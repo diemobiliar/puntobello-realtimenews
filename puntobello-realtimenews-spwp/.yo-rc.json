@@ -1,0 +1,17 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "version": "1.18.2",
+    "isDomainIsolated": false,
+    "isCreatingSolution": true,
+    "packageManager": "npm",
+    "componentType": "webpart",
+    "libraryName": "spfx-socket-io",
+    "libraryId": "2f53fcae-b41c-4fec-ba55-ae0e3d03491f",
+    "framework": "react",
+    "sdkVersions": {
+      "@microsoft/teams-js": "2.12.0",
+      "@microsoft/microsoft-graph-client": "3.0.2"
+    },
+    "nodeVersion": "18.19.1"
+  }
+}

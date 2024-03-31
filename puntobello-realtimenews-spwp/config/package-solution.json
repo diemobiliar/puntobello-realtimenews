@@ -1,0 +1,31 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "puntobello-realtimenews-spwp",
+    "id": "2f53fcae-b41c-4fec-ba55-ae0e3d03491f",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "Nello D'Andrea - Die Mobiliar",
+      "websiteUrl": "https://github.com/diemobiliar",
+      "privacyUrl": "https://github.com/diemobiliar",
+      "termsOfUseUrl": "https://github.com/diemobiliar",
+      "mpnId": "Undefined-1.18.2"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "puntobello-realtimenews-spwp realtime newsfeed"
+      },
+      "longDescription": {
+        "default": "puntobello-realtimenews-spwp webpart showing news in realtime in the newsfeed"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    }
+  },
+  "paths": {
+    "zippedPackage": "solution/puntobello-realtimenews-spwp.sppkg"
+  }
+}

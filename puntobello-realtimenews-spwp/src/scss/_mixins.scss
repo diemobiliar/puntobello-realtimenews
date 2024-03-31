@@ -1,0 +1,38 @@
+@import '~@fluentui/react/dist/sass/References.scss';
+
+@mixin row($gutter: 30px) {
+  display: flex;
+  flex-wrap: wrap;
+  margin: $gutter * -0.5;
+}
+
+@mixin column-base($gutter: 30px) {
+  box-sizing: border-box;
+  padding: $gutter * 0.5;
+  width: 100%;
+}
+
+@mixin column($columns: 1 / 1) {
+  width: percentage($columns);
+}
+
+@mixin mq($mq: null, $until: null) {
+  @if $until {
+    @media (max-width: $until) {
+      @content;
+    }
+  } @else if $mq {
+    @media (min-width: $mq) {
+      @content;
+    }
+  }
+}
+
+@mixin text-line-clamp($lines: 1) {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $lines;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}

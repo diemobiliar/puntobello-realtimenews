@@ -1,0 +1,390 @@
+@import '../../scss/_mixins.scss';
+@import '../../scss/_variables.scss';
+@import '~@fluentui/react/dist/sass/References.scss';
+
+$newsfeed-card-border-radius: 10px;
+$newsfeed-card-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12), 0 2px 9px rgba(29, 29, 29, 0.09);
+$newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(29, 29, 29, 0.09);
+
+.newsFeed {
+  
+  .highlightContainer {
+    margin-bottom: 60px;
+
+    @include mq($ms-screen-min-lg) {
+      margin-bottom: 120px;
+    }
+  }
+
+  .filterBar {
+    display: flex;
+    flex-direction: column;
+    margin-top: -16px;
+    margin-bottom: 32px;
+
+    @include mq($ms-screen-min-lg) {
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+
+  .filterBarItem {
+    margin-top: 16px;
+    flex-grow: 1;
+  }
+
+  .overflowSet {
+    @include mq($ms-screen-min-lg) {
+      justify-content: flex-end;
+    }
+  }
+
+  .overflowSetLink {
+    margin-right: 12px;
+    font-size: 18px;
+    color: $color-red;
+
+    &:hover,
+    &:focus {
+      color: $color-dark-red;
+      text-decoration: none;
+    }
+
+    @include mq($ms-screen-min-lg) {
+      margin-left: 24px;
+      margin-right: 0;
+    }
+  }
+
+  .dropdown {
+    @include mq($ms-screen-min-lg) {
+      max-width: 285px;
+    }
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    max-width: none;
+    border: 0;
+    transition-property: transform, box-shadow;
+    transition-duration: 0.15s;
+    transition-timing-function: ease;
+
+    &:hover:after {
+      border: 0;
+    }
+
+    @include mq($ms-screen-min-lg) {
+      min-height: 230px;
+    }
+  }
+
+  .cardHighlight {
+    .details {
+      border-radius: 0 0 $newsfeed-card-border-radius $newsfeed-card-border-radius;
+      background-color: $color-red;
+      color: $color-ui-white;
+    }
+
+    .imageWrapper {
+      border-radius: $newsfeed-card-border-radius $newsfeed-card-border-radius 0 0;
+    }
+
+    @include mq($until: $ms-screen-max-md) {
+      border-radius: $newsfeed-card-border-radius;
+      box-shadow: $newsfeed-card-box-shadow;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: $newsfeed-card-box-shadow-hover;
+      }
+    }
+
+    @include mq($ms-screen-min-lg) {
+      margin: 30px 0;
+
+      &:hover {
+        .details {
+          transform: translateY(-4px);
+          box-shadow: $newsfeed-card-box-shadow-hover;
+        }
+      }
+
+      .details {
+        position: relative;
+        z-index: 1;
+        width: 45%;
+        border-radius: $newsfeed-card-border-radius;
+        box-shadow: $newsfeed-card-box-shadow;
+      }
+
+      .imageWrapper {
+        position: absolute;
+        right: 0;
+        top: -30px;
+        bottom: -30px;
+        width: 72%;
+        border-radius: $newsfeed-card-border-radius;
+      }
+    }
+  }
+
+  .details {
+    justify-content: flex-start;
+    padding: 20px;
+    transition-property: transform, box-shadow;
+    transition-duration: 0.15s;
+    transition-timing-function: ease;
+  }
+
+  .title {
+    @include text-line-clamp(2);
+
+    height: auto;
+    margin-bottom: 20px;
+    padding: 0;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: inherit;
+
+    @include mq($ms-screen-min-lg) {
+      font-size: 32px;
+      max-height: 75px;
+    }
+  }
+
+  .subtitle {
+    @include text-line-clamp(1);
+
+    height: auto;
+    margin-bottom: 20px;
+    padding: 0;
+    font-size: 16px;
+    line-height: 1.2;
+    color: inherit;
+  }
+
+  .text {
+    @include text-line-clamp(4);
+
+    font-size: 18px;
+    line-height: 1.4;
+    color: inherit;
+  }
+
+  .imageWrapper {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .metaBarContainer {
+    overflow: hidden;
+    margin-top: auto;
+    margin-bottom: -14px;
+    padding-top: 20px;
+  }
+
+  .metaBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 16px;
+    color: $color-ui-white;
+  }
+
+  .metaBarText {
+    color: inherit;
+  }
+
+  .commandBar {
+    flex-grow: 1;
+  }
+}
+
+.newsletterList {
+
+  .linkNewsItem {
+    text-decoration: 'none';
+  }
+
+  .card {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    max-width: none;
+    border: 0;
+    border-radius: 10px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12), 0 2px 9px rgba(29, 29, 29, 0.09);
+    transition-property: transform, box-shadow;
+    transition-duration: 0.15s;
+    transition-timing-function: ease;
+
+    &:hover:after {
+      border: 0;
+    }
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(29, 29, 29, 0.09);
+    }
+
+    @include mq($ms-screen-min-lg) {
+      min-height: 230px;
+      flex-direction: row;
+    }
+  }
+
+  .details {
+    justify-content: flex-start;
+    padding: 20px;
+  }
+
+  .title {
+    overflow: hidden;
+    height: auto;
+    max-height: 62px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    margin-bottom: 15px;
+    padding: 0;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: $color-ui-black;
+  }
+
+  .subtitle {
+    height: 18px;
+    margin-bottom: 15px;
+    padding: 0;
+    font-size: 16px;
+    line-height: 1;
+    color: $color-dark-grey;
+  }
+
+  .text {
+    overflow: hidden;
+    max-height: 100px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    font-size: 18px;
+    line-height: 1.4;
+    color: $color-ui-black;
+  }
+
+  .imageWrapper {
+    position: relative;
+
+    @include mq($ms-screen-min-lg) {
+      max-width: 50%;
+    }
+  }
+
+  .imageMeta {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 72px;
+    height: 72px;
+    padding: 0.2em;
+    font-size: 20px;
+    letter-spacing: 0.02em;
+    background-color: $color-red;
+    color: #fff;
+  }
+
+  .metaBarContainer {
+    overflow: hidden;
+    margin-top: auto;
+    margin-bottom: -14px;
+    padding-top: 20px;
+  }
+
+  .metaBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 16px;
+    color: $color-dark-grey;
+  }
+
+  .commandBar {
+    flex-grow: 1;
+  }
+}
+
+.systemMessage {
+  box-sizing: border-box;
+  position: absolute;
+  z-index: $ms-zIndex-1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 10px 4px rgba(0, 0, 0, 0.1);
+
+  @include mq($ms-screen-min-lg) {
+    padding: 12px 20px 12px 64px;
+  }
+
+  .title {
+    height: auto;
+    margin-top: -0.1em;
+    margin-bottom: 18px;
+    padding: 0;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 1.3;
+    color: $color-ui-black;
+  }
+
+  .details {
+    position: relative;
+    padding-left: 28px;
+  }
+
+  .icon {
+    position: absolute;
+    left: 0;
+    width: 18px;
+    height: 18px;
+    color: $color-red;
+  }
+
+  .button {
+    align-self: flex-start;
+    max-width: 100%;
+    height: auto;
+    padding: 14px 32px;
+    border: 0;
+    border-radius: 25px;
+    font-size: 18px;
+    line-height: 1.3;
+    background-color: $color-red;
+    color: $color-ui-white;
+
+    &:hover {
+      background-color: $color-dark-red;
+      color: $color-ui-white;
+    }
+
+    @include mq($ms-screen-min-lg) {
+      padding: 16px 50px;
+    }
+  }
+}
+
