@@ -1,0 +1,31 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
+  "id": "bd6bb470-57d5-4061-88f9-58d25d095f73",
+  "alias": "RealTimeNewsFeed",
+  "componentType": "WebPart",
+  "version": "*",
+  "manifestVersion": 2,
+  "requiresCustomScript": false,
+  "supportedHosts": [
+    "SharePointWebPart"
+  ],
+  "preconfiguredEntries": [
+    {
+      "groupId": "5c03119e-3074-46fd-976b-c60198311f70", 
+      "group": {
+        "default": "Other"
+      },
+      "title": {
+        "default": "Newsfeed, multilingual, realtime, location/user-based"
+      },
+      "description": {
+        "default": "Newsfeed webpart, multilingual. The feed is served in realtime is based on user preferences and organizational location."
+      },
+      "properties": {
+        "language": "de",
+        "newsCount": 6
+      },
+      "iconImageUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAgCAYAAABgrToAAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGRSURBVFhH7ZexagJBEIZ9qJSmioWFhQiChQrCoSSYiCAiFhaCIgimSGOVIkU6n8CHyCNt+A8mbNbd2blbDw/c4hB1Z+fbf2b+1crP96Mq81MpMxzYImBohaKChSrYng3Vw2hqffDdatNR588nqwvM11029m3VV6dj3esgbIk5QAKvvkzUYd+6SMQB6ofe7tospAjw+N78twlUAxQdAJCmGgSIV7PM2C9ZDv4U5pTMBagn7C2SNBFKpn/OAdI6gjRj9X2CAaEGAKFmVkBX7H0BosmhIEqdVUEqMdzAZUdBJcaw1F7HKaA5jVwPfn000p5FXGP67LQq711MU2pOMd4DANNLSUwFJDYDBV0+SvuJFHSZNQ2HLYkEEAf0QeYChLIokalslh7UfRRlLqQHuXtW4oOIpx623Ua5e1DyA0AK6FsnKjFXShesLzHF0TS7rOamgBgucgJYj+2wNwEEDBQjONPkr3rV+UrMWRRnU5l8MKQHbYCYXKjmmlyxgpJpLXpN/NMUqnBUMCoYqkBofOl78Bd/0vWnxeVdeAAAAABJRU5ErkJggg=="
+    }
+  ]
+}

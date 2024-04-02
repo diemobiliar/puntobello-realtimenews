@@ -1,0 +1,19 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "real-time-news-feed-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/realTimeNewsFeed/RealTimeNewsFeedWebPart.js",
+          "manifest": "./src/webparts/realTimeNewsFeed/RealTimeNewsFeedWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "realTimeNewsFeedStrings": "lib/webparts/realTimeNewsFeed/loc/{locale}.js",
+    "PropertyControlStrings": "node_modules/@pnp/spfx-property-controls/lib/loc/{locale}.js"
+  }
+}
