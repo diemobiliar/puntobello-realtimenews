@@ -29,6 +29,7 @@ import { getEditedDate, getSystemMessageTitle } from '../../../utils/ui';
 import { Utility } from '../../../utils/utils';
 import { Logger } from '../../../utils/logger';
 import { AppContext, AppContextProps } from '../../../common/AppContext';
+import SharePointService from '../../../services/SharePointService';
 //#endregion
 
 const stackTokens: IStackTokens = { childrenGap: 14 };
@@ -38,6 +39,7 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
   const logger = Logger.getInstance();
   // Refs
   const contextRef = useRef<AppContextProps | undefined>(context);
+  const spo = contextRef.current.serviceScope.consume(SharePointService.serviceKey);
   const myNewsGuidRef = useRef("00000000-0000-0000-0000-000000000000");
   const newsChannelCurrentRef = useRef(myNewsGuidRef.current);
   const newsChannelsRef = useRef<IChannels2SubscriptionItem[]>();
@@ -51,6 +53,59 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [systemMessageVisible, setSystemMessageVisible] = useState(false);
+  const [loadingText, setLoadingText] = React.useState('');
+  const [noNewsText, setNoNewsText] = React.useState('');
+  const [modalSettingsTitle, setModalSettingsTitle] = React.useState('');
+
+  React.useEffect(() => {
+    async function getLoadingText() {
+      const translation = await Utility.getStringTranslation4Locale('loading', contextRef.current.pageLanguage);
+      setLoadingText(translation);
+    }  
+    getLoadingText();
+  }, []);
+
+  React.useEffect(() => {
+    async function getNoNewsText() {
+      const translation = await Utility.getStringTranslation4Locale('noNewsText', contextRef.current.pageLanguage);
+      setNoNewsText(translation);
+    }  
+    getNoNewsText();
+  }, []);
+
+  React.useEffect(() => {
+    async function getModalSettingsTitle() {
+      const translation = await Utility.getStringTranslation4Locale('modalSettingsTitle', contextRef.current.pageLanguage);
+      setModalSettingsTitle(translation);
+    }  
+    getModalSettingsTitle();
+  }, []);
+
+  useEffect(() => {
+    // Socket connection
+    const socket = io(process.env.SPFX_SOCKET_URL, { transports: ["websocket"], timeout: 30000 });
+    socket.on("connect", () => {
+      logger.info('Socket Connect, SocketId:' + socket.id);
+    });
+    socket.on("nd", (data) => {
+      processSocketEvent(data);
+    });
+    socket.on("disconnect", () => {
+      logger.info('Socket Disconnect, SocketId:' + socket.id);
+    });
+    socket.on("connect_error", (socketerr) => {
+      logger.warn('Socket_error SocketId' + + socket.id + 'error ' + socketerr);
+    });
+
+    getAllData();
+
+    return () => {
+      // before the component is destroyed
+      // unbind all event handlers used in this component
+      socket.off();
+    };
+  }, []);
+
 
   async function processSocketEvent(data) {
     // Safeguard if we get in the situation when the webpart is loading and an event has been received
@@ -60,7 +115,7 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
     const eventType = Object.keys(data)[0];
     const eventId: number = Number(Object.values(data)[0]);
 
-    const validItem = await contextRef.current.spo.checkValidNewsItem(eventId);
+    const validItem = await spo.checkValidNewsItem(eventId);
     if (validItem) {
       switch (eventType) {
         case 'A':
@@ -89,7 +144,7 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
     getChannelsAndSubscriptions()
       .then(() => {
         // Now get the news items, which are based on the channels subscription for the user
-        contextRef.current.spo.getNewsItems(newsChannelCurrentRef.current, myNewsGuidRef.current, newsChannelsRef.current, contextRef.current.pageLanguage, props.newsCount)
+        spo.getNewsItems(newsChannelCurrentRef.current, myNewsGuidRef.current, newsChannelsRef.current, contextRef.current.pageLanguage, props.newsCount)
           .then((responsenews) => {
             newsItemsRef.current = responsenews.newsItemData;
             stickyRef.current = responsenews.sticky;
@@ -112,10 +167,10 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
     const newsChannelConfig: IChannels2SubscriptionItem[] = [];
 
     // Process all channels from termstore
-    const allCachedChannels: IOrderedTermInfo[] = await contextRef.current.spo.getAndCacheAllChannels();
+    const allCachedChannels: IOrderedTermInfo[] = await spo.getAndCacheAllChannels();
 
     // Get subscribed channels for current user
-    const channels2subItem: IChannels2SubsItem[] = await contextRef.current.spo.getSubscribedChannels4CurrentUser();
+    const channels2subItem: IChannels2SubsItem[] = await spo.getSubscribedChannels4CurrentUser();
 
     if (channels2subItem.length > 0) {
       channels2subItem[0].pb_Channels.forEach(channel => {
@@ -125,7 +180,7 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
       channelsubItemIdRef.current = channels2subItem[0].Id;
     } else {
       // We do not have any subscribed channels, create default subscription item
-      const newSubItem: IItemAddResult = await contextRef.current.spo.addSubscribedChannels4CurrentUser();
+      const newSubItem: IItemAddResult = await spo.addSubscribedChannels4CurrentUser();
       channelsubItemIdRef.current = newSubItem.data.ID;
     }
 
@@ -157,7 +212,7 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
   function getAvailableItems() {
     setSystemMessageVisible(false);
     setLoading(true);
-    contextRef.current.spo.getNewsItems(newsChannelCurrentRef.current, myNewsGuidRef.current, newsChannelsRef.current, contextRef.current.pageLanguage, props.newsCount)
+    spo.getNewsItems(newsChannelCurrentRef.current, myNewsGuidRef.current, newsChannelsRef.current, contextRef.current.pageLanguage, props.newsCount)
       .then((responsenews) => {
         newsItemsRef.current = responsenews.newsItemData;
         stickyRef.current = responsenews.sticky;
@@ -193,7 +248,7 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
         }
       });
     }
-    contextRef.current.spo.updateMultiMeta(channels, 'pb_subscribed_channels', 'pb_Channels', channelsubItemIdRef.current).then().catch((error) => {
+    spo.updateMultiMeta(channels, 'pb_subscribed_channels', 'pb_Channels', channelsubItemIdRef.current).then().catch((error) => {
       logger.error('CHANGE_CHANNEL_SETTINGS', error);
     });
   }
@@ -232,43 +287,18 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
     return retVal;
   }
 
-  useEffect(() => {
-    // Socket connection
-    const socket = io(process.env.SPFX_SOCKET_URL, { transports: ["websocket"], timeout: 30000 });
-    socket.on("connect", () => {
-      logger.info('Socket Connect, SocketId:' + socket.id);
-    });
-    socket.on("nd", (data) => {
-      processSocketEvent(data);
-    });
-    socket.on("disconnect", () => {
-      logger.info('Socket Disconnect, SocketId:' + socket.id);
-    });
-    socket.on("connect_error", (socketerr) => {
-      logger.warn('Socket_error SocketId' + + socket.id + 'error ' + socketerr);
-    });
-
-    getAllData();
-
-    return () => {
-      // before the component is destroyed
-      // unbind all event handlers used in this component
-      socket.off();
-    };
-  }, []);
-
   return (
     <>
-      {loading && <Spinner label={Utility.getStringTranslation4Locale('loading', contextRef.current.pageLanguage)} />}
+      {loading && <Spinner label={loadingText} />}
       {!loading &&
         <div className={styles.newsFeed} style={{ backgroundColor: contextRef.current.themeVariant.semanticColors.bodyBackground, color: contextRef.current.themeVariant.semanticColors.bodyText }}>
           {systemMessageVisible && <SystemMessage Title={getSystemMessageTitle(numberOfNewNewsRef.current, contextRef.current.pageLanguage)} buttonUpdateNewsClicked={updateNews} />}
           {stickyRef.current &&
             <div className={styles.highlightContainer}>
-              <StickyItem NewsUrl={newsItemsRef.current[0].pb_NewsUrl.Url} ImageUrl={newsItemsRef.current[0].pb_ImageUrl} NewsTitle={newsItemsRef.current[0].pb_NewsTitle} PubFrom={getEditedDate(newsItemsRef.current[0].pb_PubFrom)} NewsHeader={newsItemsRef.current[0].pb_NewsHeader} metaText={getEditedDate(newsItemsRef.current[0].pb_PubFrom)} comments={_newsItems.current[0].pb_CommentsNumber} likes={newsItemsRef.current[0].pb_LikeNumber} isSticky={false} />
+              <StickyItem NewsUrl={newsItemsRef.current[0].pb_NewsUrl.Url} ImageUrl={newsItemsRef.current[0].pb_ImageUrl} NewsTitle={newsItemsRef.current[0].pb_NewsTitle} PubFrom={getEditedDate(newsItemsRef.current[0].pb_PubFrom)} NewsHeader={newsItemsRef.current[0].pb_NewsHeader} metaText={getEditedDate(newsItemsRef.current[0].pb_PubFrom)} comments={newsItemsRef.current[0].pb_CommentsNumber} likes={newsItemsRef.current[0].pb_LikeNumber} isSticky={false} />
             </div>
           }
-          {<ChannelSettings myNewsGuid={myNewsGuidRef.current} channelsubItemId={channelsubItemIdRef.current} channelsConfig={newsChannelsRef.current} locale={contextRef.current.pageLanguage} modalVisible={modalVisible} modalSettingsTitle={getStringTranslation('modalSettingsTitle', contextRef.current.pageLanguage.current)} closeModal={hideChannelSettings} changeChannelSettings={changeChannelSettings} />}
+          {<ChannelSettings myNewsGuid={myNewsGuidRef.current} channelsubItemId={channelsubItemIdRef.current} channelsConfig={newsChannelsRef.current} locale={contextRef.current.pageLanguage} modalVisible={modalVisible} modalSettingsTitle={modalSettingsTitle} closeModal={hideChannelSettings} changeChannelSettings={changeChannelSettings} />}
           {<CommandBarNewsFeed channelDropdown={getChannelDD()} selectedKey={newsChannelCurrentRef.current} archivLinkUrl={Utility.getArchiveNewsUrl()} channelDropdownChanged={channelChange} channelSettingsModalClicked={showChannelSettings} />}
           {newsItemsRef.current.length > 0 ?
             <Stack tokens={stackTokens} className={styles.newsletterList}>
@@ -277,7 +307,7 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
                   <NewsItem NewsUrl={currnews.pb_NewsUrl.Url} ImageUrl={currnews.pb_ImageUrl} NewsTitle={currnews.pb_NewsTitle} PubFrom={getEditedDate(currnews.pb_PubFrom)} NewsHeader={currnews.pb_NewsHeader} metaText={getEditedDate(currnews.pb_PubFrom)} comments={currnews.pb_CommentsNumber} likes={currnews.pb_LikeNumber} isSticky={false} />
               ))}
             </Stack>
-            : <h2>{getStringTranslation('noNewsText', contextRef.current.pageLanguage)}</h2>}
+            : <h2>{noNewsText}</h2>}
         </div >
       }
     </>

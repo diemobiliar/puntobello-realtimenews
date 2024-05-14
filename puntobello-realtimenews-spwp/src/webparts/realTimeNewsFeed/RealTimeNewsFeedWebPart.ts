@@ -23,7 +23,7 @@ export default class RealTimeNewsFeedWebPart extends BaseClientSideWebPart<IReal
   private pageLanguage: string;
   private themeProvider: ThemeProvider;
   private themeVariant: IReadonlyTheme | undefined;
-  private spo: SharePointService;
+  private spo: ISharePointService;
 
   private _handleThemeChangedEvent(args: ThemeChangedEventArgs): void {
     this.themeVariant = args.theme;
@@ -58,7 +58,6 @@ export default class RealTimeNewsFeedWebPart extends BaseClientSideWebPart<IReal
       AppContext.Provider,
       { value: {
         serviceScope: this.context.serviceScope,
-        spo: this.spo,
         themeVariant: this.themeVariant,
         context: this.context,
         pageLanguage: this.pageLanguage

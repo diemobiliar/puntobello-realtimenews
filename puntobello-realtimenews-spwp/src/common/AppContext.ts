@@ -1,12 +1,10 @@
 import { ServiceScope } from '@microsoft/sp-core-library';
 import * as React from 'react';
-import SharePointService from '../services/SharePointService';
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 export interface AppContextProps {
     serviceScope: ServiceScope;
-    spo: SharePointService;
     themeVariant: IReadonlyTheme | undefined;
     context: WebPartContext;
     pageLanguage: string;

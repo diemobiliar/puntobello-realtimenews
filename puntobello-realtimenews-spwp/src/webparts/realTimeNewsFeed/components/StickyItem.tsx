@@ -7,6 +7,7 @@ import {
     DocumentCardDetails,
     DocumentCardTitle,
     CommandBar,
+    ICommandBarItemProps,
 } from '@fluentui/react';
 import INewsItem from '../../../models/INewsItem';
 import { getCommandBarItems, getImage, getStickyCommandBarInnerStyles, getStickyImageInnerStyles } from '../../../utils/ui';
@@ -15,6 +16,17 @@ import { AppContext, AppContextProps } from '../../../common/AppContext';
 export function StickyItem(props: INewsItem) {
     const context = React.useContext<AppContextProps | undefined>(AppContext);
     const contextRef = React.useRef<AppContextProps | undefined>(context);
+
+    const [commandBarItems, setCommandBarItems] = React.useState<ICommandBarItemProps[]>();
+
+    React.useEffect(() => {
+      async function getCBItems() {
+        const cbItems = await getCommandBarItems(contextRef.current.pageLanguage, props.comments, props.likes);
+        setCommandBarItems(cbItems);
+      }  
+      getCBItems();
+    }, []);
+
 
     return (
         <DocumentCard className={`${styles.card} ${styles.cardHighlight}`} onClickHref={props.NewsUrl}>
@@ -38,7 +50,7 @@ export function StickyItem(props: INewsItem) {
                         <CommandBar
                             className={styles.commandBar}
                             styles={getStickyCommandBarInnerStyles()}
-                            items={getCommandBarItems(contextRef.current.pageLanguage, props.comments, props.likes)}
+                            items={commandBarItems}
                         />
                     </div>
                 </div>

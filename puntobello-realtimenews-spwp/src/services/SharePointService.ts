@@ -21,18 +21,18 @@ export interface ISharePointService {
     getNewsItems(newsChannelCurrent: string, newsGuid: string, newsChannels: IChannels2SubscriptionItem[], pageLanguage: string, newsCount: number): Promise<IGetNewsItemsResult>;
     checkValidNewsItem(id: number): Promise<boolean>;
     updateMultiMeta(terms: any[], listName: string, fieldName: string, itemId: number): Promise<any>;
-
     calculateLanguage(listId: string, listItemId: number, defaultLanguage: number): Promise<string>;
 }
 
-export default class SharePointService {
+export default class SharePointService implements ISharePointService {
     public static readonly serviceKey: ServiceKey<ISharePointService> =
         ServiceKey.create<ISharePointService>('SPFx:SharePointService', SharePointService);
+    
     private storage: PnPClientStorage;
     private pageContext: PageContext;
     private logger: Logger;
     private filterQuery4Socket: string;
-    public sp: SPFI;
+    private sp: SPFI;
 
     constructor(serviceScope: ServiceScope) {
         this.logger = Logger.getInstance();
@@ -186,7 +186,7 @@ export default class SharePointService {
             ':' + pad(tzOffset % 60);
     }
 
-    public calculateLanguage = async (listId: string, listItemId: number, defaultLanguage: number): Promise<string> => {
+    public async calculateLanguage(listId: string, listItemId: number, defaultLanguage: number): Promise<string> {
         let pageContext = null;
         try {
             pageContext = await this.getPageContext(listId, listItemId);
