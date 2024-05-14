@@ -1,7 +1,7 @@
 define([], function() {
   return {
     "PropertyPaneDescription": "Impostazioni web part",
-    "BasicGroupName": "RedNet Mobiliare",
+    "BasicGroupName": "PuntoBello Intranet",
     "ListTitleFieldLabel": "Scegliere lista news",
     "loading": "Caricamento news in corso...",
     "archivLink": "Archivio",

@@ -7,11 +7,14 @@ import {
     DocumentCardDetails,
     DocumentCardTitle,
     CommandBar,
-} from 'office-ui-fabric-react';
-import INewsItem from '../models/INewsItem';
+} from '@fluentui/react';
+import INewsItem from '../../../models/INewsItem';
 import { getCommandBarItems, getImage, getStickyCommandBarInnerStyles, getStickyImageInnerStyles } from '../../../utils/ui';
+import { AppContext, AppContextProps } from '../../../common/AppContext';
 
 export function StickyItem(props: INewsItem) {
+    const context = React.useContext<AppContextProps | undefined>(AppContext);
+    const contextRef = React.useRef<AppContextProps | undefined>(context);
 
     return (
         <DocumentCard className={`${styles.card} ${styles.cardHighlight}`} onClickHref={props.NewsUrl}>
@@ -35,7 +38,7 @@ export function StickyItem(props: INewsItem) {
                         <CommandBar
                             className={styles.commandBar}
                             styles={getStickyCommandBarInnerStyles()}
-                            items={getCommandBarItems(props.wpLang, props.comments, props.likes)}
+                            items={getCommandBarItems(contextRef.current.pageLanguage, props.comments, props.likes)}
                         />
                     </div>
                 </div>

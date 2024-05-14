@@ -7,14 +7,17 @@ import {
   Link,
   IButtonStyles,
   IconButton,
-} from 'office-ui-fabric-react';
+} from '@fluentui/react';
 import { Navigation } from 'spfx-navigation';
 
 import { dropdownStyles } from '../../../styles/dropdown';
-import ICommandBarData from '../models/ICommandBarData';
-import { getStringTranslation } from '../../../utils/localize';
+import ICommandBarData from '../../../models/ICommandBarData';
+import { AppContext, AppContextProps } from '../../../common/AppContext';
+import { Utility } from '../../../utils/utils';
 
 export function CommandBarNewsFeed(props: ICommandBarData) {
+  const context = React.useContext<AppContextProps | undefined>(AppContext);
+  const contextRef = React.useRef<AppContextProps | undefined>(context);
 
   function onRenderOverflowItem(item: IOverflowSetItemProps): JSX.Element {
     return (
@@ -66,12 +69,12 @@ export function CommandBarNewsFeed(props: ICommandBarData) {
           items={[
             {
               key: 'channelsettingsmodal',
-              name: getStringTranslation('modalSettingsLink', props.wpLang),
+              name: Utility.getStringTranslation4Locale('modalSettingsLink', contextRef.current.pageLanguage),
               onClick: () => { props.channelSettingsModalClicked(); },
             },
             {
-              key: 'rednetnewssearch',
-              name: getStringTranslation('archivLink', props.wpLang),
+              key: 'puntobellonewssearch',
+              name: Utility.getStringTranslation4Locale('archivLink', contextRef.current.pageLanguage),
               onClick: () => { Navigation.navigate(props.archivLinkUrl, true); },
             },
           ]}

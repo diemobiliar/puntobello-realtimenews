@@ -1,19 +1,18 @@
 import * as React from 'react';
 import styles from '../RealTimeNewsFeed.module.scss';
-import ISystemMessageProps from '../models/ISystemMessage';
+import ISystemMessageProps from '../../../models/ISystemMessage';
 import {
     DefaultButton,
     DocumentCard,
     DocumentCardDetails,
     DocumentCardTitle,
-} from 'office-ui-fabric-react';
+} from '@fluentui/react';
+import { AppContext, AppContextProps } from '../../../common/AppContext';
+import { Utility } from '../../../utils/utils';
 
 export function SystemMessage(props: ISystemMessageProps) {
-
-    function getStringTranslation(stringName: string) {
-        const translatedString = require(`../loc/${props.wpLang}.js`);
-        return translatedString[stringName];
-    }
+    const context = React.useContext<AppContextProps | undefined>(AppContext);
+    const contextRef = React.useRef<AppContextProps | undefined>(context);
 
     return (
         <DocumentCard className={styles.systemMessage}>
@@ -27,7 +26,7 @@ export function SystemMessage(props: ISystemMessageProps) {
                 {
                     <DocumentCardTitle className={styles.title} title={props.Title} />
                 }
-                <DefaultButton className={styles.button} onClick={() => { props.buttonUpdateNewsClicked(); }}>{getStringTranslation('SystemMessageLabel')}</DefaultButton>
+                <DefaultButton className={styles.button} onClick={() => { props.buttonUpdateNewsClicked(); }}>{Utility.getStringTranslation4Locale('SystemMessageLabel', contextRef.current.pageLanguage)}</DefaultButton>
             </DocumentCardDetails>
         </DocumentCard>
     );

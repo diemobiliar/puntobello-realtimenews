@@ -7,14 +7,15 @@ import {
     FontWeights,
     IconButton,
     IIconProps,
-} from 'office-ui-fabric-react';
-import { getId } from 'office-ui-fabric-react/lib/Utilities';
-import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
-import { Stack } from 'office-ui-fabric-react/lib/Stack';
-import { IChannels2SubscriptionItem } from '../models/IRedNetNewsFeed';
+} from '@fluentui/react';
+import { getId } from '@fluentui/react/lib/Utilities';
+import { Checkbox } from '@fluentui/react/lib/Checkbox';
+import { Stack } from '@fluentui/react/lib/Stack';
+import { IChannels2SubscriptionItem } from '../../../models/INewsFeed';
 import "@pnp/sp/fields";
-import IChannelSettingsModalProps from '../models/IChannelSettings';
-import { getChannelText, getStringTranslation } from '../../../utils/localize';
+import IChannelSettingsModalProps from '../../../models/IChannelSettings';
+import { AppContext, AppContextProps } from '../../../common/AppContext';
+import { Utility } from '../../../utils/utils';
 
 //#region 
 
@@ -69,6 +70,19 @@ const stackTokens = { childrenGap: 15 };
 
 
 export function ChannelSettings(props: IChannelSettingsModalProps) {
+    const context = React.useContext<AppContextProps | undefined>(AppContext);
+    const contextRef = React.useRef<AppContextProps | undefined>(context);
+
+    const [ariaLabelIcon, setAriaLabelIcon] = React.useState('');
+
+    React.useEffect(() => {
+      async function fetchTranslation() {
+        const translation = await Utility.getStringTranslation4Locale('ariaCloseChannelSettings', contextRef.current.pageLanguage);
+        setAriaLabelIcon(translation);
+      }  
+      fetchTranslation();
+    }, []);
+  
 
     function closeModal() {
         props.closeModal();
@@ -92,7 +106,7 @@ export function ChannelSettings(props: IChannelSettingsModalProps) {
                 <IconButton
                     styles={iconButtonStyles}
                     iconProps={cancelIcon}
-                    ariaLabel={getStringTranslation('ariaCloseChannelSettings', props.locale)}
+                    ariaLabel={ariaLabelIcon}
                     onClick={closeModal}
                 />
             </div>
@@ -101,9 +115,8 @@ export function ChannelSettings(props: IChannelSettingsModalProps) {
                 <Stack tokens={stackTokens}>
                     {props.channelsConfig.map((item) => {
                         if (props.myNewsGuid != item.TermGuid) {
-                            return <Checkbox label={getChannelText(props.wpLang, item)}
-                                disabled={item.Mandatory ? true : false}
-                                defaultChecked={item.Subscribed || item.Mandatory ? true : false}
+                            return <Checkbox label={Utility.getChannelText(contextRef.current.pageLanguage, item)}
+                                defaultChecked={item.Subscribed}
                                 onChange={channelCheckboxChanged.bind(this, item)}
                             />;
                         }

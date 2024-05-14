@@ -1,10 +1,9 @@
-import { IChannels2SubscriptionItem } from "./IRedNetNewsFeed";
+import { IChannels2SubscriptionItem } from "./INewsFeed";
 
 interface IChannelSettingsModalProps {
     myNewsGuid: string;
     channelsubItemId: number;
     channelsConfig: IChannels2SubscriptionItem[];
-    wpLang: string;
     locale: string;
     modalSettingsTitle: string;
     modalVisible: boolean;

@@ -1,10 +1,9 @@
 import {
     IDropdownOption,
-} from 'office-ui-fabric-react';
+} from '@fluentui/react';
 
 interface ICommandBarData {
     channelDropdown: IDropdownOption[];
-    wpLang: string;
     archivLinkUrl: string;
     channelDropdownChanged: any;
     channelSettingsModalClicked: any;

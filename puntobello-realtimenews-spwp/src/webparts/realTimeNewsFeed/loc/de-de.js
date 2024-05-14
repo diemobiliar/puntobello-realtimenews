@@ -1,7 +1,7 @@
 define([], function() {
   return {
     "PropertyPaneDescription": "Webpart-Einstellungen",
-    "BasicGroupName": "Mobiliar Rednet",
+    "BasicGroupName": "PuntoBello Intranet",
     "ListTitleFieldLabel": "News Liste auswählen",
     "loading": "News werden geladen ...",
     "archivLink": "Archiv",

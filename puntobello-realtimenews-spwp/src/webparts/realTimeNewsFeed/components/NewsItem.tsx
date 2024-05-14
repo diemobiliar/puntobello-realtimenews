@@ -7,18 +7,32 @@ import {
     DocumentCardTitle,
     Text,
     CommandBar,
-} from 'office-ui-fabric-react';
-import INewsItem from '../models/INewsItem';
+    ICommandBarItemProps,
+} from '@fluentui/react';
+import INewsItem from '../../../models/INewsItem';
 import { getCommandBarItems, getImage, getNewsCommandBarInnerStyles, getNewsImageInnerStyles } from '../../../utils/ui';
+import { AppContext, AppContextProps } from '../../../common/AppContext';
 
 export function NewsItem(props: INewsItem) {
+    const context = React.useContext<AppContextProps | undefined>(AppContext);
+    const contextRef = React.useRef<AppContextProps | undefined>(context);
 
+    const [commandBarItems, setCommandBarItems] = React.useState<ICommandBarItemProps[]>();
+
+    React.useEffect(() => {
+      async function getCBItems() {
+        const cbItems = await getCommandBarItems(contextRef.current.pageLanguage, props.comments, props.likes);
+        setCommandBarItems(cbItems);
+      }  
+      getCBItems();
+    }, []);
+
+  
     return (
         <a href={props.NewsUrl} className={styles.linkNewsItem} data-interception="off">
         <DocumentCard className={styles.card}>
             <div className={styles.imageWrapper}>
                 {<DocumentCardPreview styles={getNewsImageInnerStyles()} {...getImage(props.ImageUrl)} />}
-                {props.isGANL && <div className={styles.imageMeta}>{props.GANLWW}</div>}
             </div>
             <DocumentCardDetails className={styles.details}>
                 <DocumentCardTitle className={styles.title} title={props.NewsTitle} />
@@ -33,7 +47,7 @@ export function NewsItem(props: INewsItem) {
                         <CommandBar
                             className={styles.commandBar}
                             styles={getNewsCommandBarInnerStyles()}
-                            items={getCommandBarItems(props.wpLang, props.comments, props.likes)}
+                            items={commandBarItems}
                         />
                     </div>
                 </div>

@@ -7,11 +7,7 @@ interface INewsItem {
     metaText: string;
     comments: number;
     likes: number;
-    wpLang: string;
     isSticky: boolean;
-    isGANL: boolean;
-    GANLWW?: string;
-    GANLYY?: string;
 }
 
 export default INewsItem;
