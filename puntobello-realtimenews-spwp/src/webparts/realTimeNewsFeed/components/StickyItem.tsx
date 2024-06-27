@@ -5,17 +5,12 @@ import {
     DocumentCard,
     DocumentCardPreview,
     DocumentCardDetails,
-    DocumentCardTitle,
-    CommandBar,
+    DocumentCardTitle
 } from '@fluentui/react';
 import INewsItem from '../../../models/INewsItem';
-import { getCommandBarItems, getImage, getStickyCommandBarInnerStyles, getStickyImageInnerStyles } from '../../../utils/ui';
-import { AppContext, AppContextProps } from '../../../common/AppContext';
+import { getImage, getStickyImageInnerStyles } from '../../../utils/ui';
 
 export function StickyItem(props: INewsItem) {
-    const context = React.useContext<AppContextProps | undefined>(AppContext);
-    const contextRef = React.useRef<AppContextProps | undefined>(context);
-
     return (
         <DocumentCard className={`${styles.card} ${styles.cardHighlight}`} onClickHref={props.NewsUrl}>
             <div className={styles.imageWrapper}>
@@ -23,25 +18,16 @@ export function StickyItem(props: INewsItem) {
             </div>
             <DocumentCardDetails className={styles.details}>
                 <DocumentCardTitle className={styles.title} title={props.NewsTitle} />
-                {props.PubFrom && (
+                {props.PublishedFrom && (
                     <DocumentCardTitle
                         className={styles.subtitle}
-                        title={props.PubFrom}
+                        title={props.PublishedFrom}
                         showAsSecondaryTitle
                     />
                 )}
                 <Text block className={styles.text}>
                     {props.NewsHeader}
                 </Text>
-                <div className={styles.metaBarContainer}>
-                    <div className={styles.metaBar}>
-                        <CommandBar
-                            className={styles.commandBar}
-                            styles={getStickyCommandBarInnerStyles()}
-                            items={getCommandBarItems(contextRef.current.pageLanguage, props.comments, props.likes)}
-                        />
-                    </div>
-                </div>
             </DocumentCardDetails>
         </DocumentCard>
     );

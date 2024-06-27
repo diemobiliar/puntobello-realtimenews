@@ -1,0 +1,7 @@
+include:
+  - project: 'diemobiliar/it/cin/system/cin-system-stack'
+    ref: '2.16.17060'
+    file: '/cin-system-paclib/cin-multiregion.gitlab-ci.yml'
+  - project: 'diemobiliar/swe/spfx/base/spfx-base-stack'
+    ref: 'master'
+    file: '/spfx-base-paclib/redn-cin-multiregion.gitlab-ci.yml'

@@ -1,18 +1,16 @@
 // Must corresponds to the SharePoint site column internal names for a news item
 interface INewsItemData {
-    pb_NewsTitle: string;
+    Title: string;
     Id: number;
-    pb_NewsHeader: string;
+    Author: string;
+    pb_Header: string;
     pb_ImageUrl: any;
     pb_Channels?: string;
-    pb_PubFrom: string;
-    pb_PubTo: string;
-    Author: string;
-    pb_LikeNumber: number;
-    pb_CommentsNumber: number;
+    pb_PublishedFrom: string;
+    pb_PublishedTo: string;
     pb_NewsUrl: any;
-    pb_LangCd: string;
-    pbN_Sticky: boolean;
+    pb_Language: string;
+    pb_Sticky: boolean;
     pb_StickyDate: Date;
 }
 

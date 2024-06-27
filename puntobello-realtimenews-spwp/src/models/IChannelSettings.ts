@@ -1,10 +1,11 @@
+import ILanguageRepresentation from "./ILanguageRepresentation";
 import { IChannels2SubscriptionItem } from "./INewsFeed";
 
 interface IChannelSettingsModalProps {
     myNewsGuid: string;
     channelsubItemId: number;
     channelsConfig: IChannels2SubscriptionItem[];
-    locale: string;
+    pageLanguage: ILanguageRepresentation;
     modalSettingsTitle: string;
     modalVisible: boolean;
     closeModal: any;

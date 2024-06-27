@@ -1,0 +1,16 @@
+config:
+  target: "@@azureWebapp@@"
+  phases:
+    - duration: 20
+      arrivalRate: 10
+      name: "Constant load"
+  engines:
+   socketio-v3:
+     pingInterval: 40000
+     pingTimeout: 30000
+     transports: ["websocket"]
+scenarios:
+  - name: Load test RedNet PubSub
+    engine: "socketio-v3"
+    flow:
+      - think: 600 # do nothing for 10m and disconnect

@@ -3,13 +3,15 @@ import { ILogger } from "./ILogger";
 enum LogLevel {
     Info = 'info',
     Warn = 'warn',
-    Error = 'error',
+    Error = 'error'
 }
 
 export class Logger implements ILogger {
     private static instance: Logger;
     private isVerbose: boolean;
     private contextInfo: string;
+    private figletOutpout = false;
+    private welcomeFiglet = `\u001b[31m \u001b[33m \u001b[33m_\u001b[32m_\u001b[34m_\u001b[35m_\u001b[36m \u001b[31m \u001b[33m \u001b[33m \u001b[32m \u001b[34m \u001b[35m \u001b[36m \u001b[31m \u001b[33m \u001b[33m \u001b[32m \u001b[34m \u001b[35m \u001b[36m_\u001b[31m \u001b[33m \u001b[33m \u001b[32m \u001b[34m \u001b[35m \u001b[36m \u001b[31m \u001b[33m_\u001b[33m_\u001b[32m_\u001b[34m_\u001b[35m \u001b[36m \u001b[31m \u001b[33m \u001b[33m \u001b[32m \u001b[34m \u001b[35m_\u001b[36m \u001b[31m_\u001b[33m \u001b[33m \u001b[32m \u001b[34m \u001b[35m \u001b[36m \u001b[31m \u001b[0m\n\u001b[33m \u001b[33m|\u001b[32m \u001b[34m \u001b[35m_\u001b[36m \u001b[31m\\\u001b[33m \u001b[33m_\u001b[32m \u001b[34m \u001b[35m \u001b[36m_\u001b[31m \u001b[33m_\u001b[33m \u001b[32m_\u001b[34m_\u001b[35m \u001b[36m|\u001b[31m \u001b[33m|\u001b[33m_\u001b[32m \u001b[34m_\u001b[35m_\u001b[36m_\u001b[31m \u001b[33m|\u001b[33m \u001b[32m_\u001b[34m_\u001b[35m \u001b[36m)\u001b[31m \u001b[33m \u001b[33m_\u001b[32m_\u001b[34m_\u001b[35m|\u001b[36m \u001b[31m|\u001b[33m \u001b[33m|\u001b[32m \u001b[34m_\u001b[35m_\u001b[36m_\u001b[31m \u001b[33m \u001b[0m\n\u001b[33m \u001b[32m|\u001b[34m \u001b[35m|\u001b[36m_\u001b[31m)\u001b[33m \u001b[33m|\u001b[32m \u001b[34m|\u001b[35m \u001b[36m|\u001b[31m \u001b[33m|\u001b[33m \u001b[32m'\u001b[34m_\u001b[35m \u001b[36m\\\u001b[31m|\u001b[33m \u001b[33m_\u001b[32m_\u001b[34m/\u001b[35m \u001b[36m_\u001b[31m \u001b[33m\\\u001b[33m|\u001b[32m \u001b[34m \u001b[35m_\u001b[36m \u001b[31m\\\u001b[33m \u001b[33m/\u001b[32m \u001b[34m_\u001b[35m \u001b[36m\\\u001b[31m \u001b[33m|\u001b[33m \u001b[32m|\u001b[34m/\u001b[35m \u001b[36m_\u001b[31m \u001b[33m\\\u001b[33m \u001b[0m\n\u001b[32m \u001b[34m|\u001b[35m \u001b[36m \u001b[31m_\u001b[33m_\u001b[33m/\u001b[32m|\u001b[34m \u001b[35m|\u001b[36m_\u001b[31m|\u001b[33m \u001b[33m|\u001b[32m \u001b[34m|\u001b[35m \u001b[36m|\u001b[31m \u001b[33m|\u001b[33m \u001b[32m|\u001b[34m|\u001b[35m \u001b[36m(\u001b[31m_\u001b[33m)\u001b[33m \u001b[32m|\u001b[34m \u001b[35m|\u001b[36m_\u001b[31m)\u001b[33m \u001b[33m|\u001b[32m \u001b[34m \u001b[35m_\u001b[36m_\u001b[31m/\u001b[33m \u001b[33m|\u001b[32m \u001b[34m|\u001b[35m \u001b[36m(\u001b[31m_\u001b[33m)\u001b[33m \u001b[32m|\u001b[0m\n\u001b[34m \u001b[35m|\u001b[36m_\u001b[31m|\u001b[33m \u001b[33m \u001b[32m \u001b[34m \u001b[35m\\\u001b[36m_\u001b[31m_\u001b[33m,\u001b[33m_\u001b[32m|\u001b[34m_\u001b[35m|\u001b[36m \u001b[31m|\u001b[33m_\u001b[33m|\u001b[32m\\\u001b[34m_\u001b[35m_\u001b[36m\\\u001b[31m_\u001b[33m_\u001b[33m_\u001b[32m/\u001b[34m|\u001b[35m_\u001b[36m_\u001b[31m_\u001b[33m_\u001b[33m/\u001b[32m \u001b[34m\\\u001b[35m_\u001b[36m_\u001b[31m_\u001b[33m|\u001b[33m_\u001b[32m|\u001b[34m_\u001b[35m|\u001b[36m\\\u001b[31m_\u001b[33m_\u001b[33m_\u001b[32m/\u001b[34m \u001b[0m\n\u001b[35m \u001b[36m \u001b[31m \u001b[33m \u001b[33m \u001b[32m \u001b[34m \u001b[35m \u001b[36m \u001b[31m \u001b[33m \u001b[33m \u001b[32m \u001b[34m \u001b[35m \u001b[36m \u001b[31m \u001b[33m \u001b[33m \u001b[32m \u001b[34m \u001b[35m \u001b[36m \u001b[31m \u001b[33m \u001b[33m \u001b[32m \u001b[34m \u001b[35m \u001b[36m \u001b[31m \u001b[33m \u001b[33m \u001b[32m \u001b[34m \u001b[35m \u001b[36m \u001b[31m \u001b[33m \u001b[33m \u001b[32m \u001b[34m \u001b[35m \u001b[36m \u001b[31m \u001b[33m \u001b[33m \u001b[32m \u001b[34m \u001b[35m \u001b[0m\n`;
 
     private constructor() {
         const urlParams = new URLSearchParams(window.location.href);
@@ -43,8 +45,13 @@ export class Logger implements ILogger {
     }
 
     private customLog<T>(level: LogLevel, message: string, ...optionalParams: T[]): void {
-        const icon = level === LogLevel.Error ? '🔥' : level === LogLevel.Warn ? '⚠️' : 'ℹ️';
-        const color = level === LogLevel.Error ? 'color: red;' : level === LogLevel.Warn ? 'color: orange;' : 'color: blue;';
+        this.writeWelcomeFiglet();
+        const icon = level === LogLevel.Error ? '🐞' :
+                     level === LogLevel.Warn ? '🔔' :
+                     level === LogLevel.Info ? 'ℹ️' : '';
+        const color = level === LogLevel.Error ? 'color: red;' :
+                      level === LogLevel.Warn ? 'color: orange;' :
+                      level === LogLevel.Info ? 'color: blue;' : '';
         const prefix = `%c${icon} [${level.toUpperCase()}]:`;
         const style = `${color} font-weight: bold;`;
 
@@ -54,5 +61,11 @@ export class Logger implements ILogger {
 
         logFunction(...params);
     }
-    
+
+    private writeWelcomeFiglet() {
+        if (!this.figletOutpout) {
+            console.log(this.welcomeFiglet);
+            this.figletOutpout = true;
+        }
+    }
 }

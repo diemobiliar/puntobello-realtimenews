@@ -4,10 +4,10 @@ import {
 
 interface ICommandBarData {
     channelDropdown: IDropdownOption[];
-    archivLinkUrl: string;
     channelDropdownChanged: any;
     channelSettingsModalClicked: any;
     selectedKey: string;
+    pageLanguage: string;
 }
 
 export default ICommandBarData;

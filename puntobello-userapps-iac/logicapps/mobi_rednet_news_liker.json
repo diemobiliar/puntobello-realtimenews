@@ -1,0 +1,889 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Condition_LastThirtyDaysOnly": {
+                "actions": {
+                    "Set_variable_varFilter_for_last_thirty_days_only": {
+                        "inputs": {
+                            "name": "varFilter",
+                            "value": "@{variables('varDateToFilter')} ge '@{formatDateTime(addDays(utcNow(), -30), 'yyyy-MM-ddTHH:mm:ssK')}'"
+                        },
+                        "runAfter": {},
+                        "type": "SetVariable"
+                    }
+                },
+                "else": {
+                    "actions": {
+                        "Set_variable_varFilter_empty": {
+                            "inputs": {
+                                "name": "varFilter",
+                                "value": "@{variables('varDateToFilter')} le '@{formatDateTime(addDays(utcNow(), 0), 'yyyy-MM-ddTHH:mm:ssK')}'"
+                            },
+                            "runAfter": {},
+                            "type": "SetVariable"
+                        }
+                    }
+                },
+                "expression": {
+                    "and": [
+                        {
+                            "equals": [
+                                "@variables('varLastThirtyDaysOnly')",
+                                true
+                            ]
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "For_each_job_config": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "If"
+            },
+            "For_each_job_config": {
+                "actions": {
+                    "Set_variable_varLastThirtyDaysOnly": {
+                        "inputs": {
+                            "name": "varLastThirtyDaysOnly",
+                            "value": "@items('For_each_job_config')['REDN_last_thirty_days_only']"
+                        },
+                        "runAfter": {},
+                        "type": "SetVariable"
+                    }
+                },
+                "foreach": "@body('Get_items_from_job_configuration_list')?['value']",
+                "runAfter": {
+                    "Get_items_from_job_configuration_list": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Foreach"
+            },
+            "For_each_top_level_file,_get_likes,_build_json_and_save_everything_in_array_": {
+                "actions": {
+                    "Condition_varLikeCount_greater_than_0": {
+                        "actions": {
+                            "For_each_but_just_one_french": {
+                                "actions": {
+                                    "Update_item_RTNews_for_french_language": {
+                                        "inputs": {
+                                            "body": {
+                                                "REDN_LikeNumber": "@variables('varLikeCount')"
+                                            },
+                                            "host": {
+                                                "connection": {
+                                                    "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                                                }
+                                            },
+                                            "method": "patch",
+                                            "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent(variables('varRTNewsListName')))}/items/@{encodeURIComponent(items('For_each_but_just_one_french')['ID'])}"
+                                        },
+                                        "runAfter": {},
+                                        "type": "ApiConnection"
+                                    }
+                                },
+                                "foreach": "@body('Get_items_for_french')?['value']",
+                                "runAfter": {
+                                    "Get_items_for_french": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "Foreach"
+                            },
+                            "For_each_but_just_one_german": {
+                                "actions": {
+                                    "Update_item_RTNews_for_german_language_": {
+                                        "inputs": {
+                                            "body": {
+                                                "REDN_LikeNumber": "@variables('varLikeCount')"
+                                            },
+                                            "host": {
+                                                "connection": {
+                                                    "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                                                }
+                                            },
+                                            "method": "patch",
+                                            "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent(variables('varRTNewsListName')))}/items/@{encodeURIComponent(items('For_each_but_just_one_german')['ID'])}"
+                                        },
+                                        "runAfter": {},
+                                        "type": "ApiConnection"
+                                    }
+                                },
+                                "foreach": "@body('Get_items_for_german')?['value']",
+                                "runAfter": {
+                                    "Get_items_for_german": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "Foreach"
+                            },
+                            "For_each_but_just_one_italian": {
+                                "actions": {
+                                    "Update_item_RTNews_for_italian_language": {
+                                        "inputs": {
+                                            "body": {
+                                                "REDN_LikeNumber": "@variables('varLikeCount')"
+                                            },
+                                            "host": {
+                                                "connection": {
+                                                    "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                                                }
+                                            },
+                                            "method": "patch",
+                                            "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent(variables('varRTNewsListName')))}/items/@{encodeURIComponent(items('For_each_but_just_one_italian')['ID'])}"
+                                        },
+                                        "runAfter": {},
+                                        "type": "ApiConnection"
+                                    }
+                                },
+                                "foreach": "@body('Get_items_for_italian')?['value']",
+                                "runAfter": {
+                                    "Get_items_for_italian": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "Foreach"
+                            },
+                            "Get_items_for_french": {
+                                "inputs": {
+                                    "host": {
+                                        "connection": {
+                                            "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                                        }
+                                    },
+                                    "method": "get",
+                                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent(variables('varRTNewsListName')))}/items",
+                                    "queries": {
+                                        "$filter": "(REDN_LangCd eq 'FR') and ((REDN_PageName eq '@{replace(items('For_each_top_level_file,_get_likes,_build_json_and_save_everything_in_array_')?['{FilenameWithExtension}'],'''','''''')}') or (REDN_PageName eq '@{uriComponent(items('For_each_top_level_file,_get_likes,_build_json_and_save_everything_in_array_')?['{FilenameWithExtension}'])}'))",
+                                        "$top": 1
+                                    }
+                                },
+                                "runAfter": {
+                                    "For_each_but_just_one_german": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "ApiConnection"
+                            },
+                            "Get_items_for_german": {
+                                "inputs": {
+                                    "host": {
+                                        "connection": {
+                                            "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                                        }
+                                    },
+                                    "method": "get",
+                                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent(variables('varRTNewsListName')))}/items",
+                                    "queries": {
+                                        "$filter": "(REDN_LangCd eq 'DE') and ((REDN_PageName eq '@{replace(items('For_each_top_level_file,_get_likes,_build_json_and_save_everything_in_array_')?['{FilenameWithExtension}'],'''','''''')}') or (REDN_PageName eq '@{uriComponent(items('For_each_top_level_file,_get_likes,_build_json_and_save_everything_in_array_')?['{FilenameWithExtension}'])}'))",
+                                        "$top": 1
+                                    }
+                                },
+                                "runAfter": {},
+                                "type": "ApiConnection"
+                            },
+                            "Get_items_for_italian": {
+                                "inputs": {
+                                    "host": {
+                                        "connection": {
+                                            "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                                        }
+                                    },
+                                    "method": "get",
+                                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent(variables('varRTNewsListName')))}/items",
+                                    "queries": {
+                                        "$filter": "(REDN_LangCd eq 'IT') and ((REDN_PageName eq '@{replace(items('For_each_top_level_file,_get_likes,_build_json_and_save_everything_in_array_')?['{FilenameWithExtension}'],'''','''''')}') or (REDN_PageName eq '@{uriComponent(items('For_each_top_level_file,_get_likes,_build_json_and_save_everything_in_array_')?['{FilenameWithExtension}'])}'))",
+                                        "$top": 1
+                                    }
+                                },
+                                "runAfter": {
+                                    "For_each_but_just_one_french": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "ApiConnection"
+                            }
+                        },
+                        "expression": {
+                            "and": [
+                                {
+                                    "greater": [
+                                        "@variables('varLikeCount')",
+                                        0
+                                    ]
+                                }
+                            ]
+                        },
+                        "runAfter": {
+                            "For_each_translated_page_add_the_like_count": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "If"
+                    },
+                    "For_each_translated_page_add_the_like_count": {
+                        "actions": {
+                            "Switch_depending_upon_the_language": {
+                                "cases": {
+                                    "Case_translation_is_french": {
+                                        "actions": {
+                                            "Condition_when_french_page_not_found_(404)": {
+                                                "actions": {},
+                                                "else": {
+                                                    "actions": {
+                                                        "Increment_variable_with_count_from_french_page": {
+                                                            "inputs": {
+                                                                "name": "varLikeCount",
+                                                                "value": "@int(body('Send_an_HTTP_request_to_SharePoint_to_get_like_count_for_the_french_page')['d']['__count'])"
+                                                            },
+                                                            "runAfter": {
+                                                                "Send_an_HTTP_request_to_SharePoint_to_get_like_count_for_the_french_page": [
+                                                                    "Succeeded"
+                                                                ]
+                                                            },
+                                                            "type": "IncrementVariable"
+                                                        },
+                                                        "Send_an_HTTP_request_to_SharePoint_to_get_like_count_for_the_french_page": {
+                                                            "inputs": {
+                                                                "body": {
+                                                                    "headers": {
+                                                                        "Accept": "application/json;odata=verbose",
+                                                                        "Content-Type": "application/json;odata=verbose"
+                                                                    },
+                                                                    "method": "GET",
+                                                                    "uri": "_api/web/Lists('@{variables('varSitePagesGuid')}')/GetItemById(@{body('Get_file_metadata_for_french_page')?['ItemId']})/likedBy?$inlineCount=AllPages"
+                                                                },
+                                                                "host": {
+                                                                    "connection": {
+                                                                        "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                                                                    }
+                                                                },
+                                                                "method": "post",
+                                                                "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varRootUrl')))}/httprequest"
+                                                            },
+                                                            "runAfter": {},
+                                                            "type": "ApiConnection"
+                                                        }
+                                                    }
+                                                },
+                                                "expression": {
+                                                    "and": [
+                                                        {
+                                                            "equals": [
+                                                                "@actions('Get_file_metadata_for_french_page').outputs.statusCode",
+                                                                404
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                "runAfter": {
+                                                    "Get_file_metadata_for_french_page": [
+                                                        "Succeeded",
+                                                        "FAILED"
+                                                    ]
+                                                },
+                                                "type": "If"
+                                            },
+                                            "Get_file_metadata_for_french_page": {
+                                                "inputs": {
+                                                    "host": {
+                                                        "connection": {
+                                                            "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                                                        }
+                                                    },
+                                                    "method": "get",
+                                                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varRootUrl')))}/files/@{encodeURIComponent(encodeUriComponent(concat(encodeUriComponent('SitePages/fr/'), encodeUriComponent(items('For_each_top_level_file,_get_likes,_build_json_and_save_everything_in_array_')?['{FilenameWithExtension}']))))}"
+                                                },
+                                                "runAfter": {},
+                                                "type": "ApiConnection"
+                                            }
+                                        },
+                                        "case": "fr-fr"
+                                    },
+                                    "Case_translation_is_german": {
+                                        "actions": {
+                                            "Condition_when_german_page_not_found_(404)": {
+                                                "actions": {},
+                                                "else": {
+                                                    "actions": {
+                                                        "Increment_variable_with_count_from_german_page": {
+                                                            "inputs": {
+                                                                "name": "varLikeCount",
+                                                                "value": "@int(body('Send_an_HTTP_request_to_SharePoint_to_get_like_count_for_the_german_page')['d']['__count'])"
+                                                            },
+                                                            "runAfter": {
+                                                                "Send_an_HTTP_request_to_SharePoint_to_get_like_count_for_the_german_page": [
+                                                                    "Succeeded"
+                                                                ]
+                                                            },
+                                                            "type": "IncrementVariable"
+                                                        },
+                                                        "Send_an_HTTP_request_to_SharePoint_to_get_like_count_for_the_german_page": {
+                                                            "inputs": {
+                                                                "body": {
+                                                                    "headers": {
+                                                                        "Accept": "application/json;odata=verbose",
+                                                                        "Content-Type": "application/json;odata=verbose"
+                                                                    },
+                                                                    "method": "GET",
+                                                                    "uri": "_api/web/Lists('@{variables('varSitePagesGuid')}')/GetItemById(@{body('Get_file_metadata_for_german_page')?['ItemId']})/likedBy?$inlineCount=AllPages"
+                                                                },
+                                                                "host": {
+                                                                    "connection": {
+                                                                        "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                                                                    }
+                                                                },
+                                                                "method": "post",
+                                                                "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varRootUrl')))}/httprequest"
+                                                            },
+                                                            "runAfter": {},
+                                                            "type": "ApiConnection"
+                                                        }
+                                                    }
+                                                },
+                                                "expression": {
+                                                    "and": [
+                                                        {
+                                                            "equals": [
+                                                                "@actions('Get_file_metadata_for_german_page').outputs.statusCode",
+                                                                404
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                "runAfter": {
+                                                    "Get_file_metadata_for_german_page": [
+                                                        "Succeeded",
+                                                        "FAILED"
+                                                    ]
+                                                },
+                                                "type": "If"
+                                            },
+                                            "Get_file_metadata_for_german_page": {
+                                                "inputs": {
+                                                    "host": {
+                                                        "connection": {
+                                                            "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                                                        }
+                                                    },
+                                                    "method": "get",
+                                                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varRootUrl')))}/files/@{encodeURIComponent(encodeUriComponent(concat(encodeUriComponent('SitePages/de/'), encodeUriComponent(items('For_each_top_level_file,_get_likes,_build_json_and_save_everything_in_array_')?['{FilenameWithExtension}']))))}"
+                                                },
+                                                "runAfter": {},
+                                                "type": "ApiConnection"
+                                            }
+                                        },
+                                        "case": "de-de"
+                                    },
+                                    "Case_translation_is_italian": {
+                                        "actions": {
+                                            "Condition_when_italian_page_not_found_(404)": {
+                                                "actions": {},
+                                                "else": {
+                                                    "actions": {
+                                                        "Increment_variable_with_count_from_italian_page": {
+                                                            "inputs": {
+                                                                "name": "varLikeCount",
+                                                                "value": "@int(body('Send_an_HTTP_request_to_SharePoint_to_get_like_count_for_the_italian_page')['d']['__count'])"
+                                                            },
+                                                            "runAfter": {
+                                                                "Send_an_HTTP_request_to_SharePoint_to_get_like_count_for_the_italian_page": [
+                                                                    "Succeeded"
+                                                                ]
+                                                            },
+                                                            "type": "IncrementVariable"
+                                                        },
+                                                        "Send_an_HTTP_request_to_SharePoint_to_get_like_count_for_the_italian_page": {
+                                                            "inputs": {
+                                                                "body": {
+                                                                    "headers": {
+                                                                        "Accept": "application/json;odata=verbose",
+                                                                        "Content-Type": "application/json;odata=verbose"
+                                                                    },
+                                                                    "method": "GET",
+                                                                    "uri": "_api/web/Lists('@{variables('varSitePagesGuid')}')/GetItemById(@{body('Get_file_metadata_for_italian_page')?['ItemId']})/likedBy?$inlineCount=AllPages"
+                                                                },
+                                                                "host": {
+                                                                    "connection": {
+                                                                        "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                                                                    }
+                                                                },
+                                                                "method": "post",
+                                                                "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varRootUrl')))}/httprequest"
+                                                            },
+                                                            "runAfter": {},
+                                                            "type": "ApiConnection"
+                                                        }
+                                                    }
+                                                },
+                                                "expression": {
+                                                    "and": [
+                                                        {
+                                                            "equals": [
+                                                                "@actions('Get_file_metadata_for_italian_page').outputs.statusCode",
+                                                                404
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                "runAfter": {
+                                                    "Get_file_metadata_for_italian_page": [
+                                                        "Succeeded",
+                                                        "FAILED"
+                                                    ]
+                                                },
+                                                "type": "If"
+                                            },
+                                            "Get_file_metadata_for_italian_page": {
+                                                "inputs": {
+                                                    "host": {
+                                                        "connection": {
+                                                            "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                                                        }
+                                                    },
+                                                    "method": "get",
+                                                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varRootUrl')))}/files/@{encodeURIComponent(encodeUriComponent(concat(encodeUriComponent('SitePages/it/'), encodeUriComponent(items('For_each_top_level_file,_get_likes,_build_json_and_save_everything_in_array_')?['{FilenameWithExtension}']))))}"
+                                                },
+                                                "runAfter": {},
+                                                "type": "ApiConnection"
+                                            }
+                                        },
+                                        "case": "it-it"
+                                    }
+                                },
+                                "default": {
+                                    "actions": {}
+                                },
+                                "expression": "@items('For_each_translated_page_add_the_like_count')?['Value']",
+                                "runAfter": {},
+                                "type": "Switch"
+                            }
+                        },
+                        "foreach": "@items('For_each_top_level_file,_get_likes,_build_json_and_save_everything_in_array_')?['OData__SPTranslatedLanguages']",
+                        "runAfter": {
+                            "Set_variable_varLikeCount_from_output_of_http_request": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "Foreach"
+                    },
+                    "Send_an_HTTP_request_to_SharePoint_to_get_the_like_count_for_the_page": {
+                        "inputs": {
+                            "body": {
+                                "headers": {
+                                    "Accept": "application/json;odata=verbose",
+                                    "Content-Type": "application/json;odata=verbose"
+                                },
+                                "method": "GET",
+                                "uri": "_api/web/Lists('@{variables('varSitePagesGuid')}')/GetItemById(@{items('For_each_top_level_file,_get_likes,_build_json_and_save_everything_in_array_')?['ID']})/likedBy?$inlineCount=AllPages"
+                            },
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                                }
+                            },
+                            "method": "post",
+                            "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varRootUrl')))}/httprequest"
+                        },
+                        "runAfter": {
+                            "Set_variable_varLikeCount_to_0": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "ApiConnection"
+                    },
+                    "Set_variable_varLikeCount_from_output_of_http_request": {
+                        "inputs": {
+                            "name": "varLikeCount",
+                            "value": "@int(body('Send_an_HTTP_request_to_SharePoint_to_get_the_like_count_for_the_page')['d']['__count'])"
+                        },
+                        "runAfter": {
+                            "Send_an_HTTP_request_to_SharePoint_to_get_the_like_count_for_the_page": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "SetVariable"
+                    },
+                    "Set_variable_varLikeCount_to_0": {
+                        "inputs": {
+                            "name": "varLikeCount",
+                            "value": 0
+                        },
+                        "runAfter": {},
+                        "type": "SetVariable"
+                    }
+                },
+                "foreach": "@body('Get_files_(properties_only)_only_from_top_level')?['value']",
+                "runAfter": {
+                    "Initialize_variable_varLikeCount": [
+                        "Succeeded"
+                    ]
+                },
+                "runtimeConfiguration": {
+                    "concurrency": {
+                        "repetitions": 1
+                    }
+                },
+                "type": "Foreach"
+            },
+            "Get_files_(properties_only)_only_from_top_level": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varRootUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('@@sitePageTriggerListGuid@@'))}/getfileitems",
+                    "queries": {
+                        "$filter": "@variables('varFilter')",
+                        "viewScopeOption": "Default"
+                    }
+                },
+                "runAfter": {
+                    "Condition_LastThirtyDaysOnly": [
+                        "Succeeded"
+                    ]
+                },
+                "runtimeConfiguration": {
+                    "paginationPolicy": {
+                        "minimumItemCount": 5000
+                    }
+                },
+                "type": "ApiConnection"
+            },
+            "Get_items_from_job_configuration_list": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varAdminSiteUrl')))}/tables/@{encodeURIComponent(encodeURIComponent(variables('varJobConfigList')))}/items",
+                    "queries": {
+                        "$filter": "Title eq 'redn-realtimenews-likecounter'",
+                        "$top": 1
+                    }
+                },
+                "runAfter": {
+                    "Initialize_variable_varJobConfigList": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            },
+            "Initialize_variable_varAdminSiteUrl": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "varAdminSiteUrl",
+                            "type": "string",
+                            "value": "https://@@tenantName@@.sharepoint.com@@adminUrl@@"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_varFilter": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_varDateToFilter": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "varDateToFilter",
+                            "type": "string",
+                            "value": "Modified"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_varLastThirtyDaysOnly": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_varFilter": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "varFilter",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_varItemLanguage_default_to_german": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "varItemLanguage",
+                            "type": "string",
+                            "value": "DE"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_var_SPWebLCID": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_varJobConfigList": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "varJobConfigList",
+                            "type": "string",
+                            "value": "JobConfiguration"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Switch_set_default_language_according_to_web_LCID": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_varLastThirtyDaysOnly": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "varLastThirtyDaysOnly",
+                            "type": "boolean",
+                            "value": true
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_varAdminSiteUrl": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_varLikeCount": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "varLikeCount",
+                            "type": "integer",
+                            "value": 0
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Get_files_(properties_only)_only_from_top_level": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_varRTNewsListName": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "varRTNewsListName",
+                            "type": "string",
+                            "value": "@@rtNewsListName@@"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_varTargetUrl": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_varRootUrl": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "varRootUrl",
+                            "type": "string",
+                            "value": "https://@@tenantName@@.sharepoint.com/sites/@@newsSite@@"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_varDateToFilter": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_varSitePagesGuid": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "varSitePagesGuid",
+                            "type": "string",
+                            "value": "@@sitePageTriggerListGuid@@"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_varRTNewsListName": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_varTargetUrl": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "varTargetUrl",
+                            "type": "string",
+                            "value": "https://@@tenantName@@.sharepoint.com/sites/@@rednetHubSite@@"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_varRootUrl": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_var_SPWebLCID": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "varSPWebLCID",
+                            "type": "string",
+                            "value": "@body('Send_an_HTTP_request_to_SharePoint_to_get_current_web_language')['d']['Language']"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Send_an_HTTP_request_to_SharePoint_to_get_current_web_language": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Send_an_HTTP_request_to_SharePoint_to_get_current_web_language": {
+                "inputs": {
+                    "body": {
+                        "headers": {
+                            "Accept": "application/json;odata=verbose",
+                            "Content-Type": "application/json;odata=verbose"
+                        },
+                        "method": "GET",
+                        "uri": "_api/web/language"
+                    },
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                        }
+                    },
+                    "method": "post",
+                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varRootUrl')))}/httprequest"
+                },
+                "runAfter": {
+                    "Initialize_variable_varSitePagesGuid": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            },
+            "Switch_set_default_language_according_to_web_LCID": {
+                "cases": {
+                    "Case": {
+                        "actions": {
+                            "Set_variable_varItemLanguage_to_german_from_LCID": {
+                                "inputs": {
+                                    "name": "varItemLanguage",
+                                    "value": "DE"
+                                },
+                                "runAfter": {},
+                                "type": "SetVariable"
+                            }
+                        },
+                        "case": "1031"
+                    },
+                    "Case_2": {
+                        "actions": {
+                            "Set_variable_varItemLanguage_to_french_from_LCID": {
+                                "inputs": {
+                                    "name": "varItemLanguage",
+                                    "value": "FR"
+                                },
+                                "runAfter": {},
+                                "type": "SetVariable"
+                            }
+                        },
+                        "case": "1036"
+                    },
+                    "Case_3": {
+                        "actions": {
+                            "Set_variable_varItemLanguage_to_italian_from_LCID": {
+                                "inputs": {
+                                    "name": "varItemLanguage",
+                                    "value": "IT"
+                                },
+                                "runAfter": {},
+                                "type": "SetVariable"
+                            }
+                        },
+                        "case": "1040"
+                    }
+                },
+                "default": {
+                    "actions": {}
+                },
+                "expression": "@variables('varSPWebLCID')",
+                "runAfter": {
+                    "Initialize_variable_varItemLanguage_default_to_german": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Switch"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "Runs_every_..._(configure_here)": {
+                "evaluatedRecurrence": {
+                    "frequency": "Minute",
+                    "interval": 10
+                },
+                "recurrence": {
+                    "frequency": "Minute",
+                    "interval": 10
+                },
+                "type": "Recurrence"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {
+                "sharepointonline": {
+                    "connectionId": "/subscriptions/@@azureSubscriptionId@@/resourceGroups/@@azureBaseResourceGroup@@/providers/Microsoft.Web/connections/@@azureSPOConnectionName@@",
+                    "connectionName": "@@azureSPOConnectionName@@",
+                    "id": "/subscriptions/@@azureSubscriptionId@@/providers/Microsoft.Web/locations/@@azureLocation@@/managedApis/sharepointonline"
+                }
+            }
+        }
+    }
+}

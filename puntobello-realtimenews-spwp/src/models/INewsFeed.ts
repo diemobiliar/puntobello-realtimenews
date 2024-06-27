@@ -1,8 +1,8 @@
-import ILanguage from "./ILanguage";
+import IChannelLanguage from "./IChannelLanguage";
 import { IItem } from '@pnp/sp/items';
 
 export interface IChannels2SubscriptionItem {
-  Channel: ILanguage[];
+  Channel: IChannelLanguage[];
   TermGuid: string;
   Subscribed: boolean;
   Visible: boolean;

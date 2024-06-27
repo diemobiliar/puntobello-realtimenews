@@ -2,7 +2,7 @@
 @import '../../scss/_variables.scss';
 @import '~@fluentui/react/dist/sass/References.scss';
 
-$newsfeed-card-border-radius: 10px;
+$newsfeed-card-border-radius: 16px;
 $newsfeed-card-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12), 0 2px 9px rgba(29, 29, 29, 0.09);
 $newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(29, 29, 29, 0.09);
 
@@ -69,7 +69,7 @@ $newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(
     max-width: none;
     border: 0;
     transition-property: transform, box-shadow;
-    transition-duration: 0.15s;
+    transition-duration: 0.30s;
     transition-timing-function: ease;
 
     &:hover:after {
@@ -218,7 +218,7 @@ $newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(
     min-width: 0;
     max-width: none;
     border: 0;
-    border-radius: 10px;
+    border-radius: 16px;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12), 0 2px 9px rgba(29, 29, 29, 0.09);
     transition-property: transform, box-shadow;
     transition-duration: 0.15s;
@@ -301,7 +301,7 @@ $newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(
     font-size: 20px;
     letter-spacing: 0.02em;
     background-color: $color-red;
-    color: #fff;
+    color: $color-ui-white;
   }
 
   .metaBarContainer {
@@ -334,7 +334,7 @@ $newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(
   min-width: 0;
   max-width: none;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 10px 4px rgba(0, 0, 0, 0.1);
 
   @include mq($ms-screen-min-lg) {

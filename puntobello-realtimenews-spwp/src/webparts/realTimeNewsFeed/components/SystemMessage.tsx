@@ -7,13 +7,9 @@ import {
     DocumentCardDetails,
     DocumentCardTitle,
 } from '@fluentui/react';
-import { AppContext, AppContextProps } from '../../../common/AppContext';
 import { Utility } from '../../../utils/utils';
 
 export function SystemMessage(props: ISystemMessageProps) {
-    const context = React.useContext<AppContextProps | undefined>(AppContext);
-    const contextRef = React.useRef<AppContextProps | undefined>(context);
-
     return (
         <DocumentCard className={styles.systemMessage}>
             <DocumentCardDetails className={styles.details}>
@@ -26,7 +22,7 @@ export function SystemMessage(props: ISystemMessageProps) {
                 {
                     <DocumentCardTitle className={styles.title} title={props.Title} />
                 }
-                <DefaultButton className={styles.button} onClick={() => { props.buttonUpdateNewsClicked(); }}>{Utility.getStringTranslation4Locale('SystemMessageLabel', contextRef.current.pageLanguage)}</DefaultButton>
+                <DefaultButton className={styles.button} onClick={() => { props.buttonUpdateNewsClicked(); }}>{Utility.getStringTranslation4Locale('SystemMessageLabel', props.pageLanguage)}</DefaultButton>
             </DocumentCardDetails>
         </DocumentCard>
     );

@@ -16,14 +16,15 @@ import IRealTimeNewsFeedWP from '../../models/IRealTimeNewsFeedWP';
 import { RealTimeNewsFeed } from './components/RealTimeNewsFeed';
 import { Logger } from '../../utils/logger';
 import SharePointService, { ISharePointService } from '../../services/SharePointService';
-import { AppContext } from '../../common/AppContext';
+import ILanguageRepresentation from '../../models/ILanguageRepresentation';
 
 export default class RealTimeNewsFeedWebPart extends BaseClientSideWebPart<IRealTimeNewsFeedWP> {
   private logger: Logger;
-  private pageLanguage: string;
+  private pageLanguage: ILanguageRepresentation;
   private themeProvider: ThemeProvider;
   private themeVariant: IReadonlyTheme | undefined;
-  private spo: SharePointService;
+  private spo: ISharePointService;
+  private initialized: boolean = false;
 
   private _handleThemeChangedEvent(args: ThemeChangedEventArgs): void {
     this.themeVariant = args.theme;
@@ -31,42 +32,38 @@ export default class RealTimeNewsFeedWebPart extends BaseClientSideWebPart<IReal
   }
 
   protected async onInit(): Promise<void> {
-    return super.onInit().then(async () => {
-      this.logger = Logger.getInstance();
-      this.logger.setContextInfo(this.context.manifest.alias + " with id " + this.context.manifest.id);
-      this.logger.info('Logger initialized');
-      try {
-        // Make wp theme aware
-        this.themeProvider = this.context.serviceScope.consume(ThemeProvider.serviceKey);
-        this.themeVariant = this.themeProvider.tryGetTheme();
-        this.themeProvider.themeChangedEvent.add(this, this._handleThemeChangedEvent);
-        const listItemId = this.context.pageContext.listItem ? this.context.pageContext.listItem.id : 3; // add here your listitem id when working in the hosted workbench
-        const listId = this.context.pageContext.list ? this.context.pageContext.list.id.toString() : 'be29cdff-fa74-4a53-8dcc-54270a716bf6'; // add here your list id when working in the hosted workbench
-        const language = this.context.pageContext.web.language;
-        
-        this.spo = this.context.serviceScope.consume(SharePointService.serviceKey);
-        this.pageLanguage = await this.spo.calculateLanguage(listId, listItemId, language);
+    this.logger = Logger.getInstance();
+    this.logger.setContextInfo(this.context.manifest.alias + " with id " + this.context.manifest.id);
+    this.logger.info('Logger initialized');
 
-      } catch (error) {
-        this.logger.error("Error in onInit Webpart: ", error);
-      }
-    });
+    try {
+      // Make wp theme aware
+      this.themeProvider = this.context.serviceScope.consume(ThemeProvider.serviceKey);
+      this.themeVariant = this.themeProvider.tryGetTheme();
+      this.themeProvider.themeChangedEvent.add(this, this._handleThemeChangedEvent);
+      const listId = this.context.pageContext.list ? this.context.pageContext.list.id.toString() : 'a3427855-c59b-4a06-aa6c-ce85bcabf087'; // add here your list id when working in the hosted workbench
+      const listItemId = this.context.pageContext.listItem ? this.context.pageContext.listItem.id : 1; // add here your listitem id when working in the hosted workbench
+      const language = this.context.pageContext.web.language;
+      
+      await super.onInit();
+      this.spo = this.context.serviceScope.consume(SharePointService.serviceKey);
+      this.pageLanguage = await this.spo.calculateLanguage(listId, listItemId, language);
+      this.initialized = true;
+
+    } catch (error) {
+      this.logger.error("Error in onInit Webpart: ", error);
+    }
   }
 
   public render(): void {
-    const element: React.ReactElement = React.createElement(
-      AppContext.Provider,
-      { value: {
-        serviceScope: this.context.serviceScope,
-        spo: this.spo,
+    if(this.initialized) {
+      ReactDom.render(React.createElement(RealTimeNewsFeed, {
+        pageLanguage: this.pageLanguage,
+        newsCount: this.properties.newsCount,
         themeVariant: this.themeVariant,
-        context: this.context,
-        pageLanguage: this.pageLanguage
-      } },
-      React.createElement(RealTimeNewsFeed, {
-        newsCount: this.properties.newsCount
-      })
-    );
+        spo: this.spo
+      }), this.domElement);
+    }
   }
 
   protected get dataVersion(): Version {

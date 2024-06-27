@@ -14,7 +14,6 @@ import { Stack } from '@fluentui/react/lib/Stack';
 import { IChannels2SubscriptionItem } from '../../../models/INewsFeed';
 import "@pnp/sp/fields";
 import IChannelSettingsModalProps from '../../../models/IChannelSettings';
-import { AppContext, AppContextProps } from '../../../common/AppContext';
 import { Utility } from '../../../utils/utils';
 
 //#region 
@@ -28,17 +27,20 @@ const contentStyles = mergeStyleSets({
         display: 'flex',
         flexFlow: 'column nowrap',
         alignItems: 'stretch',
+        borderRadius: '16px',
+        minHeight: '300px',
+        minWidht: '360px'
     },
     header: [
         theme.fonts.xLarge,
         {
             flex: '1 1 auto',
-            borderTop: `4px solid #da2323`,
-            color: '#da2323',
+            borderTop: `12px solid ${process.env.SPFX_THEME_COLOR_UI_PRIMARY}`,
+            color: `${process.env.SPFX_THEME_COLOR_UI_PRIMARY}`,
             display: 'flex',
             alignItems: 'center',
             fontWeight: FontWeights.semibold,
-            padding: '12px 12px 14px 24px',
+            padding: '12px 12px 14px 24px'
         },
     ],
     body: {
@@ -55,13 +57,13 @@ const contentStyles = mergeStyleSets({
 
 const iconButtonStyles = {
     root: {
-        color: '#da2323',
+        color: `${process.env.SPFX_THEME_COLOR_UI_PRIMARY}`,
         marginLeft: 'auto',
         marginTop: '4px',
         marginRight: '2px',
     },
     rootHovered: {
-        color: '#000000',
+        color: `${process.env.SPFX_THEME_COLOR_UI_BLACK}`,
     },
 };
 
@@ -70,20 +72,6 @@ const stackTokens = { childrenGap: 15 };
 
 
 export function ChannelSettings(props: IChannelSettingsModalProps) {
-    const context = React.useContext<AppContextProps | undefined>(AppContext);
-    const contextRef = React.useRef<AppContextProps | undefined>(context);
-
-    const [ariaLabelIcon, setAriaLabelIcon] = React.useState('');
-
-    React.useEffect(() => {
-      async function fetchTranslation() {
-        const translation = await Utility.getStringTranslation4Locale('ariaCloseChannelSettings', contextRef.current.pageLanguage);
-        setAriaLabelIcon(translation);
-      }  
-      fetchTranslation();
-    }, []);
-  
-
     function closeModal() {
         props.closeModal();
     }
@@ -106,7 +94,7 @@ export function ChannelSettings(props: IChannelSettingsModalProps) {
                 <IconButton
                     styles={iconButtonStyles}
                     iconProps={cancelIcon}
-                    ariaLabel={ariaLabelIcon}
+                    ariaLabel={Utility.getStringTranslation4Locale('ariaCloseChannelSettings', props.pageLanguage.Language)}
                     onClick={closeModal}
                 />
             </div>
@@ -115,7 +103,7 @@ export function ChannelSettings(props: IChannelSettingsModalProps) {
                 <Stack tokens={stackTokens}>
                     {props.channelsConfig.map((item) => {
                         if (props.myNewsGuid != item.TermGuid) {
-                            return <Checkbox label={Utility.getChannelText(contextRef.current.pageLanguage, item)}
+                            return <Checkbox label={Utility.getChannelText(props.pageLanguage, item)}
                                 defaultChecked={item.Subscribed}
                                 onChange={channelCheckboxChanged.bind(this, item)}
                             />;

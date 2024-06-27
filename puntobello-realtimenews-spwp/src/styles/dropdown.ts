@@ -6,25 +6,25 @@ export const dropdownStyles: Partial<IDropdownStyles> = {
     height: '40px',
     lineHeight: '37px',
     padding: '0 30px 0 12px',
-    borderRadius: '4px',
-    borderColor: '#969ba0',
-    color: '#333',
+    borderRadius: '6px',
+    borderColor: `${process.env.SPFX_THEME_COLOR_UI_DARK_GREY}`,
+    color: `${process.env.SPFX_THEME_COLOR_UI_BLACK}`,
   },
   dropdown: {
     selectors: {
       '&:hover .ms-Dropdown-title': {
-        borderColor: '#969ba0',
-        color: '#333',
+        borderColor: `${process.env.SPFX_THEME_COLOR_UI_DARK_GREY}`,
+        color: `${process.env.SPFX_THEME_COLOR_UI_BLACK}`,
       },
       '&:focus::after': {
-        borderRadius: '4px',
-        borderColor: '#da2323',
+        borderRadius: '6px',
+        borderColor: `${process.env.SPFX_THEME_COLOR_UI_PRIMARY}`,
       },
     },
   },
   dropdownOptionText: {
     fontSize: '18px',
-    color: '#333',
+    color: `${process.env.SPFX_THEME_COLOR_UI_BLACK}`,
     lineHeight: '1.25',
   },
   caretDownWrapper: {
@@ -34,7 +34,7 @@ export const dropdownStyles: Partial<IDropdownStyles> = {
   },
   caretDown: {
     fontSize: '18px',
-    color: '#333',
+    color: `${process.env.SPFX_THEME_COLOR_UI_BLACK}`,
   },
   label: {
     position: 'absolute',

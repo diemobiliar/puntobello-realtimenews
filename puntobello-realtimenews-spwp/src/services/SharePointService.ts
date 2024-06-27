@@ -2,27 +2,27 @@ import { ServiceKey, ServiceScope } from "@microsoft/sp-core-library";
 import { PageContext } from "@microsoft/sp-page-context";
 import IPageContext from "../models/IPageContext";
 import { SPFI, spfi, SPFx } from "@pnp/sp";
+import "@pnp/sp/regional-settings/web";
 import { dateAdd, PnPClientStorage } from "@pnp/common";
 import { IItemAddResult, Web } from "@pnp/sp/presets/all";
 import { IOrderedTermInfo } from "@pnp/sp/taxonomy";
 
-import { Utility } from "../utils/utils";
 import { Logger } from '../utils/logger';
 import * as lcid from "lcid";
 import { IChannels2SubsItem, IChannels2SubscriptionItem } from "../models/INewsFeed";
 import IGetNewsItemsResult from "../models/IGetNewsItemsResult";
 import INewsItemData from "../models/INewsItemData";
+import ILanguageRepresentation from "../models/ILanguageRepresentation";
 
 export interface ISharePointService {
     getAndCacheAllChannels(): Promise<IOrderedTermInfo[]>;
     getSubscribedChannels4CurrentUser(): Promise<IChannels2SubsItem[]>;
     getPageContext(listId: string, listItemId: number): Promise<IPageContext>;
     addSubscribedChannels4CurrentUser(): Promise<IItemAddResult>;
-    getNewsItems(newsChannelCurrent: string, newsGuid: string, newsChannels: IChannels2SubscriptionItem[], pageLanguage: string, newsCount: number): Promise<IGetNewsItemsResult>;
+    getNewsItems(newsChannelCurrent: string, newsGuid: string, newsChannels: IChannels2SubscriptionItem[], pageLanguage: ILanguageRepresentation, newsCount: number): Promise<IGetNewsItemsResult>;
     checkValidNewsItem(id: number): Promise<boolean>;
     updateMultiMeta(terms: any[], listName: string, fieldName: string, itemId: number): Promise<any>;
-
-    calculateLanguage(listId: string, listItemId: number, defaultLanguage: number): Promise<string>;
+    calculateLanguage(listId: string, listItemId: number, defaultLanguage: number): Promise<ILanguageRepresentation>;
 }
 
 export default class SharePointService {
@@ -31,7 +31,7 @@ export default class SharePointService {
     private storage: PnPClientStorage;
     private pageContext: PageContext;
     private logger: Logger;
-    private filterQuery4Socket: string;
+    public filterQuery4Socket: string;
     public sp: SPFI;
 
     constructor(serviceScope: ServiceScope) {
@@ -47,13 +47,24 @@ export default class SharePointService {
     }
 
     public getPageContext = async (listId: string, listItemId: number): Promise<IPageContext> => {
-        const context: IPageContext = await this.sp.web.lists.getById(listId)
-            .items
-            .getById(listItemId)
-            .select(
-                'OData__SPIsTranslation',
-                'OData__SPTranslationLanguage')();
-        return context;
+        // Check if we are in a multilingual setup
+        const fields = await this.sp.web.lists.getById(listId).fields();
+        const requiredFields = ['OData__SPIsTranslation', 'OData__SPTranslationLanguage'];
+
+        // Check if all required fields exist
+        const fieldNames = fields.map(field => field.InternalName);
+        const allFieldsExist = requiredFields.every(field => fieldNames.includes(field));
+        if (!allFieldsExist) {
+            return null;
+        } else {
+            const context = await this.sp.web.lists.getById(listId)
+                .items
+                .getById(listItemId)
+                .select(
+                    'OData__SPIsTranslation',
+                    'OData__SPTranslationLanguage')();
+            return context;
+        }
     }
 
     public async getAndCacheAllChannels(): Promise<IOrderedTermInfo[]> {
@@ -63,21 +74,20 @@ export default class SharePointService {
     }
 
     public async getSubscribedChannels4CurrentUser(): Promise<IChannels2SubsItem[]> {
-        return await this.sp.web.lists.getByTitle("pb_subscribed_channels").items
+        return await this.sp.web.lists.getByTitle(`${process.env.SPFX_SUBSCRIBEDCHANNELS_LIST_TITLE}`).items
             .filter("pb_Subscriber eq '" + this.pageContext.legacyPageContext.userId + "'")
             .select("Id", "pb_Channels").top(1)();
     }
 
     public async addSubscribedChannels4CurrentUser(): Promise<IItemAddResult> {
-        return await this.sp.web.lists.getByTitle("pb_subscribed_channels").items.add({
+        return await this.sp.web.lists.getByTitle(`${process.env.SPFX_SUBSCRIBEDCHANNELS_LIST_TITLE}`).items.add({
             Title: this.pageContext.legacyPageContext.DisplayName,
-            pb_ChannelSubscriberId: this.pageContext.legacyPageContext.userId
+            pb_SubscriberId: this.pageContext.legacyPageContext.userId
         });
     }
 
     // Reads the news for all the subscribed channels or for a specific channel
-    public getNewsItems(newsChannelCurrent: string, newsGuid: string, newsChannels: IChannels2SubscriptionItem[], pageLanguage: string, newsCount: number): Promise<IGetNewsItemsResult> {
-
+    public getNewsItems(newsChannelCurrent: string, newsGuid: string, newsChannels: IChannels2SubscriptionItem[], pageLanguage: ILanguageRepresentation, newsCount: number): Promise<IGetNewsItemsResult> {
         const p = new Promise<IGetNewsItemsResult>((resolve, reject) => {
             const newsResult: IGetNewsItemsResult = {
                 newsItemData: [],
@@ -95,26 +105,26 @@ export default class SharePointService {
             }
 
             const currDate = this.toISOStringWithTimezone(new Date());
-            const publishingDatesFilter = `pb_PubFrom le datetime'${currDate}' and (pb_PubTo ge datetime'${currDate}' or pb_PubTo eq null)`;
+            const publishingDatesFilter = `pb_PublishedFrom le datetime'${currDate}' and (pb_PublishedTo ge datetime'${currDate}' or pb_PublishedTo eq null)`;
 
-            // there was here a toUpperCase for the language, why ? testnd
-            const filterQuery = channelFilter + " and (pb_Unpublish eq false or pb_Unpublish eq null) and (pb_LangCd eq '" + pageLanguage + "') and " + publishingDatesFilter;
-            const filterQuerySocket = channelFilter + " and (pb_Unpublish eq false or pb_Unpublish eq null) and (pb_LangCd eq '" + pageLanguage + "') and ";
+            // pageLanguage is not enough, you need the lcid...
+            const filterQuery = channelFilter + " and (pb_Language eq '" + pageLanguage.Language + "' or pb_Language eq '" + pageLanguage.lcid + "') and " + publishingDatesFilter;
+            const filterQuerySocket = channelFilter + " and (pb_Language eq '" + pageLanguage + "' or pb_Language eq '" + pageLanguage.lcid + "') and ";
             this.filterQuery4Socket = filterQuerySocket;
-
+        
             // Check if we have a sticky news which sticky date is not reached
             newsResult.sticky = false;
             const filterQuerySticky = filterQuery + ` and (pb_Sticky eq 1 and pb_StickyDate ge datetime'${currDate}')`;
             const filterQueryWithoutSticky = filterQuery + ` and ((pb_Sticky eq 0 or pb_Sticky eq null) or (pb_Sticky eq 1 and pb_StickyDate le datetime'${currDate}'))`;
             //const allNews: INewsItemData[] = [];
-            this.sp.web.lists.getById(Utility.getRealTimeNewsUrl()).items.filter(filterQuerySticky).top(1)().then((item) => {
+            this.sp.web.lists.getById(`${process.env.SPFX_REALTIMENEWSLIST_ID}`).items.filter(filterQuerySticky).top(1)().then((item) => {
                 if (item.length > 0) {
                     newsResult.sticky = true;
                     newsResult.newsItemData.push(item[0] as INewsItemData);
                 } else {
                     newsResult.sticky = false;
                 }
-                this.sp.web.lists.getById(Utility.getRealTimeNewsUrl()).items.filter(filterQueryWithoutSticky).orderBy("pb_PubFrom", false).top(newsCount)().then((items) => {
+                this.sp.web.lists.getById(`${process.env.SPFX_REALTIMENEWSLIST_ID}`).items.filter(filterQueryWithoutSticky).orderBy("pb_PublishedFrom", false).top(newsCount)().then((items) => {
                     newsResult.newsItemData.push(...items);
                     resolve(
                         newsResult
@@ -134,16 +144,13 @@ export default class SharePointService {
         const publishingDatesFilter = `pb_PublishedFrom le datetime'${currDate}' and (pb_PublishedTo ge datetime'${currDate}' or pb_PublishedTo eq null)`;
 
         const currentFilter = this.filterQuery4Socket + publishingDatesFilter + ' and (Id eq ' + id.toString() + ')';
-        // to be changed
-        const item = await this.sp.web.lists.getById(Utility.getRealTimeNewsUrl()).items.filter(currentFilter).top(1)();
+        const item = await this.sp.web.lists.getById(`${process.env.SPFX_REALTIMENEWSLIST_ID}`).items.filter(currentFilter).top(1)();
         if (item) return true;
         return false;
     }
 
     public async updateMultiMeta(terms: any[], listName: string, fieldName: string, itemId: number): Promise<any> {
-        // to be changed
         const list = await this.sp.web.lists.getByTitle(listName);
-
         let termsString: string = '';
         terms.forEach(term => {
             termsString += `${term.termName}|${term.termGUID};`;
@@ -186,8 +193,15 @@ export default class SharePointService {
             ':' + pad(tzOffset % 60);
     }
 
-    public calculateLanguage = async (listId: string, listItemId: number, defaultLanguage: number): Promise<string> => {
+    public calculateLanguage = async (listId: string, listItemId: number, defaultLanguage: number): Promise<ILanguageRepresentation> => {
         let pageContext = null;
+        const languageData: ILanguageRepresentation = {
+            lcid: 0, 
+            Language: '',
+            LanguageLC: '',
+            LanguageDashed: '',
+            LanguageDashedLC: '',
+          };
         try {
             pageContext = await this.getPageContext(listId, listItemId);
         } catch (error) {
@@ -196,28 +210,20 @@ export default class SharePointService {
         if (!pageContext || !pageContext.OData__SPIsTranslation || !pageContext.OData__SPTranslationLanguage) {
             // Not running in a multilingual setup
             // Get language from web
-            return lcid.from(defaultLanguage);
-        }
-        if (!pageContext.OData__SPIsTranslation) {
-            // Page is not a translation
-            // Get language from web and search for correct label according to web language
-            return lcid.from(defaultLanguage);
+            languageData.lcid = defaultLanguage;
+            languageData.Language = lcid.from(defaultLanguage);
+            languageData.LanguageLC = languageData.Language.toLowerCase();
+            languageData.LanguageDashed = languageData.Language.replace('_','-');
+            languageData.LanguageDashedLC = languageData.LanguageLC.replace('_','-');
+            return languageData;
         }
         // Page is a translation
         // Get language from page property
-        return pageContext.OData__SPTranslationLanguage;
+        languageData.lcid = lcid.to(pageContext.OData__SPTranslationLanguage);
+        languageData.Language = pageContext.OData__SPTranslationLanguage;
+        languageData.LanguageLC = languageData.Language.toLowerCase();
+        languageData.LanguageDashed = languageData.Language.replace('_','-');
+        languageData.LanguageDashedLC = languageData.LanguageLC.replace('_','-');
+        return languageData;
     }
-
-    // don't know if i need this
-    /*
-    public calculateLanguage = (pageIsTranslation: boolean, pageTranslatedLanguage: string, defaultLanguage: number): string => {
-        if (!pageIsTranslation) {
-            // Page is not a translation
-            // Get language from web and search for correct label according to web language
-            return lcid.from(defaultLanguage);
-        }
-        // Page is a translation
-        // Get language from page property
-        return lcid.from(lcid.to(pageTranslatedLanguage));
-    }*/
 }

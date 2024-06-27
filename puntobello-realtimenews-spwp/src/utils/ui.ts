@@ -7,33 +7,6 @@ export function getEditedDate(pubdate: string): string {
     return moment(pubdate).format('DD.MM.YYYY');
 }
 
-export function getSystemMessageTitle(numberOfNewNews: number, locale: string) {
-    return numberOfNewNews.toString() + " " + getStringTranslation4Locale('NewNewsAvailableLabel', locale);
-}
-
-export async function getCommandBarItems(language: string, comments: number, likes: number): Promise<ICommandBarItemProps[]> {
-    const commandBarItems: ICommandBarItemProps[] = [];
-    const cbComments: ICommandBarItemProps = {
-        key: 'comment',
-        text: comments.toString(),
-        ariaLabel: await Utility.getStringTranslation4Locale('ariaLabelPictoNewsComments', language),
-        iconProps: {
-            iconName: 'Comment',
-        }
-    };
-    const cbLikes: ICommandBarItemProps = {
-        key: 'like',
-        text: likes.toString(),
-        ariaLabel: await Utility.getStringTranslation4Locale('ariaLabelPictoNewsLikes', language),
-        iconProps: {
-            iconName: 'Like',
-        }
-    };
-    commandBarItems.push(cbComments);
-    commandBarItems.push(cbLikes);
-    return commandBarItems;
-}
-
 export function getImage(imageUrl: any): IDocumentCardPreviewProps {
     const currImage =
     {
@@ -88,22 +61,22 @@ export function getStickyCommandBarInnerStyles(): Partial<ICommandBarStyles> {
             backgroundColor: 'transparent',
             selectors: {
                 '.ms-Icon': {
-                    color: '#fff',
+                    color: `${process.env.SPFX_THEME_COLOR_UI_WHITE}`,
                     marginRight: 4,
                     marginBottom: -1,
                     transition: '0.15s linear color',
                 },
                 '.ms-Button': {
                     backgroundColor: 'transparent',
-                    color: '#fff',
+                    color: `${process.env.SPFX_THEME_COLOR_UI_WHITE}`,
                     transition: '0.15s linear color',
                 },
                 '.ms-Button:hover, .ms-Button:active': {
                     backgroundColor: 'transparent',
-                    color: '#fff',
+                    color: `${process.env.SPFX_THEME_COLOR_UI_WHITE}`,
                     selectors: {
                         '.ms-Icon': {
-                            color: '#fff',
+                            color: `${process.env.SPFX_THEME_COLOR_UI_WHITE}`,
                         },
                     },
                 },
@@ -132,6 +105,7 @@ export function getNewsImageInnerStyles(): Partial<IImageStyles> {
                 },
                 '.ms-Image-image': {
                     height: '100%',
+                    maxHeight:'267px',
                 },
         },
             '@media (max-width: 639px)': {
@@ -157,21 +131,21 @@ export function getNewsCommandBarInnerStyles(): Partial<ICommandBarStyles> {
             paddingRight: 0,
             selectors: {
                 '.ms-Icon': {
-                    color: '#73777B',
+                    color: `${process.env.SPFX_THEME_COLOR_UI_DARK_GREY}`,
                     marginRight: 4,
                     marginBottom: -1,
                     transition: '0.15s linear color',
                 },
                 '.ms-Button': {
-                    color: '#73777B',
+                    color: `${process.env.SPFX_THEME_COLOR_UI_DARK_GREY}`,
                     transition: '0.15s linear color',
                 },
                 '.ms-Button:hover, .ms-Button:active': {
                     backgroundColor: 'transparent',
-                    color: '#000',
+                    color: `${process.env.SPFX_THEME_COLOR_UI_BLACK}`,
                     selectors: {
                         '.ms-Icon': {
-                            color: '#000',
+                            color: `${process.env.SPFX_THEME_COLOR_UI_BLACK}`,
                         },
                     },
                 },
@@ -181,8 +155,4 @@ export function getNewsCommandBarInnerStyles(): Partial<ICommandBarStyles> {
             justifyContent: 'flex-end',
         },
     });
-}
-
-function getStringTranslation4Locale(arg0: string, locale: string) {
-    throw new Error('Function not implemented.');
 }

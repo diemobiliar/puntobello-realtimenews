@@ -5,29 +5,12 @@ import {
     DocumentCardPreview,
     DocumentCardDetails,
     DocumentCardTitle,
-    Text,
-    CommandBar,
-    ICommandBarItemProps,
+    Text
 } from '@fluentui/react';
 import INewsItem from '../../../models/INewsItem';
-import { getCommandBarItems, getImage, getNewsCommandBarInnerStyles, getNewsImageInnerStyles } from '../../../utils/ui';
-import { AppContext, AppContextProps } from '../../../common/AppContext';
+import { getImage, getNewsImageInnerStyles } from '../../../utils/ui';
 
 export function NewsItem(props: INewsItem) {
-    const context = React.useContext<AppContextProps | undefined>(AppContext);
-    const contextRef = React.useRef<AppContextProps | undefined>(context);
-
-    const [commandBarItems, setCommandBarItems] = React.useState<ICommandBarItemProps[]>();
-
-    React.useEffect(() => {
-      async function getCBItems() {
-        const cbItems = await getCommandBarItems(contextRef.current.pageLanguage, props.comments, props.likes);
-        setCommandBarItems(cbItems);
-      }  
-      getCBItems();
-    }, []);
-
-  
     return (
         <a href={props.NewsUrl} className={styles.linkNewsItem} data-interception="off">
         <DocumentCard className={styles.card}>
@@ -42,13 +25,8 @@ export function NewsItem(props: INewsItem) {
                 <div className={styles.metaBarContainer}>
                     <div className={styles.metaBar}>
                         <Text block nowrap>
-                            {props.PubFrom}
+                            {props.PublishedFrom}
                         </Text>
-                        <CommandBar
-                            className={styles.commandBar}
-                            styles={getNewsCommandBarInnerStyles()}
-                            items={commandBarItems}
-                        />
                     </div>
                 </div>
             </DocumentCardDetails>

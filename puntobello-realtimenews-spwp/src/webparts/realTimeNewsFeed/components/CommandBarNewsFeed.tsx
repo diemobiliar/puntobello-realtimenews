@@ -8,16 +8,11 @@ import {
   IButtonStyles,
   IconButton,
 } from '@fluentui/react';
-import { Navigation } from 'spfx-navigation';
-
 import { dropdownStyles } from '../../../styles/dropdown';
 import ICommandBarData from '../../../models/ICommandBarData';
-import { AppContext, AppContextProps } from '../../../common/AppContext';
 import { Utility } from '../../../utils/utils';
 
 export function CommandBarNewsFeed(props: ICommandBarData) {
-  const context = React.useContext<AppContextProps | undefined>(AppContext);
-  const contextRef = React.useRef<AppContextProps | undefined>(context);
 
   function onRenderOverflowItem(item: IOverflowSetItemProps): JSX.Element {
     return (
@@ -69,14 +64,9 @@ export function CommandBarNewsFeed(props: ICommandBarData) {
           items={[
             {
               key: 'channelsettingsmodal',
-              name: Utility.getStringTranslation4Locale('modalSettingsLink', contextRef.current.pageLanguage),
+              name: Utility.getStringTranslation4Locale('modalSettingsLink', props.pageLanguage),
               onClick: () => { props.channelSettingsModalClicked(); },
-            },
-            {
-              key: 'puntobellonewssearch',
-              name: Utility.getStringTranslation4Locale('archivLink', contextRef.current.pageLanguage),
-              onClick: () => { Navigation.navigate(props.archivLinkUrl, true); },
-            },
+            }
           ]}
           onRenderOverflowButton={onRenderOverflowButton}
           onRenderItem={onRenderOverflowItem}

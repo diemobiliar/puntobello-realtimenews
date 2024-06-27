@@ -2,11 +2,9 @@ interface INewsItem {
     NewsUrl: string;
     ImageUrl: any;
     NewsTitle: string;
-    PubFrom: string;
+    PublishedFrom: string;
     NewsHeader: string;
     metaText: string;
-    comments: number;
-    likes: number;
     isSticky: boolean;
 }
 

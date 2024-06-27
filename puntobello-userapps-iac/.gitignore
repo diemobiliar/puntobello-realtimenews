@@ -1,0 +1,7 @@
+.terraform*
+terraform.tf
+infra.plan
+terraform.tfstate*
+vendor
+tflint.xml
+logicapps/redn-*
