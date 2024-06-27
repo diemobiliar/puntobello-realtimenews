@@ -25,9 +25,10 @@ export interface ISharePointService {
     calculateLanguage(listId: string, listItemId: number, defaultLanguage: number): Promise<ILanguageRepresentation>;
 }
 
-export default class SharePointService {
+export default class SharePointService implements ISharePointService {
     public static readonly serviceKey: ServiceKey<ISharePointService> =
         ServiceKey.create<ISharePointService>('SPFx:SharePointService', SharePointService);
+    
     private storage: PnPClientStorage;
     private pageContext: PageContext;
     private logger: Logger;

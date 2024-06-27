@@ -47,6 +47,59 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [systemMessageVisible, setSystemMessageVisible] = useState(false);
+  const [loadingText, setLoadingText] = React.useState('');
+  const [noNewsText, setNoNewsText] = React.useState('');
+  const [modalSettingsTitle, setModalSettingsTitle] = React.useState('');
+
+  React.useEffect(() => {
+    async function getLoadingText() {
+      const translation = await Utility.getStringTranslation4Locale('loading', props.pageLanguage.Language);
+      setLoadingText(translation);
+    }  
+    getLoadingText();
+  }, []);
+
+  React.useEffect(() => {
+    async function getNoNewsText() {
+      const translation = await Utility.getStringTranslation4Locale('noNewsText', props.pageLanguage.Language);
+      setNoNewsText(translation);
+    }  
+    getNoNewsText();
+  }, []);
+
+  React.useEffect(() => {
+    async function getModalSettingsTitle() {
+      const translation = await Utility.getStringTranslation4Locale('modalSettingsTitle', props.pageLanguage.Language);
+      setModalSettingsTitle(translation);
+    }  
+    getModalSettingsTitle();
+  }, []);
+
+  useEffect(() => {
+    // Socket connection
+    const socket = io(process.env.SPFX_SOCKET_URL, { transports: ["websocket"], timeout: 30000 });
+    socket.on("connect", () => {
+      logger.info('Socket Connect, SocketId:' + socket.id);
+    });
+    socket.on("nd", (data) => {
+      processSocketEvent(data);
+    });
+    socket.on("disconnect", () => {
+      logger.info('Socket Disconnect, SocketId:' + socket.id);
+    });
+    socket.on("connect_error", (socketerr) => {
+      logger.warn('Socket_error SocketId' + + socket.id + 'error ' + socketerr);
+    });
+
+    getAllData();
+
+    return () => {
+      // before the component is destroyed
+      // unbind all event handlers used in this component
+      socket.off();
+    };
+  }, []);
+
 
   async function processSocketEvent(data) {
     // Safeguard if we get in the situation when the webpart is loading and an event has been received
