@@ -1,6 +1,12 @@
 import { ServiceKey, ServiceScope } from "@microsoft/sp-core-library";
 import { PageContext } from "@microsoft/sp-page-context";
 import IPageContext from "../models/IPageContext";
+import "@pnp/sp/webs";
+import "@pnp/sp/site-users/web";
+import "@pnp/sp/lists";
+import "@pnp/sp/items";
+import "@pnp/sp/profiles";
+import "@pnp/sp/taxonomy";
 import { SPFI, spfi, SPFx } from "@pnp/sp";
 import "@pnp/sp/regional-settings/web";
 import { dateAdd, PnPClientStorage } from "@pnp/common";
@@ -23,6 +29,8 @@ export interface ISharePointService {
     checkValidNewsItem(id: number): Promise<boolean>;
     updateMultiMeta(terms: any[], listName: string, fieldName: string, itemId: number): Promise<any>;
     calculateLanguage(listId: string, listItemId: number, defaultLanguage: number): Promise<ILanguageRepresentation>;
+    filterQuery4Socket: string;
+    sp: SPFI;
 }
 
 export default class SharePointService implements ISharePointService {
@@ -112,7 +120,6 @@ export default class SharePointService implements ISharePointService {
             const filterQuery = channelFilter + " and (pb_Language eq '" + pageLanguage.Language + "' or pb_Language eq '" + pageLanguage.lcid + "') and " + publishingDatesFilter;
             const filterQuerySocket = channelFilter + " and (pb_Language eq '" + pageLanguage + "' or pb_Language eq '" + pageLanguage.lcid + "') and ";
             this.filterQuery4Socket = filterQuerySocket;
-        
             // Check if we have a sticky news which sticky date is not reached
             newsResult.sticky = false;
             const filterQuerySticky = filterQuery + ` and (pb_Sticky eq 1 and pb_StickyDate ge datetime'${currDate}')`;

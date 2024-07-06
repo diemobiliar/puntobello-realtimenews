@@ -2,15 +2,8 @@ import { useRef, useState, useEffect } from 'react';
 import * as React from 'react';
 
 import { Spinner, IDropdownOption, Stack, IStackTokens } from '@fluentui/react';
-
-import "@pnp/sp/webs";
-import "@pnp/sp/site-users/web";
-import "@pnp/sp/lists";
-import "@pnp/sp/items";
-import "@pnp/sp/profiles";
-import "@pnp/sp/taxonomy";
+import { IItemAddResult, Web } from "@pnp/sp/presets/all";
 import { IOrderedTermInfo } from "@pnp/sp/taxonomy";
-import { IItemAddResult } from '@pnp/sp/items';
 
 import io from 'socket.io-client';
 import * as __ from 'lodash';
@@ -47,33 +40,6 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [systemMessageVisible, setSystemMessageVisible] = useState(false);
-  const [loadingText, setLoadingText] = React.useState('');
-  const [noNewsText, setNoNewsText] = React.useState('');
-  const [modalSettingsTitle, setModalSettingsTitle] = React.useState('');
-
-  React.useEffect(() => {
-    async function getLoadingText() {
-      const translation = await Utility.getStringTranslation4Locale('loading', props.pageLanguage.Language);
-      setLoadingText(translation);
-    }  
-    getLoadingText();
-  }, []);
-
-  React.useEffect(() => {
-    async function getNoNewsText() {
-      const translation = await Utility.getStringTranslation4Locale('noNewsText', props.pageLanguage.Language);
-      setNoNewsText(translation);
-    }  
-    getNoNewsText();
-  }, []);
-
-  React.useEffect(() => {
-    async function getModalSettingsTitle() {
-      const translation = await Utility.getStringTranslation4Locale('modalSettingsTitle', props.pageLanguage.Language);
-      setModalSettingsTitle(translation);
-    }  
-    getModalSettingsTitle();
-  }, []);
 
   useEffect(() => {
     // Socket connection
