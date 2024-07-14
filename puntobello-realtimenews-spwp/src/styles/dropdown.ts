@@ -8,7 +8,7 @@ export const dropdownStyles: Partial<IDropdownStyles> = {
     padding: '0 30px 0 12px',
     borderRadius: '6px',
     borderColor: `${process.env.SPFX_THEME_COLOR_UI_DARK_GREY}`,
-    color: `${.SPFX_THEME_COLOR_UI_BLACK}`,
+    color: `${process.env.SPFX_THEME_COLOR_UI_BLACK}`,
   },
   dropdown: {
     selectors: {

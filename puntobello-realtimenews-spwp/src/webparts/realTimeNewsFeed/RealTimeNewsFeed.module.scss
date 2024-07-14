@@ -1,10 +1,5 @@
 @import '../../scss/_mixins.scss';
-@import '../../scss/_variables.scss';
 @import '~@fluentui/react/dist/sass/References.scss';
-
-$newsfeed-card-border-radius: 16px;
-$newsfeed-card-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12), 0 2px 9px rgba(29, 29, 29, 0.09);
-$newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(29, 29, 29, 0.09);
 
 .newsFeed {
   
@@ -42,11 +37,11 @@ $newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(
   .overflowSetLink {
     margin-right: 12px;
     font-size: 18px;
-    color: $color-red;
+    color: var(--spfx_theme_color_ui_primary);
 
     &:hover,
     &:focus {
-      color: $color-dark-red;
+      color: var(--spfx_theme_color_ui_dark_primary);
       text-decoration: none;
     }
 
@@ -83,22 +78,22 @@ $newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(
 
   .cardHighlight {
     .details {
-      border-radius: 0 0 $newsfeed-card-border-radius $newsfeed-card-border-radius;
-      background-color: $color-red;
-      color: $color-ui-white;
+      border-radius: 0 0 var(--spfx_card_border_radius) var(--spfx_card_border_radius);
+      background-color: var(--spfx_theme_color_ui_primary);
+      color: var(--spfx_theme_color_ui_white);
     }
 
     .imageWrapper {
-      border-radius: $newsfeed-card-border-radius $newsfeed-card-border-radius 0 0;
+      border-radius: var(--spfx_card_border_radius) var(--spfx_card_border_radius) 0 0;
     }
 
     @include mq($until: $ms-screen-max-md) {
-      border-radius: $newsfeed-card-border-radius;
-      box-shadow: $newsfeed-card-box-shadow;
+      border-radius: var(--spfx_card_border_radius);
+      box-shadow: var(--spfx_card_box_shadow);
 
       &:hover {
         transform: translateY(-4px);
-        box-shadow: $newsfeed-card-box-shadow-hover;
+        box-shadow: var(--spfx_card_box_shadow_hover);
       }
     }
 
@@ -108,7 +103,7 @@ $newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(
       &:hover {
         .details {
           transform: translateY(-4px);
-          box-shadow: $newsfeed-card-box-shadow-hover;
+          box-shadow: var(--spfx_card_box_shadow_hover);
         }
       }
 
@@ -116,8 +111,8 @@ $newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(
         position: relative;
         z-index: 1;
         width: 45%;
-        border-radius: $newsfeed-card-border-radius;
-        box-shadow: $newsfeed-card-box-shadow;
+        border-radius: var(--spfx_card_border_radius);
+        box-shadow: var(--spfx_card_box_shadow);
       }
 
       .imageWrapper {
@@ -126,7 +121,7 @@ $newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(
         top: -30px;
         bottom: -30px;
         width: 72%;
-        border-radius: $newsfeed-card-border-radius;
+        border-radius: var(--spfx_card_border_radius);
       }
     }
   }
@@ -193,7 +188,7 @@ $newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(
     align-items: center;
     justify-content: space-between;
     font-size: 16px;
-    color: $color-ui-white;
+    color: var(--spfx_theme_color_ui_white);
   }
 
   .metaBarText {
@@ -257,7 +252,7 @@ $newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(
     font-weight: bold;
     line-height: 1.3;
     letter-spacing: -0.01em;
-    color: $color-ui-black;
+    color: var(--spfx_theme_color_ui_black);
   }
 
   .subtitle {
@@ -266,7 +261,7 @@ $newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(
     padding: 0;
     font-size: 16px;
     line-height: 1;
-    color: $color-dark-grey;
+    color: var(--spfx_theme_color_ui_dark_grey);
   }
 
   .text {
@@ -277,7 +272,7 @@ $newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(
     -webkit-line-clamp: 4;
     font-size: 18px;
     line-height: 1.4;
-    color: $color-ui-black;
+    color: var(--spfx_theme_color_ui_black);
   }
 
   .imageWrapper {
@@ -300,8 +295,8 @@ $newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(
     padding: 0.2em;
     font-size: 20px;
     letter-spacing: 0.02em;
-    background-color: $color-red;
-    color: $color-ui-white;
+    background-color: var(--spfx_theme_color_ui_primary);
+    color: var(--spfx_theme_color_ui_white);
   }
 
   .metaBarContainer {
@@ -316,7 +311,7 @@ $newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(
     align-items: center;
     justify-content: space-between;
     font-size: 16px;
-    color: $color-dark-grey;
+    color: var(--spfx_theme_color_ui_dark_grey);
   }
 
   .commandBar {
@@ -349,7 +344,7 @@ $newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(
     font-size: 18px;
     font-weight: bold;
     line-height: 1.3;
-    color: $color-ui-black;
+    color: var(--spfx_theme_color_ui_black);
   }
 
   .details {
@@ -362,7 +357,7 @@ $newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(
     left: 0;
     width: 18px;
     height: 18px;
-    color: $color-red;
+    color: var(--spfx_theme_color_ui_primary);
   }
 
   .button {
@@ -374,12 +369,12 @@ $newsfeed-card-box-shadow-hover: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(
     border-radius: 25px;
     font-size: 18px;
     line-height: 1.3;
-    background-color: $color-red;
-    color: $color-ui-white;
+    background-color: var(--spfx_theme_color_ui_primary);
+    color: var(--spfx_theme_color_ui_white);
 
     &:hover {
-      background-color: $color-dark-red;
-      color: $color-ui-white;
+      background-color: var(--spfx_theme_color_ui_dark_primary);
+      color: var(--spfx_theme_color_ui_white);
     }
 
     @include mq($ms-screen-min-lg) {
