@@ -5,7 +5,6 @@ interface INewsItem {
     PublishedFrom: string;
     NewsHeader: string;
     metaText: string;
-    isSticky: boolean;
 }
 
 export default INewsItem;

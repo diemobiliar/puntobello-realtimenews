@@ -46,11 +46,16 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
     '--spfx_theme_color_ui_white': process.env.SPFX_THEME_COLOR_UI_WHITE,
     '--spfx_theme_color_ui_primary': process.env.SPFX_THEME_COLOR_UI_PRIMARY,
     '--spfx_theme_color_ui_dark_primary': process.env.SPFX_THEME_COLOR_UI_DARK_PRIMARY,
+    '--spfx_theme_color_ui_bright_grey': process.env.SPFX_THEME_COLOR_UI_BRIGHT_GREY,
     '--spfx_theme_color_ui_middle_grey': process.env.SPFX_THEME_COLOR_UI_MIDDLE_GREY,
     '--spfx_theme_color_ui_dark_grey': process.env.SPFX_THEME_COLOR_UI_DARK_GREY,
-    '--spfx_card_border_radius': process.env.SPFX_CARD_BORDER_RADIUS,
+    '--spfx_border_radius': process.env.SPFX_BORDER_RADIUS,
     '--spfx_card_box_shadow': process.env.SPFX_CARD_BOX_SHADOW,
     '--spfx_card_box_shadow_hover': process.env.SPFX_CARD_BOX_SHADOW_HOVER,
+    '--spfx_system_message_box_shadow': process.env.SPFX_SYSTEM_MESSAGE_BOX_SHADOW,
+    '--spfx_font_family': process.env.SPFX_FONT_FAMILY,
+    '--spfx_generic_font_size': process.env.SPFX_GENERIC_FONT_SIZE,
+    '--spfx_title_font_size': process.env.SPFX_TITLE_FONT_SIZE,
   } as React.CSSProperties;
 
   const combinedStyles = Object.assign(
@@ -304,7 +309,7 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
           {systemMessageVisible && <SystemMessage Title={Utility.getStringTranslation4Locale('NewNewsAvailableLabel', props.pageLanguage.Language)} buttonUpdateNewsClicked={updateNews} pageLanguage={props.pageLanguage.Language} />}
           {stickyRef.current &&
             <div className={styles.highlightContainer}>
-              <StickyItem NewsUrl={newsItemsRef.current[0].pb_NewsUrl.Url} ImageUrl={newsItemsRef.current[0].pb_ImageUrl} NewsTitle={newsItemsRef.current[0].Title} PublishedFrom={getEditedDate(newsItemsRef.current[0].pb_PublishedFrom)} NewsHeader={newsItemsRef.current[0].pb_Header} metaText={getEditedDate(newsItemsRef.current[0].pb_PublishedFrom)} isSticky={false} />
+              <StickyItem NewsUrl={newsItemsRef.current[0].pb_NewsUrl.Url} ImageUrl={newsItemsRef.current[0].pb_ImageUrl} NewsTitle={newsItemsRef.current[0].Title} PublishedFrom={getEditedDate(newsItemsRef.current[0].pb_PublishedFrom)} NewsHeader={newsItemsRef.current[0].pb_Header} metaText={getEditedDate(newsItemsRef.current[0].pb_PublishedFrom)}/>
             </div>
           }
           {<ChannelSettings myNewsGuid={myNewsGuidRef.current} channelsubItemId={channelsubItemIdRef.current} channelsConfig={newsChannelsRef.current} pageLanguage={props.pageLanguage} modalVisible={modalVisible} modalSettingsTitle={Utility.getStringTranslation4Locale('modalSettingsTitle', props.pageLanguage.Language)} closeModal={hideChannelSettings} changeChannelSettings={changeChannelSettings} />}
@@ -313,7 +318,7 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
             <Stack tokens={stackTokens} className={styles.newsletterList}>
               {newsItemsRef.current.map((currnews, index) => (
                 (index == 0 && stickyRef.current) ? <></> :
-                  <NewsItem NewsUrl={currnews.pb_NewsUrl.Url} ImageUrl={currnews.pb_ImageUrl} NewsTitle={currnews.Title} PublishedFrom={getEditedDate(currnews.pb_PublishedFrom)} NewsHeader={currnews.pb_Header} metaText={getEditedDate(currnews.pb_PublishedFrom)} isSticky={false} />
+                  <NewsItem NewsUrl={currnews.pb_NewsUrl.Url} ImageUrl={currnews.pb_ImageUrl} NewsTitle={currnews.Title} PublishedFrom={getEditedDate(currnews.pb_PublishedFrom)} NewsHeader={currnews.pb_Header} metaText={getEditedDate(currnews.pb_PublishedFrom)}/>
               ))}
             </Stack>
             : <h2>{Utility.getStringTranslation4Locale('noNewsText', props.pageLanguage.Language)}</h2>}

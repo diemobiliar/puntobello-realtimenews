@@ -1,12 +1,17 @@
-import { IDropdownStyles } from '@fluentui/react';
+import { IButtonStyles, IDropdownStyles } from '@fluentui/react';
 
 export const dropdownStyles: Partial<IDropdownStyles> = {
+  dropdownItem: {
+    '& body, & p, & h1, & h2, & h3, & h4, & h5, & h6, & li, & a, & span, & div': {
+      fontFamily: `${process.env.SPFX_FONT_FAMILY} !important`,
+    },
+  },
   title: {
-    fontSize: '18px',
+    fontSize: `${process.env.SPFX_GENERIC_FONT_SIZE}`,
     height: '40px',
     lineHeight: '37px',
     padding: '0 30px 0 12px',
-    borderRadius: '6px',
+    borderRadius: '3px',
     borderColor: `${process.env.SPFX_THEME_COLOR_UI_DARK_GREY}`,
     color: `${process.env.SPFX_THEME_COLOR_UI_BLACK}`,
   },
@@ -17,13 +22,13 @@ export const dropdownStyles: Partial<IDropdownStyles> = {
         color: `${process.env.SPFX_THEME_COLOR_UI_BLACK}`,
       },
       '&:focus::after': {
-        borderRadius: '6px',
+        borderRadius: `${process.env.SPFX_BORDER_RADIUS}`,
         borderColor: `${process.env.SPFX_THEME_COLOR_UI_PRIMARY}`,
       },
     },
   },
   dropdownOptionText: {
-    fontSize: '18px',
+    fontSize: `${process.env.SPFX_GENERIC_FONT_SIZE}`,
     color: `${process.env.SPFX_THEME_COLOR_UI_BLACK}`,
     lineHeight: '1.25',
   },
@@ -33,7 +38,7 @@ export const dropdownStyles: Partial<IDropdownStyles> = {
     lineHeight: '40px',
   },
   caretDown: {
-    fontSize: '18px',
+    fontSize: `${process.env.SPFX_GENERIC_FONT_SIZE}`,
     color: `${process.env.SPFX_THEME_COLOR_UI_BLACK}`,
   },
   label: {
@@ -45,3 +50,13 @@ export const dropdownStyles: Partial<IDropdownStyles> = {
     whiteSpace: 'nowrap',
   },
 };
+
+export const buttonStyles: Partial<IButtonStyles> = {
+  root: {
+    minWidth: 0,
+    padding: '0 4px',
+    alignSelf: 'stretch',
+    height: 'auto',
+  },
+};
+

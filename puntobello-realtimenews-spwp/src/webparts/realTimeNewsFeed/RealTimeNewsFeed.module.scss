@@ -1,8 +1,11 @@
-@import '../../scss/_mixins.scss';
-@import '~@fluentui/react/dist/sass/References.scss';
+@import "../../scss/_mixins.scss";
+@import "~@fluentui/react/dist/sass/References.scss";
 
 .newsFeed {
-  
+  body, p, h1, h2, h3, h4, h5, h6, li, a, span, div {
+    font-family: var(--spfx_font_family) !important;
+  }
+
   .highlightContainer {
     margin-bottom: 60px;
 
@@ -36,7 +39,7 @@
 
   .overflowSetLink {
     margin-right: 12px;
-    font-size: 18px;
+    font-size: var(--spfx_generic_font_size);
     color: var(--spfx_theme_color_ui_primary);
 
     &:hover,
@@ -64,7 +67,7 @@
     max-width: none;
     border: 0;
     transition-property: transform, box-shadow;
-    transition-duration: 0.30s;
+    transition-duration: 0.3s;
     transition-timing-function: ease;
 
     &:hover:after {
@@ -78,17 +81,17 @@
 
   .cardHighlight {
     .details {
-      border-radius: 0 0 var(--spfx_card_border_radius) var(--spfx_card_border_radius);
+      border-radius: 0 0 var(--spfx_border_radius) var(--spfx_border_radius);
       background-color: var(--spfx_theme_color_ui_primary);
       color: var(--spfx_theme_color_ui_white);
     }
 
     .imageWrapper {
-      border-radius: var(--spfx_card_border_radius) var(--spfx_card_border_radius) 0 0;
+      border-radius: var(--spfx_border_radius) var(--spfx_border_radius) 0 0;
     }
 
     @include mq($until: $ms-screen-max-md) {
-      border-radius: var(--spfx_card_border_radius);
+      border-radius: var(--spfx_border_radius);
       box-shadow: var(--spfx_card_box_shadow);
 
       &:hover {
@@ -110,18 +113,67 @@
       .details {
         position: relative;
         z-index: 1;
-        width: 45%;
-        border-radius: var(--spfx_card_border_radius);
+        width: 40%;
+        border-radius: var(--spfx_border_radius);
         box-shadow: var(--spfx_card_box_shadow);
+        animation: circularMotion 12s linear infinite;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+        backface-visibility: hidden;
+        will-change: transform;
+        &:hover {
+          transform: scale(1.05);
+          box-shadow: var(--spfx_card_box_shadow_hover);
+        }
       }
-
       .imageWrapper {
         position: absolute;
         right: 0;
         top: -30px;
         bottom: -30px;
-        width: 72%;
-        border-radius: var(--spfx_card_border_radius);
+        width: 82%;
+        border-radius: var(--spfx_border_radius);
+        overflow: hidden;
+
+        img {
+          width: 100%;
+          height: auto;
+          border-radius: inherit;
+          transition: transform 0.3s ease;
+        }
+
+        &:hover img {
+          transform: scale(1.15);
+        }
+      }
+      // Keyframe animation for smooth circular motion
+      @keyframes circularMotion {
+        0%,
+        100% {
+          transform: translate3d(0, 0, 0);
+        }
+        12.5% {
+          transform: translate3d(3px, 3px, 0);
+        }
+        25% {
+          transform: translate3d(5px, 5px, 0);
+        }
+        37.5% {
+          transform: translate3d(3px, 7px, 0);
+        }
+        50% {
+          transform: translate3d(0, 10px, 0);
+        }
+        62.5% {
+          transform: translate3d(-3px, 7px, 0);
+        }
+        75% {
+          transform: translate3d(-5px, 5px, 0);
+        }
+        87.5% {
+          transform: translate3d(-3px, 3px, 0);
+        }
       }
     }
   }
@@ -140,25 +192,24 @@
     height: auto;
     margin-bottom: 20px;
     padding: 0;
-    font-size: 24px;
+    font-size: var(--spfx_title_font_size);
     font-weight: bold;
     line-height: 1.2;
     letter-spacing: -0.01em;
     color: inherit;
 
     @include mq($ms-screen-min-lg) {
-      font-size: 32px;
+      font-size: var(--spfx_title_font_size);
       max-height: 75px;
     }
   }
 
   .subtitle {
     @include text-line-clamp(1);
-
     height: auto;
     margin-bottom: 20px;
     padding: 0;
-    font-size: 16px;
+    font-size: var(--spfx_generic_font_size);
     line-height: 1.2;
     color: inherit;
   }
@@ -166,7 +217,7 @@
   .text {
     @include text-line-clamp(4);
 
-    font-size: 18px;
+    font-size: var(--spfx_generic_font_size);
     line-height: 1.4;
     color: inherit;
   }
@@ -187,7 +238,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 16px;
+    font-size: var(--spfx_generic_font_size);
     color: var(--spfx_theme_color_ui_white);
   }
 
@@ -201,9 +252,8 @@
 }
 
 .newsletterList {
-
   .linkNewsItem {
-    text-decoration: 'none';
+    text-decoration: "none";
   }
 
   .card {
@@ -213,19 +263,38 @@
     min-width: 0;
     max-width: none;
     border: 0;
-    border-radius: 16px;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12), 0 2px 9px rgba(29, 29, 29, 0.09);
+    border-radius: var(--spfx_border_radius);
+    box-shadow: var(--spfx_card_box_shadow);
     transition-property: transform, box-shadow;
     transition-duration: 0.15s;
     transition-timing-function: ease;
-
-    &:hover:after {
-      border: 0;
-    }
+    position: relative; // Make sure the pseudo-element is positioned correctly
 
     &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 2px 18px rgba(0, 0, 0, 0.18), 0 2px 9px rgba(29, 29, 29, 0.09);
+      transform: rotateY(6deg) rotateX(3deg);
+      box-shadow: var(--spfx_card_box_shadow_hover);
+    }
+
+    // Pseudo-element for the light sweep effect
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -150%;
+      width: 150%;
+      height: 100%;
+      background: linear-gradient(120deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 60%);
+      transition: opacity 0.35s ease;
+      opacity: 0;
+    }
+
+    // Light sweep effect on hover
+    &:hover::before {
+      opacity: 1;
+      left: 100%;
+      transition:
+        left 0.8s ease,
+        opacity 0.8s ease;
     }
 
     @include mq($ms-screen-min-lg) {
@@ -248,7 +317,7 @@
     -webkit-line-clamp: 2;
     margin-bottom: 15px;
     padding: 0;
-    font-size: 24px;
+    font-size: var(--spfx_title_font_size);
     font-weight: bold;
     line-height: 1.3;
     letter-spacing: -0.01em;
@@ -259,7 +328,7 @@
     height: 18px;
     margin-bottom: 15px;
     padding: 0;
-    font-size: 16px;
+    font-size: var(--spfx_generic_font_size);
     line-height: 1;
     color: var(--spfx_theme_color_ui_dark_grey);
   }
@@ -270,7 +339,7 @@
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 4;
-    font-size: 18px;
+    font-size: var(--spfx_generic_font_size);
     line-height: 1.4;
     color: var(--spfx_theme_color_ui_black);
   }
@@ -293,7 +362,7 @@
     width: 72px;
     height: 72px;
     padding: 0.2em;
-    font-size: 20px;
+    font-size: var(--spfx_generic_font_size);
     letter-spacing: 0.02em;
     background-color: var(--spfx_theme_color_ui_primary);
     color: var(--spfx_theme_color_ui_white);
@@ -310,7 +379,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 16px;
+    font-size: var(--spfx_generic_font_size);
     color: var(--spfx_theme_color_ui_dark_grey);
   }
 
@@ -329,8 +398,8 @@
   min-width: 0;
   max-width: none;
   padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 10px 4px rgba(0, 0, 0, 0.1);
+  border-radius: var(--spfx_border_radius);
+  box-shadow: var(--spfx_system_message_box_shadow);
 
   @include mq($ms-screen-min-lg) {
     padding: 12px 20px 12px 64px;
@@ -341,8 +410,8 @@
     margin-top: -0.1em;
     margin-bottom: 18px;
     padding: 0;
-    font-size: 18px;
-    font-weight: bold;
+    font-size: var(--spfx_generic_font_size);
+    font-weight: 500;
     line-height: 1.3;
     color: var(--spfx_theme_color_ui_black);
   }
@@ -355,9 +424,9 @@
   .icon {
     position: absolute;
     left: 0;
-    width: 18px;
-    height: 18px;
+    font-size: x-large;
     color: var(--spfx_theme_color_ui_primary);
+    animation: tiltRinger 1.8s infinite ease-in-out;
   }
 
   .button {
@@ -366,20 +435,93 @@
     height: auto;
     padding: 14px 32px;
     border: 0;
-    border-radius: 25px;
-    font-size: 18px;
+    border-radius: var(--spfx_border_radius);
+    font-size: var(--spfx_generic_font_size);
     line-height: 1.3;
     background-color: var(--spfx_theme_color_ui_primary);
     color: var(--spfx_theme_color_ui_white);
+    position: relative; // Ensure the pseudo-element is positioned correctly
+    overflow: hidden; // Ensure the pseudo-element does not overflow the button
 
     &:hover {
       background-color: var(--spfx_theme_color_ui_dark_primary);
       color: var(--spfx_theme_color_ui_white);
     }
 
+    // Pseudo-element for the shiny effect
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.4) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      transition: opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    // Hover effect to trigger the shiny animation
+    &:hover::after {
+      opacity: 1;
+      animation: buttonshine 0.75s ease;
+    }
+
+    // Media query adjustments
     @include mq($ms-screen-min-lg) {
       padding: 16px 50px;
     }
   }
-}
 
+  // Keyframe animation for the shiny effect
+  @keyframes buttonshine {
+    from {
+      left: -100%;
+    }
+    to {
+      left: 100%;
+    }
+  }
+  // Keyframe animation for tilting the ringer icon
+  @keyframes tiltRinger {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    10% {
+      transform: rotate(10deg);
+    }
+    20% {
+      transform: rotate(15deg);
+    }
+    30% {
+      transform: rotate(10deg);
+    }
+    40% {
+      transform: rotate(5deg);
+    }
+    50% {
+      transform: rotate(0deg);
+    }
+    60% {
+      transform: rotate(-5deg);
+    }
+    70% {
+      transform: rotate(-10deg);
+    }
+    80% {
+      transform: rotate(-15deg);
+    }
+    90% {
+      transform: rotate(-10deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+}

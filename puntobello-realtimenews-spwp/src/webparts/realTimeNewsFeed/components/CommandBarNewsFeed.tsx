@@ -8,7 +8,7 @@ import {
   IButtonStyles,
   IconButton,
 } from '@fluentui/react';
-import { dropdownStyles } from '../../../styles/dropdown';
+import { buttonStyles, dropdownStyles } from '../../../styles/commandbar';
 import ICommandBarData from '../../../models/ICommandBarData';
 import { Utility } from '../../../utils/utils';
 
@@ -26,14 +26,6 @@ export function CommandBarNewsFeed(props: ICommandBarData) {
   // But we do not show any additional menu, so the strings are not translated
   // => the overflow button will never be shown as long as there are no overflow items in the overflow set
   function onRenderOverflowButton(overflowItems: any[] | undefined): JSX.Element {
-    const buttonStyles: Partial<IButtonStyles> = {
-      root: {
-        minWidth: 0,
-        padding: '0 4px',
-        alignSelf: 'stretch',
-        height: 'auto',
-      },
-    };
     return (
       <IconButton
         role="menuitem"
