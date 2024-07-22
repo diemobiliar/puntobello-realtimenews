@@ -19,7 +19,17 @@ import {
 } from '../../../styles/channelsettings';
 
 export function ChannelSettings(props: IChannelSettingsModalProps) {
-    const [isVisible, setIsVisible] = React.useState(props.modalVisible);
+    const {
+        myNewsGuid,
+        channelsubItemId,
+        channelsConfig,
+        pageLanguage,
+        modalSettingsTitle,
+        modalVisible,
+        closeModal,
+        changeChannelSettings,
+      } = props;
+    const [isVisible, setIsVisible] = React.useState(modalVisible);
 
     React.useEffect(() => {
         const styleSheet = document.styleSheets[0];
@@ -27,15 +37,15 @@ export function ChannelSettings(props: IChannelSettingsModalProps) {
     }, []);
 
     React.useEffect(() => {
-        if (props.modalVisible) {
+        if (modalVisible) {
             setIsVisible(true);
         } else {
             setIsVisible(false);
         }
-    }, [props.modalVisible]);
+    }, [modalVisible]);
 
-    function closeModal() {
-        props.closeModal();
+    function closeModalDialog() {
+        closeModal();
     }
 
     if (!isVisible) {
@@ -43,35 +53,33 @@ export function ChannelSettings(props: IChannelSettingsModalProps) {
     }
 
     function channelCheckboxChanged(item: IChannels2SubscriptionItem, ev: React.FormEvent<HTMLElement>, isChecked: boolean) {
-        props.changeChannelSettings(item, ev, isChecked);
+        changeChannelSettings(item, ev, isChecked);
     }
 
     return (
         <Modal
             titleAriaId={getId('title')}
-            isOpen={props.modalVisible}
-            onDismiss={closeModal}
+            isOpen={modalVisible}
+            onDismiss={closeModalDialog}
             isModeless={false}
             isBlocking={true}
-            containerClassName={`${contentStyles.container} ${'modalFadeIn'}`}
-        >
+            containerClassName={`${contentStyles.container} ${'modalFadeIn'}`}>
             <div className={contentStyles.header}>
-                <span id={getId('title')}>{props.modalSettingsTitle}</span>
+                <span id={getId('title')}>{modalSettingsTitle}</span>
                 <IconButton
                     styles={iconButtonStyles}
                     iconProps={cancelIcon}
-                    ariaLabel={Utility.getStringTranslation4Locale('ariaCloseChannelSettings', props.pageLanguage.Language)}
+                    ariaLabel={Utility.getStringTranslation4Locale('ariaCloseChannelSettings', pageLanguage.Language)}
                     onClick={closeModal}
                 />
             </div>
-
             <div className={contentStyles.body}>
                 <Stack tokens={stackTokens}>
-                    {props.channelsConfig.map((item) => {
-                        if (props.myNewsGuid != item.TermGuid) {
+                    {channelsConfig.map((item) => {
+                        if (myNewsGuid != item.TermGuid) {
                             return (
                                 <Checkbox
-                                    label={Utility.getChannelText(props.pageLanguage, item)}
+                                    label={Utility.getChannelText(pageLanguage, item)}
                                     defaultChecked={item.Subscribed}
                                     onChange={channelCheckboxChanged.bind(this, item)}
                                     styles={customCheckboxStyles}

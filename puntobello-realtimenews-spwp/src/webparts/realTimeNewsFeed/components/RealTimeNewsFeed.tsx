@@ -26,6 +26,12 @@ import { Logger } from '../../../utils/logger';
 const stackTokens: IStackTokens = { childrenGap: 14 };
 
 export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
+  const {
+    pageLanguage,
+    newsCount,
+    themeVariant,
+    spo
+  } = props;
   const logger = Logger.getInstance();
   // Refs
   const myNewsGuidRef = useRef("00000000-0000-0000-0000-000000000000");
@@ -60,8 +66,8 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
 
   const combinedStyles = Object.assign(
     {
-      backgroundColor: props.themeVariant.semanticColors.bodyBackground,
-      color: props.themeVariant.semanticColors.bodyText
+      backgroundColor: themeVariant.semanticColors.bodyBackground,
+      color: themeVariant.semanticColors.bodyText
     },
     rootStyle
   );
@@ -94,13 +100,13 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
 
   async function processSocketEvent(data) {
     // Safeguard if we get in the situation when the webpart is loading and an event has been received
-    if (props.spo.filterQuery4Socket === undefined || props.spo.filterQuery4Socket.length == 0) {
+    if (spo.filterQuery4Socket === undefined || spo.filterQuery4Socket.length == 0) {
       return;
     }
     const eventType = Object.keys(data)[0];
     const eventId: number = Number(Object.values(data)[0]);
 
-    const validItem = await props.spo.checkValidNewsItem(eventId);
+    const validItem = await spo.checkValidNewsItem(eventId);
     if (validItem) {
       switch (eventType) {
         case 'A':
@@ -129,7 +135,7 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
     getChannelsAndSubscriptions()
       .then(() => {
         // Now get the news items, which are based on the channels subscription for the user
-        props.spo.getNewsItems(newsChannelCurrentRef.current, myNewsGuidRef.current, newsChannelsRef.current, props.pageLanguage, props.newsCount)
+        spo.getNewsItems(newsChannelCurrentRef.current, myNewsGuidRef.current, newsChannelsRef.current, pageLanguage, newsCount)
           .then((responsenews) => {
             newsItemsRef.current = responsenews.newsItemData;
             stickyRef.current = responsenews.sticky;
@@ -153,10 +159,10 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
     const newsChannelConfig: IChannels2SubscriptionItem[] = [];
 
     // Process all channels from termstore
-    const allCachedChannels: IOrderedTermInfo[] = await props.spo.getAndCacheAllChannels();
+    const allCachedChannels: IOrderedTermInfo[] = await spo.getAndCacheAllChannels();
 
     // Get subscribed channels for current user
-    const channels2subItem: IChannels2SubsItem[] = await props.spo.getSubscribedChannels4CurrentUser();
+    const channels2subItem: IChannels2SubsItem[] = await spo.getSubscribedChannels4CurrentUser();
 
     if (channels2subItem.length > 0) {
       channels2subItem[0].pb_Channels.forEach(channel => {
@@ -166,13 +172,13 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
       channelsubItemIdRef.current = channels2subItem[0].Id;
     } else {
       // We do not have any subscribed channels, create default subscription item
-      const newSubItem: IItemAddResult = await props.spo.addSubscribedChannels4CurrentUser();
+      const newSubItem: IItemAddResult = await spo.addSubscribedChannels4CurrentUser();
       channelsubItemIdRef.current = newSubItem.data.ID;
     }
 
     // Push default "my news" aka all my channels
     currNewsChannels.push({
-      Channel: [{ Language: props.pageLanguage.Language, Text: Utility.getStringTranslation4Locale('myNewsLabel', props.pageLanguage.Language) }],
+      Channel: [{ Language: pageLanguage.Language, Text: Utility.getStringTranslation4Locale('myNewsLabel', pageLanguage.Language) }],
       TermGuid: myNewsGuidRef.current, Subscribed: false, Visible: true, SortOrder: 0
     });
 
@@ -198,7 +204,7 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
   function getAvailableItems() {
     setSystemMessageVisible(false);
     setLoading(true);
-    props.spo.getNewsItems(newsChannelCurrentRef.current, myNewsGuidRef.current, newsChannelsRef.current, props.pageLanguage, props.newsCount)
+    spo.getNewsItems(newsChannelCurrentRef.current, myNewsGuidRef.current, newsChannelsRef.current, pageLanguage, newsCount)
       .then((responsenews) => {
         logger.info('getNewsiItems from getAvailableItems is', responsenews);
         newsItemsRef.current = responsenews.newsItemData;
@@ -235,7 +241,7 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
         }
       });
     }
-    props.spo.updateMultiMeta(channels, `${process.env.SPFX_SUBSCRIBEDCHANNELS_LIST_TITLE}`, 'pb_Channels', channelsubItemIdRef.current).then().catch((error) => {
+    spo.updateMultiMeta(channels, `${process.env.SPFX_SUBSCRIBEDCHANNELS_LIST_TITLE}`, 'pb_Channels', channelsubItemIdRef.current).then().catch((error) => {
       logger.error('CHANGE_CHANNEL_SETTINGS', error);
     });
   }
@@ -268,7 +274,7 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
 
     currNewsChannels.map((newschannel) => {
       if (newschannel.TermGuid == myNewsGuidRef.current || newschannel.Subscribed) {
-        retVal.push({ key: newschannel.TermGuid, text: Utility.getChannelText(props.pageLanguage, newschannel) });
+        retVal.push({ key: newschannel.TermGuid, text: Utility.getChannelText(pageLanguage, newschannel) });
       }
     });
     return retVal;
@@ -303,25 +309,25 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
 
   return (
     <>
-      {loading && <Spinner label={Utility.getStringTranslation4Locale('loading', props.pageLanguage.Language)} />}
+      {loading && <Spinner label={Utility.getStringTranslation4Locale('loading', pageLanguage.Language)} />}
       {!loading &&
         <div className={styles.newsFeed} style={combinedStyles}>
-          {systemMessageVisible && <SystemMessage Title={Utility.getStringTranslation4Locale('NewNewsAvailableLabel', props.pageLanguage.Language)} buttonUpdateNewsClicked={updateNews} pageLanguage={props.pageLanguage.Language} />}
+          {systemMessageVisible && <SystemMessage Title={Utility.getStringTranslation4Locale('NewNewsAvailableLabel', pageLanguage.Language)} buttonUpdateNewsClicked={updateNews} pageLanguage={pageLanguage.Language} />}
           {stickyRef.current &&
             <div className={styles.highlightContainer}>
-              <StickyItem NewsUrl={newsItemsRef.current[0].pb_NewsUrl.Url} ImageUrl={newsItemsRef.current[0].pb_ImageUrl} NewsTitle={newsItemsRef.current[0].Title} PublishedFrom={getEditedDate(newsItemsRef.current[0].pb_PublishedFrom)} NewsHeader={newsItemsRef.current[0].pb_Header} metaText={getEditedDate(newsItemsRef.current[0].pb_PublishedFrom)}/>
+              <StickyItem NewsUrl={newsItemsRef.current[0].pb_NewsUrl.Url} ImageUrl={newsItemsRef.current[0].pb_ImageUrl} NewsTitle={newsItemsRef.current[0].Title} PublishedFrom={getEditedDate(newsItemsRef.current[0].pb_PublishedFrom)} NewsHeader={newsItemsRef.current[0].pb_Header}/>
             </div>
           }
-          {<ChannelSettings myNewsGuid={myNewsGuidRef.current} channelsubItemId={channelsubItemIdRef.current} channelsConfig={newsChannelsRef.current} pageLanguage={props.pageLanguage} modalVisible={modalVisible} modalSettingsTitle={Utility.getStringTranslation4Locale('modalSettingsTitle', props.pageLanguage.Language)} closeModal={hideChannelSettings} changeChannelSettings={changeChannelSettings} />}
-          {<CommandBarNewsFeed channelDropdown={getChannelDD()} selectedKey={newsChannelCurrentRef.current} channelDropdownChanged={channelChange} channelSettingsModalClicked={showChannelSettings} pageLanguage={props.pageLanguage.Language} />}
+          {<ChannelSettings myNewsGuid={myNewsGuidRef.current} channelsubItemId={channelsubItemIdRef.current} channelsConfig={newsChannelsRef.current} pageLanguage={pageLanguage} modalVisible={modalVisible} modalSettingsTitle={Utility.getStringTranslation4Locale('modalSettingsTitle', pageLanguage.Language)} closeModal={hideChannelSettings} changeChannelSettings={changeChannelSettings} />}
+          {<CommandBarNewsFeed channelDropdown={getChannelDD()} selectedKey={newsChannelCurrentRef.current} channelDropdownChanged={channelChange} channelSettingsModalClicked={showChannelSettings} pageLanguage={pageLanguage.Language} />}
           {newsItemsRef.current.length > 0 ?
             <Stack tokens={stackTokens} className={styles.newsletterList}>
               {newsItemsRef.current.map((currnews, index) => (
                 (index == 0 && stickyRef.current) ? <></> :
-                  <NewsItem NewsUrl={currnews.pb_NewsUrl.Url} ImageUrl={currnews.pb_ImageUrl} NewsTitle={currnews.Title} PublishedFrom={getEditedDate(currnews.pb_PublishedFrom)} NewsHeader={currnews.pb_Header} metaText={getEditedDate(currnews.pb_PublishedFrom)}/>
+                  <NewsItem NewsUrl={currnews.pb_NewsUrl.Url} ImageUrl={currnews.pb_ImageUrl} NewsTitle={currnews.Title} PublishedFrom={getEditedDate(currnews.pb_PublishedFrom)} NewsHeader={currnews.pb_Header}/>
               ))}
             </Stack>
-            : <h2>{Utility.getStringTranslation4Locale('noNewsText', props.pageLanguage.Language)}</h2>}
+            : <h2>{Utility.getStringTranslation4Locale('noNewsText', pageLanguage.Language)}</h2>}
         </div >
       }
     </>

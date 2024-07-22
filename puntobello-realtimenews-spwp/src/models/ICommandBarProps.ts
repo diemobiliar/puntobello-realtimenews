@@ -2,7 +2,7 @@ import {
     IDropdownOption,
 } from '@fluentui/react';
 
-interface ICommandBarData {
+interface ICommandBarProps {
     channelDropdown: IDropdownOption[];
     channelDropdownChanged: any;
     channelSettingsModalClicked: any;
@@ -10,4 +10,4 @@ interface ICommandBarData {
     pageLanguage: string;
 }
 
-export default ICommandBarData;
+export default ICommandBarProps;

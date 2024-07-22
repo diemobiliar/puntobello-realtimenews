@@ -11,21 +11,28 @@ import INewsItem from '../../../models/INewsItem';
 import { getImage, getNewsImageInnerStyles } from '../../../utils/ui';
 
 export function NewsItem(props: INewsItem) {
+    const {
+        NewsUrl,
+        ImageUrl,
+        NewsTitle,
+        PublishedFrom,
+        NewsHeader
+      } = props;
     return (
-        <a href={props.NewsUrl} className={styles.linkNewsItem} data-interception="off">
+        <a href={NewsUrl} className={styles.linkNewsItem} data-interception="off">
         <DocumentCard className={styles.card}>
             <div className={styles.imageWrapper}>
-                {<DocumentCardPreview styles={getNewsImageInnerStyles()} {...getImage(props.ImageUrl)} />}
+                {<DocumentCardPreview styles={getNewsImageInnerStyles()} {...getImage(ImageUrl)} />}
             </div>
             <DocumentCardDetails className={styles.details}>
-                <DocumentCardTitle className={styles.title} title={props.NewsTitle} />
+                <DocumentCardTitle className={styles.title} title={NewsTitle} />
                 <Text block className={styles.text}>
-                    {props.NewsHeader}
+                    {NewsHeader}
                 </Text>
                 <div className={styles.metaBarContainer}>
                     <div className={styles.metaBar}>
                         <Text block nowrap>
-                            {props.PublishedFrom}
+                            {PublishedFrom}
                         </Text>
                     </div>
                 </div>

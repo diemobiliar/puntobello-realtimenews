@@ -5,14 +5,20 @@ import {
   OverflowSet,
   IOverflowSetItemProps,
   Link,
-  IButtonStyles,
   IconButton,
 } from '@fluentui/react';
 import { buttonStyles, dropdownStyles } from '../../../styles/commandbar';
-import ICommandBarData from '../../../models/ICommandBarData';
+import ICommandBarProps from '../../../models/ICommandBarProps';
 import { Utility } from '../../../utils/utils';
 
-export function CommandBarNewsFeed(props: ICommandBarData) {
+export function CommandBarNewsFeed(props: ICommandBarProps) {
+  const {
+  channelDropdown,
+  channelDropdownChanged,
+  channelSettingsModalClicked,
+  selectedKey,
+  pageLanguage
+} = props;
 
   function onRenderOverflowItem(item: IOverflowSetItemProps): JSX.Element {
     return (
@@ -41,12 +47,12 @@ export function CommandBarNewsFeed(props: ICommandBarData) {
     <div className={styles.filterBar}>
       <div className={styles.filterBarItem}>
         <Dropdown
-          options={props.channelDropdown}
+          options={channelDropdown}
           styles={dropdownStyles}
           className={styles.dropdown}
-          selectedKey={props.selectedKey}
+          selectedKey={selectedKey}
           onChange={(event, option, value) => {
-            props.channelDropdownChanged(option.key);
+            channelDropdownChanged(option.key);
           }}
         />
       </div>
@@ -56,8 +62,8 @@ export function CommandBarNewsFeed(props: ICommandBarData) {
           items={[
             {
               key: 'channelsettingsmodal',
-              name: Utility.getStringTranslation4Locale('modalSettingsLink', props.pageLanguage),
-              onClick: () => { props.channelSettingsModalClicked(); },
+              name: Utility.getStringTranslation4Locale('modalSettingsLink', pageLanguage),
+              onClick: () => { channelSettingsModalClicked(); },
             }
           ]}
           onRenderOverflowButton={onRenderOverflowButton}

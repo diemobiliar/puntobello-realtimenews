@@ -11,22 +11,30 @@ import INewsItem from '../../../models/INewsItem';
 import { getImage, getStickyImageInnerStyles } from '../../../utils/ui';
 
 export function StickyItem(props: INewsItem) {
+    const {
+        NewsUrl,
+        ImageUrl,
+        NewsTitle,
+        PublishedFrom,
+        NewsHeader
+      } = props;
+
     return (
-        <DocumentCard className={`${styles.card} ${styles.cardHighlight}`} onClickHref={props.NewsUrl}>
+        <DocumentCard className={`${styles.card} ${styles.cardHighlight}`} onClickHref={NewsUrl}>
             <div className={styles.imageWrapper}>
-                {<DocumentCardPreview styles={getStickyImageInnerStyles()} {...getImage(props.ImageUrl)} />}
+                {<DocumentCardPreview styles={getStickyImageInnerStyles()} {...getImage(ImageUrl)} />}
             </div>
             <DocumentCardDetails className={styles.details}>
-                <DocumentCardTitle className={styles.title} title={props.NewsTitle} />
-                {props.PublishedFrom && (
+                <DocumentCardTitle className={styles.title} title={NewsTitle} />
+                {PublishedFrom && (
                     <DocumentCardTitle
                         className={styles.subtitle}
-                        title={props.PublishedFrom}
+                        title={PublishedFrom}
                         showAsSecondaryTitle
                     />
                 )}
                 <Text block className={styles.text}>
-                    {props.NewsHeader}
+                    {NewsHeader}
                 </Text>
             </DocumentCardDetails>
         </DocumentCard>
