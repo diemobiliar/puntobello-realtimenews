@@ -1,27 +1,31 @@
+// RealTimeNewsFeed.tsx
 import { useRef, useState, useEffect } from 'react';
 import * as React from 'react';
 
-import { Spinner, IDropdownOption, Stack, IStackTokens } from '@fluentui/react';
-import { IItemAddResult, Web } from "@pnp/sp/presets/all";
-import { IOrderedTermInfo } from "@pnp/sp/taxonomy";
+import { Spinner,  Stack, IStackTokens } from '@fluentui/react';
 
 import io from 'socket.io-client';
-import * as __ from 'lodash';
 
 import styles from '../RealTimeNewsFeed.module.scss';
 import IRealTimeNewsFeedWP from '../../../models/IRealTimeNewsFeedWP';
-import { IChannels2SubscriptionItem, IChannels2SubsItem } from '../../../models/INewsFeed';
-import IChannelLanguage from '../../../models/IChannelLanguage';
-import INewsItemData from '../../../models/INewsItemData';
 import { CommandBarNewsFeed } from './CommandBarNewsFeed';
 import { StickyItem } from './StickyItem';
 import { ChannelSettings } from './ChannelSettings';
 import { NewsItem } from './NewsItem';
 import { SystemMessage } from './SystemMessage';
 import { getEditedDate } from '../../../utils/ui';
+import { getRootStyle } from '../../../utils/envConfig';
+
+import {
+  processSocketEvent,
+  processSocketAddEvent,
+  processSocketErrorEvent,  
+  getAllData,
+  changeChannelSettings,
+  getAvailableItems,
+  getChannelDD
+} from '../../../utils/realtimenewsfeed';
 import { Utility } from '../../../utils/utils';
-import { Logger } from '../../../utils/logger';
-//#endregion
 
 const stackTokens: IStackTokens = { childrenGap: 14 };
 
@@ -32,14 +36,14 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
     themeVariant,
     spo
   } = props;
-  const logger = Logger.getInstance();
+
   // Refs
   const myNewsGuidRef = useRef("00000000-0000-0000-0000-000000000000");
   const newsChannelCurrentRef = useRef(myNewsGuidRef.current);
-  const newsChannelsRef = useRef<IChannels2SubscriptionItem[]>();
+  const newsChannelsRef = useRef([]);
   const channelsubItemIdRef = useRef<number>();
   const stickyRef = useRef(false);
-  const newsItemsRef = useRef<INewsItemData[]>([]);
+  const newsItemsRef = useRef([]);
   const numberOfNewNewsRef = useRef<number>(0);
 
   // State
@@ -47,216 +51,45 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
   const [modalVisible, setModalVisible] = useState(false);
   const [systemMessageVisible, setSystemMessageVisible] = useState(false);
 
-  const rootStyle = {
-    '--spfx_theme_color_ui_black': process.env.SPFX_THEME_COLOR_UI_BLACK,
-    '--spfx_theme_color_ui_white': process.env.SPFX_THEME_COLOR_UI_WHITE,
-    '--spfx_theme_color_ui_primary': process.env.SPFX_THEME_COLOR_UI_PRIMARY,
-    '--spfx_theme_color_ui_dark_primary': process.env.SPFX_THEME_COLOR_UI_DARK_PRIMARY,
-    '--spfx_theme_color_ui_bright_grey': process.env.SPFX_THEME_COLOR_UI_BRIGHT_GREY,
-    '--spfx_theme_color_ui_middle_grey': process.env.SPFX_THEME_COLOR_UI_MIDDLE_GREY,
-    '--spfx_theme_color_ui_dark_grey': process.env.SPFX_THEME_COLOR_UI_DARK_GREY,
-    '--spfx_border_radius': process.env.SPFX_BORDER_RADIUS,
-    '--spfx_card_box_shadow': process.env.SPFX_CARD_BOX_SHADOW,
-    '--spfx_card_box_shadow_hover': process.env.SPFX_CARD_BOX_SHADOW_HOVER,
-    '--spfx_system_message_box_shadow': process.env.SPFX_SYSTEM_MESSAGE_BOX_SHADOW,
-    '--spfx_font_family': process.env.SPFX_FONT_FAMILY,
-    '--spfx_generic_font_size': process.env.SPFX_GENERIC_FONT_SIZE,
-    '--spfx_title_font_size': process.env.SPFX_TITLE_FONT_SIZE,
-  } as React.CSSProperties;
-
   const combinedStyles = Object.assign(
     {
       backgroundColor: themeVariant.semanticColors.bodyBackground,
       color: themeVariant.semanticColors.bodyText
     },
-    rootStyle
+    getRootStyle()
   );
 
   useEffect(() => {
     // Socket connection
     const socket = io(process.env.SPFX_SOCKET_URL, { transports: ["websocket"], timeout: 30000 });
     socket.on("connect", () => {
-      logger.info('Socket Connect, SocketId:' + socket.id);
+      console.info('Socket Connect, SocketId:' + socket.id);
     });
     socket.on("nd", (data) => {
-      processSocketEvent(data);
+      processSocketEvent(data, spo, numberOfNewNewsRef, setSystemMessageVisible, processSocketAddEvent, processSocketErrorEvent);
     });
     socket.on("disconnect", () => {
-      logger.info('Socket Disconnect, SocketId:' + socket.id);
+      console.info('Socket Disconnect, SocketId:' + socket.id);
     });
     socket.on("connect_error", (socketerr) => {
-      logger.warn('Socket_error SocketId' + + socket.id + 'error ' + socketerr);
+      console.warn('Socket_error SocketId' + socket.id + 'error ' + socketerr);
     });
 
-    getAllData();
+    getAllData(spo, newsChannelCurrentRef, myNewsGuidRef, newsChannelsRef, pageLanguage, newsCount, setLoading, newsItemsRef, stickyRef, channelsubItemIdRef);
 
     return () => {
-      // before the component is destroyed
-      // unbind all event handlers used in this component
       socket.off();
     };
   }, []);
 
-
-  async function processSocketEvent(data) {
-    // Safeguard if we get in the situation when the webpart is loading and an event has been received
-    if (spo.filterQuery4Socket === undefined || spo.filterQuery4Socket.length == 0) {
-      return;
-    }
-    const eventType = Object.keys(data)[0];
-    const eventId: number = Number(Object.values(data)[0]);
-
-    const validItem = await spo.checkValidNewsItem(eventId);
-    if (validItem) {
-      switch (eventType) {
-        case 'A':
-          processSocketAddEvent(eventId);
-          break;
-        case 'Z':
-          processSocketErrorEvent(eventId);
-          break;
-      }
-    }
-  }
-
-  function processSocketAddEvent(id: number) {
-    setSystemMessageVisible(false);
-    numberOfNewNewsRef.current++;
-    setSystemMessageVisible(true);
-  }
-
-  function processSocketErrorEvent(id: number) {
-    logger.error("Undefined event-type has been received from socket webapp", id)
-  }
-
-  function getAllData() {
-    setLoading(true);
-    // Read news channel subscriptions
-    getChannelsAndSubscriptions()
-      .then(() => {
-        // Now get the news items, which are based on the channels subscription for the user
-        spo.getNewsItems(newsChannelCurrentRef.current, myNewsGuidRef.current, newsChannelsRef.current, pageLanguage, newsCount)
-          .then((responsenews) => {
-            newsItemsRef.current = responsenews.newsItemData;
-            stickyRef.current = responsenews.sticky;
-            setLoading(false);
-          }).catch((error) => {
-            logger.error('RealTimeNewsFeed.tsx, getAllData', error);
-            newsItemsRef.current = [];
-            setLoading(false);
-          });
-      }).catch((error) => {
-        logger.error('RealTimeNewsFeed.tsx, getChannelsAndSubscription', error);
-        newsItemsRef.current = [];
-        setLoading(false);
-      });
-  }
-
-  //Ensure Channel subscription for the current user
-  async function getChannelsAndSubscriptions() {
-    // First we look if we have some data in the channel2sub list
-    const currNewsChannels: IChannels2SubscriptionItem[] = [];
-    const newsChannelConfig: IChannels2SubscriptionItem[] = [];
-
-    // Process all channels from termstore
-    const allCachedChannels: IOrderedTermInfo[] = await spo.getAndCacheAllChannels();
-
-    // Get subscribed channels for current user
-    const channels2subItem: IChannels2SubsItem[] = await spo.getSubscribedChannels4CurrentUser();
-
-    if (channels2subItem.length > 0) {
-      channels2subItem[0].pb_Channels.forEach(channel => {
-        const newChan: IChannels2SubscriptionItem = { Channel: [], TermGuid: channel.TermGuid, Subscribed: true, Visible: true, SortOrder: 0 };
-        newsChannelConfig.push(newChan);
-      });
-      channelsubItemIdRef.current = channels2subItem[0].Id;
-    } else {
-      // We do not have any subscribed channels, create default subscription item
-      const newSubItem: IItemAddResult = await spo.addSubscribedChannels4CurrentUser();
-      channelsubItemIdRef.current = newSubItem.data.ID;
-    }
-
-    // Push default "my news" aka all my channels
-    currNewsChannels.push({
-      Channel: [{ Language: pageLanguage.Language, Text: Utility.getStringTranslation4Locale('myNewsLabel', pageLanguage.Language) }],
-      TermGuid: myNewsGuidRef.current, Subscribed: false, Visible: true, SortOrder: 0
-    });
-
-    allCachedChannels.forEach(channel => {
-      if (!channel.isDeprecated) {
-        const channelLanguages: IChannelLanguage[] = channel.labels.map((label): IChannelLanguage => {
-          return { Language: label.languageTag, Text: label.name };
-        });
-        const currentNewsChannel: IChannels2SubscriptionItem = newsChannelConfig.find(newsChannel => newsChannel.TermGuid === channel.id);
-        // Channel found or we do not have any channel config which means all channels are subscribed
-        if (currentNewsChannel || newsChannelConfig.length == 0) {
-          currNewsChannels.push({ Channel: channelLanguages, TermGuid: channel.id, Subscribed: true, Visible: true, SortOrder: 0 });
-        } else {
-          currNewsChannels.push({ Channel: channelLanguages, TermGuid: channel.id, Subscribed: false, Visible: true, SortOrder: 0 });
-        }
-      }
-    });
-    newsChannelsRef.current = currNewsChannels;
-  }
-
-  // This method refresh the ui when a notification about an update has been shown
-  // or when channels have been updated
-  function getAvailableItems() {
-    setSystemMessageVisible(false);
-    setLoading(true);
-    spo.getNewsItems(newsChannelCurrentRef.current, myNewsGuidRef.current, newsChannelsRef.current, pageLanguage, newsCount)
-      .then((responsenews) => {
-        logger.info('getNewsiItems from getAvailableItems is', responsenews);
-        newsItemsRef.current = responsenews.newsItemData;
-        stickyRef.current = responsenews.sticky;
-        setLoading(false);
-      }).catch((error) => {
-        logger.error('GET_NEWS_GENERIC', error);
-        newsItemsRef.current = [];
-        setLoading(false);
-      });
-  }
-
-  function changeChannelSettings(item: IChannels2SubscriptionItem, ev: React.FormEvent<HTMLElement>, isChecked: boolean) {
-    const channels: any[] = [];
-    if (isChecked) {
-      newsChannelsRef.current.forEach(channel => {
-        if (channel.Subscribed) {
-          channels.push({ termName: channel.Channel[0].Text, termGUID: channel.TermGuid });
-        } else {
-          if (channel.TermGuid === item.TermGuid) {
-            channel.Subscribed = true;
-            channels.push({ termName: channel.Channel[0].Text, termGUID: channel.TermGuid });
-          }
-        }
-      });
-    } else {
-      newsChannelsRef.current.forEach(channel => {
-        if (channel.Subscribed) {
-          if (channel.TermGuid != item.TermGuid) {
-            channels.push({ termName: channel.Channel[0].Text, termGUID: channel.TermGuid });
-          } else {
-            channel.Subscribed = false;
-          }
-        }
-      });
-    }
-    spo.updateMultiMeta(channels, `${process.env.SPFX_SUBSCRIBEDCHANNELS_LIST_TITLE}`, 'pb_Channels', channelsubItemIdRef.current).then().catch((error) => {
-      logger.error('CHANGE_CHANNEL_SETTINGS', error);
-    });
-  }
-
   function updateNews() {
     numberOfNewNewsRef.current = 0;
-    // Fetch data
-    getAvailableItems();
+    getAvailableItems(spo, newsChannelCurrentRef, myNewsGuidRef, newsChannelsRef, pageLanguage, newsCount, newsItemsRef, stickyRef, setLoading, console);
   }
 
   function channelChange(ddKey) {
-    // Set news channel 
     newsChannelCurrentRef.current = ddKey;
-    // Fetch data
-    getAvailableItems();
+    getAvailableItems(spo, newsChannelCurrentRef, myNewsGuidRef, newsChannelsRef, pageLanguage, newsCount, newsItemsRef, stickyRef, setLoading, console);
   }
 
   function showChannelSettings() {
@@ -264,48 +97,9 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
   }
 
   function hideChannelSettings() {
-    getAvailableItems();
+    getAvailableItems(spo, newsChannelCurrentRef, myNewsGuidRef, newsChannelsRef, pageLanguage, newsCount, newsItemsRef, stickyRef, setLoading, console);
     setModalVisible(false);
   }
-
-  function getChannelDD(): IDropdownOption[] {
-    const retVal: IDropdownOption[] = [];
-    const currNewsChannels = newsChannelsRef.current;
-
-    currNewsChannels.map((newschannel) => {
-      if (newschannel.TermGuid == myNewsGuidRef.current || newschannel.Subscribed) {
-        retVal.push({ key: newschannel.TermGuid, text: Utility.getChannelText(pageLanguage, newschannel) });
-      }
-    });
-    return retVal;
-  }
-
-  useEffect(() => {
-    // Socket connection
-    const socket = io(process.env.SPFX_SOCKET_URL, { transports: ["websocket"], timeout: 30000 });
-    socket.on("connect", () => {
-      logger.info('Socket Connect, SocketId:' + socket.id);
-    });
-    socket.on("nd", (data) => {
-      logger.info('>>>>>>>>>>>>>>>>>>>>> processsocket event with data ', data);
-      processSocketEvent(data);
-    });
-    socket.on("disconnect", () => {
-      logger.info('Socket Disconnect, SocketId:' + socket.id);
-    });
-    socket.on("connect_error", (socketerr) => {
-      logger.warn('Socket_error SocketId' + + socket.id + 'error ' + socketerr);
-    });
-
-    getAllData();
-
-    return () => {
-      // before the component is destroyed
-      // unbind all event handlers used in this component
-      socket.off();
-    };
-  }, []);
-
 
   return (
     <>
@@ -318,8 +112,8 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
               <StickyItem NewsUrl={newsItemsRef.current[0].pb_NewsUrl.Url} ImageUrl={newsItemsRef.current[0].pb_ImageUrl} NewsTitle={newsItemsRef.current[0].Title} PublishedFrom={getEditedDate(newsItemsRef.current[0].pb_PublishedFrom)} NewsHeader={newsItemsRef.current[0].pb_Header}/>
             </div>
           }
-          {<ChannelSettings myNewsGuid={myNewsGuidRef.current} channelsubItemId={channelsubItemIdRef.current} channelsConfig={newsChannelsRef.current} pageLanguage={pageLanguage} modalVisible={modalVisible} modalSettingsTitle={Utility.getStringTranslation4Locale('modalSettingsTitle', pageLanguage.Language)} closeModal={hideChannelSettings} changeChannelSettings={changeChannelSettings} />}
-          {<CommandBarNewsFeed channelDropdown={getChannelDD()} selectedKey={newsChannelCurrentRef.current} channelDropdownChanged={channelChange} channelSettingsModalClicked={showChannelSettings} pageLanguage={pageLanguage.Language} />}
+          <ChannelSettings myNewsGuid={myNewsGuidRef.current} channelsConfig={newsChannelsRef.current} pageLanguage={pageLanguage} modalVisible={modalVisible} modalSettingsTitle={Utility.getStringTranslation4Locale('modalSettingsTitle', pageLanguage.Language)} closeModal={hideChannelSettings} changeChannelSettings={(item, ev, isChecked) => changeChannelSettings(spo, newsChannelsRef, item, isChecked, channelsubItemIdRef)} />
+          <CommandBarNewsFeed channelDropdown={getChannelDD(newsChannelsRef, myNewsGuidRef, Utility, pageLanguage)} selectedKey={newsChannelCurrentRef.current} channelDropdownChanged={channelChange} channelSettingsModalClicked={showChannelSettings} pageLanguage={pageLanguage.Language} />
           {newsItemsRef.current.length > 0 ?
             <Stack tokens={stackTokens} className={styles.newsletterList}>
               {newsItemsRef.current.map((currnews, index) => (

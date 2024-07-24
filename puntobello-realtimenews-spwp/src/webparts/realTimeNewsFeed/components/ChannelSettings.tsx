@@ -21,7 +21,6 @@ import {
 export function ChannelSettings(props: IChannelSettingsModalProps) {
     const {
         myNewsGuid,
-        channelsubItemId,
         channelsConfig,
         pageLanguage,
         modalSettingsTitle,
