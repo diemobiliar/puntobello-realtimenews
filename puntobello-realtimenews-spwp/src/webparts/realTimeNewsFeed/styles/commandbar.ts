@@ -1,35 +1,38 @@
 import { IButtonStyles, IDropdownStyles } from '@fluentui/react';
+import { getRootEnv } from '../utils/envConfig';
+
+const rootEnv = getRootEnv();
 
 export const dropdownStyles: Partial<IDropdownStyles> = {
   dropdownItem: {
     '& body, & p, & h1, & h2, & h3, & h4, & h5, & h6, & li, & a, & span, & div': {
-      fontFamily: `${process.env.SPFX_FONT_FAMILY} !important`,
+      fontFamily: `${rootEnv.css['--spfx_font_family']} !important`,
     },
   },
   title: {
-    fontSize: `${process.env.SPFX_GENERIC_FONT_SIZE}`,
+    fontSize: rootEnv.css['--spfx_generic_font_size'],
     height: '40px',
     lineHeight: '37px',
     padding: '0 30px 0 12px',
     borderRadius: '3px',
-    borderColor: `${process.env.SPFX_THEME_COLOR_UI_DARK_GREY}`,
-    color: `${process.env.SPFX_THEME_COLOR_UI_BLACK}`,
+    borderColor: rootEnv.css['--spfx_theme_color_ui_dark_grey'],
+    color: rootEnv.css['--spfx_theme_color_ui_black'],
   },
   dropdown: {
     selectors: {
       '&:hover .ms-Dropdown-title': {
-        borderColor: `${process.env.SPFX_THEME_COLOR_UI_DARK_GREY}`,
-        color: `${process.env.SPFX_THEME_COLOR_UI_BLACK}`,
+        borderColor: rootEnv.css['--spfx_theme_color_ui_dark_grey'],
+        color: rootEnv.css['--spfx_theme_color_ui_black'],
       },
       '&:focus::after': {
-        borderRadius: `${process.env.SPFX_BORDER_RADIUS}`,
-        borderColor: `${process.env.SPFX_THEME_COLOR_UI_PRIMARY}`,
+        borderRadius: rootEnv.css['--spfx_border_radius'],
+        borderColor: rootEnv.css['--spfx_theme_color_ui_primary'],
       },
     },
   },
   dropdownOptionText: {
-    fontSize: `${process.env.SPFX_GENERIC_FONT_SIZE}`,
-    color: `${process.env.SPFX_THEME_COLOR_UI_BLACK}`,
+    fontSize: rootEnv.css['--spfx_theme_generic_font_size'],
+    color: rootEnv.css['--spfx_theme_color_ui_black'],
     lineHeight: '1.25',
   },
   caretDownWrapper: {
@@ -38,8 +41,8 @@ export const dropdownStyles: Partial<IDropdownStyles> = {
     lineHeight: '40px',
   },
   caretDown: {
-    fontSize: `${process.env.SPFX_GENERIC_FONT_SIZE}`,
-    color: `${process.env.SPFX_THEME_COLOR_UI_BLACK}`,
+    fontSize: rootEnv.css['--spfx_theme_generic_font_size'],
+    color: rootEnv.css['--spfx_theme_color_ui_black'],
   },
   label: {
     position: 'absolute',

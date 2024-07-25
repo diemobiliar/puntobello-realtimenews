@@ -7,8 +7,8 @@ import {
     DocumentCardDetails,
     DocumentCardTitle
 } from '@fluentui/react';
-import INewsItem from '../../../models/INewsItem';
-import { getImage, getStickyImageInnerStyles } from '../../../utils/ui';
+import INewsItem from '../models/INewsItem';
+import { getImage, getStickyImageInnerStyles } from '../utils/ui';
 
 export function StickyItem(props: INewsItem) {
     const {

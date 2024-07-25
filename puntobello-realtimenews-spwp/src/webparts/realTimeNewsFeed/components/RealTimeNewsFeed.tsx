@@ -7,14 +7,14 @@ import { Spinner,  Stack, IStackTokens } from '@fluentui/react';
 import io from 'socket.io-client';
 
 import styles from '../RealTimeNewsFeed.module.scss';
-import IRealTimeNewsFeedWP from '../../../models/IRealTimeNewsFeedWP';
+import IRealTimeNewsFeedWP from '../models/IRealTimeNewsFeedWP';
 import { CommandBarNewsFeed } from './CommandBarNewsFeed';
 import { StickyItem } from './StickyItem';
 import { ChannelSettings } from './ChannelSettings';
 import { NewsItem } from './NewsItem';
 import { SystemMessage } from './SystemMessage';
-import { getEditedDate } from '../../../utils/ui';
-import { getRootStyle } from '../../../utils/envConfig';
+import { getEditedDate } from '../utils/ui';
+import { getRootEnv } from '../utils/envConfig';
 
 import {
   processSocketEvent,
@@ -24,8 +24,8 @@ import {
   changeChannelSettings,
   getAvailableItems,
   getChannelDD
-} from '../../../utils/realtimenewsfeed';
-import { Utility } from '../../../utils/utils';
+} from '../utils/realtimenewsfeed';
+import { Utility } from '../utils/utils';
 
 const stackTokens: IStackTokens = { childrenGap: 14 };
 
@@ -36,6 +36,7 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
     themeVariant,
     spo
   } = props;
+  const rootEnv = getRootEnv();
 
   // Refs
   const myNewsGuidRef = useRef("00000000-0000-0000-0000-000000000000");
@@ -56,12 +57,12 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
       backgroundColor: themeVariant.semanticColors.bodyBackground,
       color: themeVariant.semanticColors.bodyText
     },
-    getRootStyle()
+    getRootEnv().css
   );
 
   useEffect(() => {
     // Socket connection
-    const socket = io(process.env.SPFX_SOCKET_URL, { transports: ["websocket"], timeout: 30000 });
+    const socket = io(rootEnv.config.spfxSocketUrl, { transports: ["websocket"], timeout: 30000 });
     socket.on("connect", () => {
       console.info('Socket Connect, SocketId:' + socket.id);
     });

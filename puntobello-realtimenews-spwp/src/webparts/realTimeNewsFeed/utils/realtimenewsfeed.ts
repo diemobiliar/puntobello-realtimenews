@@ -1,7 +1,6 @@
 import { Logger } from '../utils/logger';
 import { Utility } from '../utils/utils';
-
-const logger = Logger.getInstance();
+import { getRootEnv } from './envConfig';
 
 export async function processSocketEvent(data, spo, numberOfNewNewsRef, setSystemMessageVisible, processSocketAddEvent, processSocketErrorEvent) {
   if (spo.filterQuery4Socket === undefined || spo.filterQuery4Socket.length == 0) {
@@ -30,7 +29,7 @@ export function processSocketAddEvent(numberOfNewNewsRef, setSystemMessageVisibl
 }
 
 export function processSocketErrorEvent(eventId) {
-  logger.error("Undefined event-type has been received from socket webapp", eventId);
+  Logger.getInstance().error("Undefined event-type has been received from socket webapp", eventId);
 }
 
 export async function getAllData(spo, newsChannelCurrentRef, myNewsGuidRef, newsChannelsRef, pageLanguage, newsCount, setLoading, newsItemsRef, stickyRef, channelsubItemIdRef) {
@@ -41,7 +40,7 @@ export async function getAllData(spo, newsChannelCurrentRef, myNewsGuidRef, news
     newsItemsRef.current = responsenews.newsItemData;
     stickyRef.current = responsenews.sticky;
   } catch (error) {
-    logger.error('RealTimeNewsFeed.tsx, getAllData', error);
+    Logger.getInstance().error('RealTimeNewsFeed.tsx, getAllData', error);
     newsItemsRef.current = [];
   }
   setLoading(false);
@@ -107,8 +106,8 @@ export function changeChannelSettings(spo, newsChannelsRef, item, isChecked, cha
       }
     });
   }
-  spo.updateMultiMeta(channels, `${process.env.SPFX_SUBSCRIBEDCHANNELS_LIST_TITLE}`, 'pb_Channels', channelsubItemIdRef.current).then().catch((error) => {
-    logger.error('CHANGE_CHANNEL_SETTINGS', error);
+  spo.updateMultiMeta(channels, getRootEnv().config.spfxRealtimenewsListId, 'pb_Channels', channelsubItemIdRef.current).then().catch((error) => {
+    Logger.getInstance().error('CHANGE_CHANNEL_SETTINGS', error);
   });
 }
 
@@ -120,7 +119,7 @@ export async function getAvailableItems(spo, newsChannelCurrentRef, myNewsGuidRe
     newsItemsRef.current = responsenews.newsItemData;
     stickyRef.current = responsenews.sticky;
   } catch (error) {
-    logger.error('GET_NEWS_GENERIC', error);
+    Logger.getInstance().error('GET_NEWS_GENERIC', error);
     newsItemsRef.current = [];
   }
   setLoading(false);

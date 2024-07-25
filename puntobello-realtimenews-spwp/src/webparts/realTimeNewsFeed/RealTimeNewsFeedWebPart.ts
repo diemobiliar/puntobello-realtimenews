@@ -12,11 +12,11 @@ import { PropertyFieldNumber } from '@pnp/spfx-property-controls/lib/PropertyFie
 import * as strings from 'realTimeNewsFeedStrings';
 import * as __ from 'lodash';
 
-import IRealTimeNewsFeedWP from '../../models/IRealTimeNewsFeedWP';
+import IRealTimeNewsFeedWP from './models/IRealTimeNewsFeedWP';
 import { RealTimeNewsFeed } from './components/RealTimeNewsFeed';
-import { Logger } from '../../utils/logger';
-import SharePointService, { ISharePointService } from '../../services/SharePointService';
-import ILanguageRepresentation from '../../models/ILanguageRepresentation';
+import { Logger } from './utils/logger';
+import SharePointService, { ISharePointService } from './services/SharePointService';
+import ILanguageRepresentation from './models/ILanguageRepresentation';
 
 export default class RealTimeNewsFeedWebPart extends BaseClientSideWebPart<IRealTimeNewsFeedWP> {
   private logger: Logger;

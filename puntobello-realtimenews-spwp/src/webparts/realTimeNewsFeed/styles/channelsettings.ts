@@ -1,6 +1,8 @@
 import { getTheme, FontWeights, mergeStyleSets, IIconProps, ICheckboxStyles } from '@fluentui/react';
+import { getRootEnv } from '../utils/envConfig';
 
 const theme = getTheme();
+const rootEnv = getRootEnv();
 
 export const cancelIcon: IIconProps = { iconName: 'Cancel' };
 
@@ -9,22 +11,22 @@ export const contentStyles = mergeStyleSets({
     display: 'flex',
     flexFlow: 'column nowrap',
     alignItems: 'stretch',
-    borderRadius: `12px solid ${process.env.SPFX_BORDER_RADIUS}`,
+    borderRadius: `12px solid ${rootEnv.css['--spfx_theme_color_ui_bright_grey']}`,
     minHeight: '300px',
     minWidth: '360px',
     animationName: 'modalFadeIn',
     animationDuration: '0.6s',
     animationTimingFunction: 'ease-out',
     '& body, & p, & h1, & h2, & h3, & h4, & h5, & h6, & li, & a, & span, & div': {
-      fontFamily: `${process.env.SPFX_FONT_FAMILY} !important`,
+      fontFamily: `${rootEnv.css['--spfx_font_family']}!important`,
     },
   },
   header: [
     theme.fonts.xLarge,
     {
       flex: '1 1 auto',
-      borderTop: `12px solid ${process.env.SPFX_THEME_COLOR_UI_PRIMARY}`,
-      color: `${process.env.SPFX_THEME_COLOR_UI_PRIMARY}`,
+      borderTop: `12px solid ${rootEnv.css['--spfx_theme_color_ui_primary']}`,
+      color: rootEnv.css['--spfx_theme_color_ui_primary'],
       display: 'flex',
       alignItems: 'center',
       fontWeight: FontWeights.semibold,
@@ -45,28 +47,28 @@ export const contentStyles = mergeStyleSets({
 
 export const iconButtonStyles = {
   root: {
-    color: `${process.env.SPFX_THEME_COLOR_UI_PRIMARY}`,
+    color: rootEnv.css['--spfx_theme_color_ui_primary'],
     marginLeft: 'auto',
     marginTop: '4px',
     marginRight: '2px',
   },
   rootHovered: {
-    color: `${process.env.SPFX_THEME_COLOR_UI_BLACK}`,
+    color: rootEnv.css['--spfx_theme_color_ui_black'],
   },
 };
 
 export const customCheckboxStyles: Partial<ICheckboxStyles> = {
   checkbox: {
-    border: `2px solid ${process.env.SPFX_THEME_COLOR_UI_MIDDLE_GREY} !important`,
-    borderRadius: `${process.env.SPFX_BORDER_RADIUS}`,
-    backgroundColor: `${process.env.SPFX_THEME_COLOR_UI_PRIMARY}`,
+    border: `2px solid ${rootEnv.css['--spfx_theme_color_ui_middle_grey']} !important`,
+    borderRadius: rootEnv.css['--spfx_border_radius'],
+    backgroundColor: rootEnv.css['--spfx_theme_color_ui_primary'],
   },
   checkmark: {
-    color: process.env.SPFX_THEME_COLOR_UI_WHITE,
+    color: rootEnv.css['--spfx_theme_color_ui_white'],
     fontWeight: FontWeights.semibold,
   },
   text: {
-    color: process.env.SPFX_THEME_COLOR_UI_BLACK,
+    color: rootEnv.css['--spfx_theme_color_ui_black'],
   },
 };
 

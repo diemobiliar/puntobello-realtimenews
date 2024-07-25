@@ -1,4 +1,4 @@
-import { ILogger } from "./ILogger";
+import { ILogger } from "../models/ILogger";
 
 enum LogLevel {
     Info = 'info',

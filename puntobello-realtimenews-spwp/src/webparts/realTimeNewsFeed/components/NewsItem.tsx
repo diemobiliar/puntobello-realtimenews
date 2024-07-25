@@ -7,8 +7,8 @@ import {
     DocumentCardTitle,
     Text
 } from '@fluentui/react';
-import INewsItem from '../../../models/INewsItem';
-import { getImage, getNewsImageInnerStyles } from '../../../utils/ui';
+import INewsItem from '../models/INewsItem';
+import { getImage, getNewsImageInnerStyles } from '../utils/ui';
 
 export function NewsItem(props: INewsItem) {
     const {

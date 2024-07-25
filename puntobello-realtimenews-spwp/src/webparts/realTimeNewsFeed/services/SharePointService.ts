@@ -10,7 +10,7 @@ import "@pnp/sp/taxonomy";
 import { SPFI, spfi, SPFx } from "@pnp/sp";
 import "@pnp/sp/regional-settings/web";
 import { dateAdd, PnPClientStorage } from "@pnp/common";
-import { IItemAddResult, Web } from "@pnp/sp/presets/all";
+import { IItemAddResult } from "@pnp/sp/presets/all";
 import { IOrderedTermInfo } from "@pnp/sp/taxonomy";
 
 import { Logger } from '../utils/logger';
@@ -19,6 +19,8 @@ import { IChannels2SubsItem, IChannels2SubscriptionItem } from "../models/INewsF
 import IGetNewsItemsResult from "../models/IGetNewsItemsResult";
 import INewsItemData from "../models/INewsItemData";
 import ILanguageRepresentation from "../models/ILanguageRepresentation";
+import { getRootEnv } from "../utils/envConfig";
+import IRootEnv from "../models/IRootEnv";
 
 export interface ISharePointService {
     getAndCacheAllChannels(): Promise<IOrderedTermInfo[]>;
@@ -40,6 +42,7 @@ export default class SharePointService implements ISharePointService {
     private storage: PnPClientStorage;
     private pageContext: PageContext;
     private logger: Logger;
+    private rootEnv: IRootEnv; 
     public filterQuery4Socket: string;
     public sp: SPFI;
 
@@ -50,6 +53,7 @@ export default class SharePointService implements ISharePointService {
 
             this.pageContext = serviceScope.consume(PageContext.serviceKey);
             this.storage = new PnPClientStorage();
+            this.rootEnv = getRootEnv();
 
             this.sp = spfi().using(SPFx({ pageContext: this.pageContext }));
         });
@@ -83,13 +87,13 @@ export default class SharePointService implements ISharePointService {
     }
 
     public async getSubscribedChannels4CurrentUser(): Promise<IChannels2SubsItem[]> {
-        return await this.sp.web.lists.getByTitle(`${process.env.SPFX_SUBSCRIBEDCHANNELS_LIST_TITLE}`).items
+        return await this.sp.web.lists.getByTitle(this.rootEnv.config.spfxSubscribedChannelsListTitle).items
             .filter("pb_Subscriber eq '" + this.pageContext.legacyPageContext.userId + "'")
             .select("Id", "pb_Channels").top(1)();
     }
 
     public async addSubscribedChannels4CurrentUser(): Promise<IItemAddResult> {
-        return await this.sp.web.lists.getByTitle(`${process.env.SPFX_SUBSCRIBEDCHANNELS_LIST_TITLE}`).items.add({
+        return await this.sp.web.lists.getByTitle(this.rootEnv.config.spfxSubscribedChannelsListTitle).items.add({
             Title: this.pageContext.legacyPageContext.DisplayName,
             pb_SubscriberId: this.pageContext.legacyPageContext.userId
         });
@@ -125,14 +129,14 @@ export default class SharePointService implements ISharePointService {
             const filterQuerySticky = filterQuery + ` and (pb_Sticky eq 1 and pb_StickyDate ge datetime'${currDate}')`;
             const filterQueryWithoutSticky = filterQuery + ` and ((pb_Sticky eq 0 or pb_Sticky eq null) or (pb_Sticky eq 1 and pb_StickyDate le datetime'${currDate}'))`;
             //const allNews: INewsItemData[] = [];
-            this.sp.web.lists.getById(`${process.env.SPFX_REALTIMENEWSLIST_ID}`).items.filter(filterQuerySticky).top(1)().then((item) => {
+            this.sp.web.lists.getById(this.rootEnv.config.spfxRealtimenewsListId).items.filter(filterQuerySticky).top(1)().then((item) => {
                 if (item.length > 0) {
                     newsResult.sticky = true;
                     newsResult.newsItemData.push(item[0] as INewsItemData);
                 } else {
                     newsResult.sticky = false;
                 }
-                this.sp.web.lists.getById(`${process.env.SPFX_REALTIMENEWSLIST_ID}`).items.filter(filterQueryWithoutSticky).orderBy("pb_PublishedFrom", false).top(newsCount)().then((items) => {
+                this.sp.web.lists.getById(this.rootEnv.config.spfxRealtimenewsListId).items.filter(filterQueryWithoutSticky).orderBy("pb_PublishedFrom", false).top(newsCount)().then((items) => {
                     newsResult.newsItemData.push(...items);
                     resolve(
                         newsResult
@@ -152,7 +156,7 @@ export default class SharePointService implements ISharePointService {
         const publishingDatesFilter = `pb_PublishedFrom le datetime'${currDate}' and (pb_PublishedTo ge datetime'${currDate}' or pb_PublishedTo eq null)`;
 
         const currentFilter = this.filterQuery4Socket + publishingDatesFilter + ' and (Id eq ' + id.toString() + ')';
-        const item = await this.sp.web.lists.getById(`${process.env.SPFX_REALTIMENEWSLIST_ID}`).items.filter(currentFilter).top(1)();
+        const item = await this.sp.web.lists.getById(this.rootEnv.config.spfxRealtimenewsListId).items.filter(currentFilter).top(1)();
         if (item) return true;
         return false;
     }

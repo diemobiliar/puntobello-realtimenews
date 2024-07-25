@@ -6,9 +6,9 @@ import {
     Stack,
 } from '@fluentui/react';
 import { getId } from '@fluentui/react/lib/Utilities';
-import { IChannels2SubscriptionItem } from '../../../models/INewsFeed';
-import IChannelSettingsModalProps from '../../../models/IChannelSettings';
-import { Utility } from '../../../utils/utils';
+import { IChannels2SubscriptionItem } from '../models/INewsFeed';
+import IChannelSettingsModalProps from '../models/IChannelSettings';
+import { Utility } from '../utils/utils';
 import {
     cancelIcon,
     contentStyles,
@@ -16,7 +16,7 @@ import {
     customCheckboxStyles,
     stackTokens,
     fadeInKeyframes,
-} from '../../../styles/channelsettings';
+} from '../styles/channelsettings';
 
 export function ChannelSettings(props: IChannelSettingsModalProps) {
     const {

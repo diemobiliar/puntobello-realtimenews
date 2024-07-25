@@ -1,7 +1,7 @@
 import * as moment from 'moment';
 import * as __ from 'lodash';
-import { ICommandBarItemProps, ICommandBarStyles, IDocumentCardPreviewProps, IImageStyles, ImageFit } from "@fluentui/react";
-import { Utility } from './utils';
+import { ICommandBarStyles, IDocumentCardPreviewProps, IImageStyles, ImageFit } from "@fluentui/react";
+import { getRootEnv } from './envConfig';
 
 export function getEditedDate(pubdate: string): string {
     return moment(pubdate).format('DD.MM.YYYY');
@@ -55,28 +55,29 @@ export function getStickyImageInnerStyles(): Partial<IImageStyles> {
 }
 
 export function getStickyCommandBarInnerStyles(): Partial<ICommandBarStyles> {
+    const rootEnv = getRootEnv();
     return ({
         root: {
             paddingRight: 0,
             backgroundColor: 'transparent',
             selectors: {
                 '.ms-Icon': {
-                    color: `${process.env.SPFX_THEME_COLOR_UI_WHITE}`,
+                    color: rootEnv.css['--spfx_theme_color_ui_white'],
                     marginRight: 4,
                     marginBottom: -1,
                     transition: '0.15s linear color',
                 },
                 '.ms-Button': {
                     backgroundColor: 'transparent',
-                    color: `${process.env.SPFX_THEME_COLOR_UI_WHITE}`,
+                    color: rootEnv.css['--spfx_theme_color_ui_white'],
                     transition: '0.15s linear color',
                 },
                 '.ms-Button:hover, .ms-Button:active': {
                     backgroundColor: 'transparent',
-                    color: `${process.env.SPFX_THEME_COLOR_UI_WHITE}`,
+                    color: rootEnv.css['--spfx_theme_color_ui_white'],
                     selectors: {
                         '.ms-Icon': {
-                            color: `${process.env.SPFX_THEME_COLOR_UI_WHITE}`,
+                            color: rootEnv.css['--spfx_theme_color_ui_white'],
                         },
                     },
                 },
@@ -126,26 +127,27 @@ export function getNewsImageInnerStyles(): Partial<IImageStyles> {
 }
 
 export function getNewsCommandBarInnerStyles(): Partial<ICommandBarStyles> {
+    const rootEnv = getRootEnv();
     return ({
         root: {
             paddingRight: 0,
             selectors: {
                 '.ms-Icon': {
-                    color: `${process.env.SPFX_THEME_COLOR_UI_DARK_GREY}`,
+                    color: rootEnv.css['--spfx_theme_color_ui_dark_grey'],
                     marginRight: 4,
                     marginBottom: -1,
                     transition: '0.15s linear color',
                 },
                 '.ms-Button': {
-                    color: `${process.env.SPFX_THEME_COLOR_UI_DARK_GREY}`,
+                    color: rootEnv.css['--spfx_theme_color_ui_dark_grey'],
                     transition: '0.15s linear color',
                 },
                 '.ms-Button:hover, .ms-Button:active': {
                     backgroundColor: 'transparent',
-                    color: `${process.env.SPFX_THEME_COLOR_UI_BLACK}`,
+                    color: rootEnv.css['--spfx_theme_color_ui_black'],
                     selectors: {
                         '.ms-Icon': {
-                            color: `${process.env.SPFX_THEME_COLOR_UI_BLACK}`,
+                            color: rootEnv.css['--spfx_theme_color_ui_black'],
                         },
                     },
                 },

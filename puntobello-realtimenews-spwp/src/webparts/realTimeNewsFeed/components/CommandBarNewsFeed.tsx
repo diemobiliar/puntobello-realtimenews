@@ -7,9 +7,9 @@ import {
   Link,
   IconButton,
 } from '@fluentui/react';
-import { buttonStyles, dropdownStyles } from '../../../styles/commandbar';
-import ICommandBarProps from '../../../models/ICommandBarProps';
-import { Utility } from '../../../utils/utils';
+import { buttonStyles, dropdownStyles } from '../styles/commandbar';
+import ICommandBarProps from '../models/ICommandBarProps';
+import { Utility } from '../utils/utils';
 
 export function CommandBarNewsFeed(props: ICommandBarProps) {
   const {

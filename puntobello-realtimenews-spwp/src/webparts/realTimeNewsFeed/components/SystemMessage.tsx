@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styles from '../RealTimeNewsFeed.module.scss';
-import ISystemMessageProps from '../../../models/ISystemMessage';
+import ISystemMessageProps from '../models/ISystemMessage';
 import {
     DefaultButton,
     DocumentCard,
@@ -8,7 +8,7 @@ import {
     DocumentCardTitle,
     FontIcon,
 } from '@fluentui/react';
-import { Utility } from '../../../utils/utils';
+import { Utility } from '../utils/utils';
 
 export function SystemMessage(props: ISystemMessageProps) {
     const {
