@@ -60,24 +60,15 @@ export default class SharePointService implements ISharePointService {
     }
 
     public getPageContext = async (listId: string, listItemId: number): Promise<IPageContext> => {
-        // Check if we are in a multilingual setup
-        const fields = await this.sp.web.lists.getById(listId).fields();
-        const requiredFields = ['OData__SPIsTranslation', 'OData__SPTranslationLanguage'];
-
-        // Check if all required fields exist
-        const fieldNames = fields.map(field => field.InternalName);
-        const allFieldsExist = requiredFields.every(field => fieldNames.includes(field));
-        if (!allFieldsExist) {
-            return null;
-        } else {
-            const context = await this.sp.web.lists.getById(listId)
-                .items
-                .getById(listItemId)
-                .select(
-                    'OData__SPIsTranslation',
-                    'OData__SPTranslationLanguage')();
-            return context;
-        }
+        this.logger.warn("getPageContext", listId, listItemId.toString());
+        const context: IPageContext = await this.sp.web.lists.getById(listId)
+            .items
+            .getById(listItemId)
+            .select(
+                'OData__SPIsTranslation',
+                'OData__SPTranslationLanguage',
+                'OData__SPTranslationSourceItemId')();
+        return context;
     }
 
     public async getAndCacheAllChannels(): Promise<IOrderedTermInfo[]> {
@@ -216,6 +207,7 @@ export default class SharePointService implements ISharePointService {
           };
         try {
             pageContext = await this.getPageContext(listId, listItemId);
+            this.logger.warn("calculateLanguage, getPageContext returned", pageContext);
         } catch (error) {
             this.logger.info("calculateLanguage, getPageContext returned an error, probably not running in a multilingual setup, defaulting to web language", error);
         }
