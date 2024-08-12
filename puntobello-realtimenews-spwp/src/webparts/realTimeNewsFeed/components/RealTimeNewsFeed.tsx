@@ -84,6 +84,7 @@ export function RealTimeNewsFeed(props: IRealTimeNewsFeedWP) {
   }, []);
 
   function updateNews() {
+    setSystemMessageVisible(false);
     numberOfNewNewsRef.current = 0;
     getAvailableItems(spo, newsChannelCurrentRef, myNewsGuidRef, newsChannelsRef, pageLanguage, newsCount, newsItemsRef, stickyRef, setLoading, console);
   }
