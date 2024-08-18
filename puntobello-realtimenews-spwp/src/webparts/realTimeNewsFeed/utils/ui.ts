@@ -1,15 +1,31 @@
+// External libraries
 import * as moment from 'moment';
 import * as __ from 'lodash';
-import { ICommandBarStyles, IDocumentCardPreviewProps, IImageStyles, ImageFit } from "@fluentui/react";
-import { getRootEnv } from './envConfig';
 
+// Fluent UI components and styles
+import { ICommandBarStyles, IDocumentCardPreviewProps, IImageStyles, ImageFit } from "@fluentui/react";
+
+// Project-specific utilities and configurations
+import { getRootEnv } from './envconfig';
+
+/**
+ * Formats the provided publication date string into a 'DD.MM.YYYY' format.
+ *
+ * @param {string} pubdate - The publication date as a string.
+ * @returns {string} The formatted date string in 'DD.MM.YYYY' format.
+ */
 export function getEditedDate(pubdate: string): string {
     return moment(pubdate).format('DD.MM.YYYY');
 }
 
+/**
+ * Generates the configuration for a document card preview image.
+ *
+ * @param {any} imageUrl - The URL of the image to be used. If not provided, a placeholder image will be used.
+ * @returns {IDocumentCardPreviewProps} The configuration object for the document card preview.
+ */
 export function getImage(imageUrl: any): IDocumentCardPreviewProps {
-    const currImage =
-    {
+    const currImage = {
         previewImages: [
             {
                 previewImageSrc: imageUrl ? imageUrl.Url + "&resolution=6" : 'https://via.placeholder.com/570x460',
@@ -21,8 +37,13 @@ export function getImage(imageUrl: any): IDocumentCardPreviewProps {
     return currImage;
 }
 
+/**
+ * Generates custom styles for the inner image of a sticky news item.
+ *
+ * @returns {Partial<IImageStyles>} The custom styles for the sticky image.
+ */
 export function getStickyImageInnerStyles(): Partial<IImageStyles> {
-    return ({
+    return {
         root: {
             position: 'static',
             borderBottom: 'none',
@@ -51,12 +72,17 @@ export function getStickyImageInnerStyles(): Partial<IImageStyles> {
                 },
             },
         },
-    });
+    };
 }
 
+/**
+ * Generates custom styles for the command bar within a sticky news item.
+ *
+ * @returns {Partial<ICommandBarStyles>} The custom styles for the sticky command bar.
+ */
 export function getStickyCommandBarInnerStyles(): Partial<ICommandBarStyles> {
     const rootEnv = getRootEnv();
-    return ({
+    return {
         root: {
             paddingRight: 0,
             backgroundColor: 'transparent',
@@ -86,12 +112,16 @@ export function getStickyCommandBarInnerStyles(): Partial<ICommandBarStyles> {
         primarySet: {
             justifyContent: 'flex-end',
         },
-    });
+    };
 }
 
-
+/**
+ * Generates custom styles for the inner image of a news item.
+ *
+ * @returns {Partial<IImageStyles>} The custom styles for the news image.
+ */
 export function getNewsImageInnerStyles(): Partial<IImageStyles> {
-    return ({
+    return {
         root: {
             height: '100%',
             position: 'static',
@@ -108,7 +138,7 @@ export function getNewsImageInnerStyles(): Partial<IImageStyles> {
                     height: '100%',
                     maxHeight:'267px',
                 },
-        },
+            },
             '@media (max-width: 639px)': {
                 selectors: {
                     '.ms-Image': {
@@ -123,12 +153,17 @@ export function getNewsImageInnerStyles(): Partial<IImageStyles> {
                 },
             },
         },
-    });
+    };
 }
 
+/**
+ * Generates custom styles for the command bar within a news item.
+ *
+ * @returns {Partial<ICommandBarStyles>} The custom styles for the news command bar.
+ */
 export function getNewsCommandBarInnerStyles(): Partial<ICommandBarStyles> {
     const rootEnv = getRootEnv();
-    return ({
+    return {
         root: {
             paddingRight: 0,
             selectors: {
@@ -156,5 +191,6 @@ export function getNewsCommandBarInnerStyles(): Partial<ICommandBarStyles> {
         primarySet: {
             justifyContent: 'flex-end',
         },
-    });
+    };
 }
+

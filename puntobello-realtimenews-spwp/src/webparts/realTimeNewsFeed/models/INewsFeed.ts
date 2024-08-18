@@ -1,4 +1,4 @@
-import IChannelLanguage from "./IChannelLanguage";
+import { IChannelLanguage } from "./IChannelLanguage";
 import { IItem } from '@pnp/sp/items';
 
 export interface IChannels2SubscriptionItem {

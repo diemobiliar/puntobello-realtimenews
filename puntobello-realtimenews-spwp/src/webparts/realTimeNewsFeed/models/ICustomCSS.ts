@@ -1,4 +1,4 @@
-interface ICustomCSSProperties extends React.CSSProperties {
+export interface ICustomCSS extends React.CSSProperties {
     '--spfx_theme_color_ui_black'?: string;
     '--spfx_theme_color_ui_white'?: string;
     '--spfx_theme_color_ui_primary'?: string;
@@ -15,5 +15,3 @@ interface ICustomCSSProperties extends React.CSSProperties {
     '--spfx_generic_font_size'?: string;
     '--spfx_title_font_size'?: string;
   }
-
-  export default ICustomCSSProperties;

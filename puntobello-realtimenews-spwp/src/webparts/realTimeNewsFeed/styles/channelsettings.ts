@@ -1,5 +1,5 @@
 import { getTheme, FontWeights, mergeStyleSets, IIconProps, ICheckboxStyles } from '@fluentui/react';
-import { getRootEnv } from '../utils/envConfig';
+import { getRootEnv } from '../utils/envconfig';
 
 const theme = getTheme();
 const rootEnv = getRootEnv();

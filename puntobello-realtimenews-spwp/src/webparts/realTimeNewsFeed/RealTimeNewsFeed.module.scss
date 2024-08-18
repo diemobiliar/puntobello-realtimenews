@@ -116,7 +116,6 @@
         width: 40%;
         border-radius: var(--spfx_border_radius);
         box-shadow: var(--spfx_card_box_shadow);
-        animation: circularMotion 12s linear infinite;
         transition:
           transform 0.3s ease,
           box-shadow 0.3s ease;
@@ -145,34 +144,6 @@
 
         &:hover img {
           transform: scale(1.15);
-        }
-      }
-      // Keyframe animation for smooth circular motion
-      @keyframes circularMotion {
-        0%,
-        100% {
-          transform: translate3d(0, 0, 0);
-        }
-        12.5% {
-          transform: translate3d(3px, 3px, 0);
-        }
-        25% {
-          transform: translate3d(5px, 5px, 0);
-        }
-        37.5% {
-          transform: translate3d(3px, 7px, 0);
-        }
-        50% {
-          transform: translate3d(0, 10px, 0);
-        }
-        62.5% {
-          transform: translate3d(-3px, 7px, 0);
-        }
-        75% {
-          transform: translate3d(-5px, 5px, 0);
-        }
-        87.5% {
-          transform: translate3d(-3px, 3px, 0);
         }
       }
     }

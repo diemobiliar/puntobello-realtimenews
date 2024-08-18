@@ -1,9 +1,6 @@
-import ICustomCSSProperties from "./ICustomCSSProperties";
-import ICustomConfigProperties from "./ICustomConfigProperties";
+import { ICustomCSS, ICustomConfig } from "./";
 
-interface IRootEnv {
-    css: ICustomCSSProperties;
-    config: ICustomConfigProperties;
+export interface IRootEnv {
+    css: ICustomCSS;
+    config: ICustomConfig;
 }
-
-export default IRootEnv

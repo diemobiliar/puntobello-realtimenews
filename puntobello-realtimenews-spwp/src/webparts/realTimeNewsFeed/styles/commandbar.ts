@@ -1,5 +1,5 @@
 import { IButtonStyles, IDropdownStyles } from '@fluentui/react';
-import { getRootEnv } from '../utils/envConfig';
+import { getRootEnv } from '../utils/envconfig';
 
 const rootEnv = getRootEnv();
 

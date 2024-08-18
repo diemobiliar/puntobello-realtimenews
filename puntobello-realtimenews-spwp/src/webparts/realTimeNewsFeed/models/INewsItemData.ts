@@ -1,5 +1,4 @@
-// Must corresponds to the SharePoint site column internal names for a news item
-interface INewsItemData {
+export interface INewsItemData {
     Title: string;
     Id: number;
     Author: string;
@@ -13,5 +12,3 @@ interface INewsItemData {
     pb_Sticky: boolean;
     pb_StickyDate: Date;
 }
-
-export default INewsItemData;

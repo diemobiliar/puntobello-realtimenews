@@ -1,29 +1,41 @@
-//#region #Imports
+// React and ReactDOM imports for building and rendering components
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 
+// SPFx component base and web part imports for theming and client-side web part functionalities
 import { ThemeProvider, ThemeChangedEventArgs, IReadonlyTheme } from '@microsoft/sp-component-base';
 import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
 import { Version } from '@microsoft/sp-core-library';
 import { IPropertyPaneConfiguration } from "@microsoft/sp-property-pane";
 
+// PnP SPFx property control for number inputs in the property pane
 import { PropertyFieldNumber } from '@pnp/spfx-property-controls/lib/PropertyFieldNumber';
 
+// Importing localization strings and lodash utility library
 import * as strings from 'realTimeNewsFeedStrings';
 import * as __ from 'lodash';
 
-import IRealTimeNewsFeedWP from './models/IRealTimeNewsFeedWP';
+// Component imports for the RealTimeNewsFeed and context management
 import { RealTimeNewsFeed } from './components/RealTimeNewsFeed';
-import { Logger } from './utils/logger';
-import SharePointService, { ISharePointService } from './services/SharePointService';
-import ILanguageRepresentation from './models/ILanguageRepresentation';
+import { AppContext, AppContextProvider } from './contexts/AppContext';
 
-export default class RealTimeNewsFeedWebPart extends BaseClientSideWebPart<IRealTimeNewsFeedWP> {
+// Service and utility imports for logging and SharePoint interactions
+import { Logger } from './utils/logger';
+import SharePointService from './services/SharePointService';
+
+// Model imports for defining types and interfaces
+import { ILanguageRepresentation } from './models';
+
+
+export interface IRealTimeNewsFeedWebPartProps {
+  newsCount: number;
+}
+
+export default class RealTimeNewsFeedWebPart extends BaseClientSideWebPart<IRealTimeNewsFeedWebPartProps> {
   private logger: Logger;
   private pageLanguage: ILanguageRepresentation;
   private themeProvider: ThemeProvider;
   private themeVariant: IReadonlyTheme | undefined;
-  private spo: ISharePointService;
   private initialized: boolean = false;
 
   private _handleThemeChangedEvent(args: ThemeChangedEventArgs): void {
@@ -41,13 +53,13 @@ export default class RealTimeNewsFeedWebPart extends BaseClientSideWebPart<IReal
       this.themeProvider = this.context.serviceScope.consume(ThemeProvider.serviceKey);
       this.themeVariant = this.themeProvider.tryGetTheme();
       this.themeProvider.themeChangedEvent.add(this, this._handleThemeChangedEvent);
-      const listId = this.context.pageContext.list ? this.context.pageContext.list.id.toString() : 'a3427855-c59b-4a06-aa6c-ce85bcabf087'; // add here your list id when working in the hosted workbench
-      const listItemId = this.context.pageContext.listItem ? this.context.pageContext.listItem.id : 1; // add here your listitem id when working in the hosted workbench
+      const listId = this.context.pageContext.list.id.toString();
+      const listItemId = this.context.pageContext.listItem.id;
       const language = this.context.pageContext.web.language;
       
       await super.onInit();
-      this.spo = this.context.serviceScope.consume(SharePointService.serviceKey);
-      this.pageLanguage = await this.spo.calculateLanguage(listId, listItemId, language);
+      const spo = this.context.serviceScope.consume(SharePointService.serviceKey);
+      this.pageLanguage = await spo.calculateLanguage(listId, listItemId, language);
       this.initialized = true;
 
     } catch (error) {
@@ -57,12 +69,21 @@ export default class RealTimeNewsFeedWebPart extends BaseClientSideWebPart<IReal
 
   public render(): void {
     if(this.initialized) {
-      ReactDom.render(React.createElement(RealTimeNewsFeed, {
-        pageLanguage: this.pageLanguage,
-        newsCount: this.properties.newsCount,
-        themeVariant: this.themeVariant,
-        spo: this.spo
-      }), this.domElement);
+      const appContext = new AppContext(
+        this.context,
+        this.logger,
+        this.pageLanguage,
+        this.themeVariant,
+        this.properties.newsCount
+      );
+  
+      const element: React.ReactElement = React.createElement(
+        AppContextProvider,
+        { appContext },
+        React.createElement(RealTimeNewsFeed)
+      );
+      ReactDom.render(element, this.domElement);
+  
     }
   }
 

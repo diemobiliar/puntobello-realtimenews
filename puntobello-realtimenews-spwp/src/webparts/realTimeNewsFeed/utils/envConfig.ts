@@ -1,9 +1,20 @@
-import IRootEnv from "../models/IRootEnv";
+import { IRootEnv } from "../models";
 
 let rootEnv: IRootEnv | null = null;
 
+/**
+ * Retrieves the root environment configuration settings, including CSS variables and SharePoint configuration.
+ * The configuration is lazily initialized and cached for future use.
+ * 
+ * @returns {IRootEnv} The root environment configuration object containing CSS variables and SharePoint configuration settings.
+ * 
+ * @example
+ * const env = getRootEnv();
+ * console.log(env.css['--spfx_theme_color_ui_primary']); // Output: The primary UI color defined in the environment
+ */
 export const getRootEnv = (): IRootEnv => {
     if (!rootEnv) {
+        // Lazily initialize the root environment configuration if it hasn't been initialized yet
         rootEnv = {
             css: {
                 '--spfx_theme_color_ui_black': process.env.SPFX_THEME_COLOR_UI_BLACK,
@@ -26,6 +37,8 @@ export const getRootEnv = (): IRootEnv => {
                 spfxSubscribedChannelsListTitle: process.env.SPFX_SUBSCRIBEDCHANNELS_LIST_TITLE,
                 spfxRealtimenewsListId: process.env.SPFX_REALTIMENEWSLIST_ID,
                 spfxRealtimenewsPath: process.env.SPFX_REALTIMENEWSLIST_PATH,
+                spfxSocketTimeoutInMs: process.env.SPFX_SOCKET_TIMEOUT_IN_MS,
+                spfxTermstoreChannelGuid: process.env.SPFX_TERMSTORE_CHANNEL_GUID,
             }
         };
     }
