@@ -10,34 +10,31 @@ let rootEnv: IRootEnv | null = null;
  * 
  * @example
  * const env = getRootEnv();
- * console.log(env.css['--spfx_theme_color_ui_primary']); // Output: The primary UI color defined in the environment
+ * console.log(env.css['--spfx_color_primary']); // Output: The primary UI color defined in the environment
  */
 export const getRootEnv = (): IRootEnv => {
     if (!rootEnv) {
         // Lazily initialize the root environment configuration if it hasn't been initialized yet
         rootEnv = {
             css: {
-                '--spfx_theme_color_ui_black': process.env.SPFX_THEME_COLOR_UI_BLACK,
-                '--spfx_theme_color_ui_white': process.env.SPFX_THEME_COLOR_UI_WHITE,
-                '--spfx_theme_color_ui_primary': process.env.SPFX_THEME_COLOR_UI_PRIMARY,
-                '--spfx_theme_color_ui_dark_primary': process.env.SPFX_THEME_COLOR_UI_DARK_PRIMARY,
-                '--spfx_theme_color_ui_bright_grey': process.env.SPFX_THEME_COLOR_UI_BRIGHT_GREY,
-                '--spfx_theme_color_ui_middle_grey': process.env.SPFX_THEME_COLOR_UI_MIDDLE_GREY,
-                '--spfx_theme_color_ui_dark_grey': process.env.SPFX_THEME_COLOR_UI_DARK_GREY,
+                '--spfx_color_text': process.env.SPFX_COLOR_TEXT,
+                '--spfx_color_sticky_text': process.env.SPFX_COLOR_STICKY_TEXT,
+                '--spfx_color_primary': process.env.SPFX_COLOR_PRIMARY,
+                '--spfx_color_primary_brightness_dark': process.env.SPFX_COLOR_PRIMARY_BRIGHTNESS_DARK,
                 '--spfx_border_radius': process.env.SPFX_BORDER_RADIUS,
                 '--spfx_card_box_shadow': process.env.SPFX_CARD_BOX_SHADOW,
                 '--spfx_card_box_shadow_hover': process.env.SPFX_CARD_BOX_SHADOW_HOVER,
                 '--spfx_system_message_box_shadow': process.env.SPFX_SYSTEM_MESSAGE_BOX_SHADOW,
                 '--spfx_font_family': process.env.SPFX_FONT_FAMILY,
-                '--spfx_generic_font_size': process.env.SPFX_GENERIC_FONT_SIZE,
-                '--spfx_title_font_size': process.env.SPFX_TITLE_FONT_SIZE,
+                '--spfx_font_size_generic': process.env.SPFX_FONT_SIZE_GENERIC,
+                '--spfx_font_size_title': process.env.SPFX_FONT_SIZE_TITLE,
             },
             config: {
-                spfxSocketUrl: process.env.SPFX_SOCKET_URL,
-                spfxSubscribedChannelsListTitle: process.env.SPFX_SUBSCRIBEDCHANNELS_LIST_TITLE,
-                spfxRealtimenewsListId: process.env.SPFX_REALTIMENEWSLIST_ID,
-                spfxRealtimenewsPath: process.env.SPFX_REALTIMENEWSLIST_PATH,
-                spfxSocketTimeoutInMs: process.env.SPFX_SOCKET_TIMEOUT_IN_MS,
+                spfxSocketUrl: process.env.SPFX_URL_SOCKET,
+                spfxSubscribedChannelsListTitle: process.env.SPFX_LIST_TITLE_SUBSCRIBEDCHANNELS,
+                spfxRealtimenewsListId: process.env.SPFX_LIST_ID_REALTIMENEWSLIST,
+                spfxRealtimenewsPath: process.env.SPFX_PATH_REALTIMENEWSLIST,
+                spfxSocketTimeoutInMs: process.env.SPFX_TIMEOUT_IN_MS_SOCKET,
                 spfxTermstoreChannelGuid: process.env.SPFX_TERMSTORE_CHANNEL_GUID,
             }
         };

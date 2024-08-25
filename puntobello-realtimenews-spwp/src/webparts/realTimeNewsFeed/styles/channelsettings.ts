@@ -11,7 +11,7 @@ export const contentStyles = mergeStyleSets({
     display: 'flex',
     flexFlow: 'column nowrap',
     alignItems: 'stretch',
-    borderRadius: `12px solid ${rootEnv.css['--spfx_theme_color_ui_bright_grey']}`,
+    borderRadius: `12px solid ${rootEnv.css['--spfx_color_primary']}`,
     minHeight: '300px',
     minWidth: '360px',
     animationName: 'modalFadeIn',
@@ -25,8 +25,8 @@ export const contentStyles = mergeStyleSets({
     theme.fonts.xLarge,
     {
       flex: '1 1 auto',
-      borderTop: `12px solid ${rootEnv.css['--spfx_theme_color_ui_primary']}`,
-      color: rootEnv.css['--spfx_theme_color_ui_primary'],
+      borderTop: `12px solid ${rootEnv.css['--spfx_color_primary']}`,
+      color: rootEnv.css['--spfx_color_primary'],
       display: 'flex',
       alignItems: 'center',
       fontWeight: FontWeights.semibold,
@@ -47,30 +47,53 @@ export const contentStyles = mergeStyleSets({
 
 export const iconButtonStyles = {
   root: {
-    color: rootEnv.css['--spfx_theme_color_ui_primary'],
+    color: rootEnv.css['--spfx_color_primary'],
     marginLeft: 'auto',
     marginTop: '4px',
     marginRight: '2px',
   },
   rootHovered: {
-    color: rootEnv.css['--spfx_theme_color_ui_black'],
+    color: rootEnv.css['--spfx_color_text'],
   },
 };
 
 export const customCheckboxStyles: Partial<ICheckboxStyles> = {
+  root: {
+    selectors: {
+      ':hover': {
+        backgroundColor: 'transparent !important',  
+      },
+      '.is-checked': {
+        backgroundColor: 'transparent !important',  
+      },
+    },
+  },
   checkbox: {
-    border: `2px solid ${rootEnv.css['--spfx_theme_color_ui_middle_grey']} !important`,
+    border: `2px solid ${rootEnv.css['--spfx_color_primary']} !important`,
     borderRadius: rootEnv.css['--spfx_border_radius'],
-    backgroundColor: rootEnv.css['--spfx_theme_color_ui_primary'],
+    backgroundColor: 'transparent !important',
   },
   checkmark: {
-    color: rootEnv.css['--spfx_theme_color_ui_white'],
+    color: rootEnv.css['--spfx_color_text'],
     fontWeight: FontWeights.semibold,
+    selectors: {
+      ':hover': {
+        color: rootEnv.css['--spfx_color_primary'],  
+      },
+    },
+  },
+  label: {
+    selectors: {
+      ':hover': {
+        backgroundColor: 'transparent !important',  
+      },
+    },
   },
   text: {
-    color: rootEnv.css['--spfx_theme_color_ui_black'],
+    color: rootEnv.css['--spfx_color_text'],
   },
 };
+
 
 export const stackTokens = { childrenGap: 15 };
 

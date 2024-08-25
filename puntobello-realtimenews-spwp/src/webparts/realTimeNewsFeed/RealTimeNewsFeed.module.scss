@@ -39,12 +39,13 @@
 
   .overflowSetLink {
     margin-right: 12px;
-    font-size: var(--spfx_generic_font_size);
-    color: var(--spfx_theme_color_ui_primary);
+    font-size: var(--spfx_font_size_generic);
+    color: var(--spfx_color_primary);
 
     &:hover,
     &:focus {
-      color: var(--spfx_theme_color_ui_dark_primary);
+      color: var(--spfx_color_primary);
+      filter: brightness(var(--spfx_color_primary_brightness_dark));
       text-decoration: none;
     }
 
@@ -82,8 +83,8 @@
   .cardHighlight {
     .details {
       border-radius: 0 0 var(--spfx_border_radius) var(--spfx_border_radius);
-      background-color: var(--spfx_theme_color_ui_primary);
-      color: var(--spfx_theme_color_ui_white);
+      background-color: var(--spfx_color_primary);
+      color: var(--spfx_color_sticky_text);
     }
 
     .imageWrapper {
@@ -163,14 +164,14 @@
     height: auto;
     margin-bottom: 20px;
     padding: 0;
-    font-size: var(--spfx_title_font_size);
+    font-size: var(--spfx_font_size_title);
     font-weight: bold;
     line-height: 1.2;
     letter-spacing: -0.01em;
     color: inherit;
 
     @include mq($ms-screen-min-lg) {
-      font-size: var(--spfx_title_font_size);
+      font-size: var(--spfx_font_size_title);
       max-height: 75px;
     }
   }
@@ -180,7 +181,7 @@
     height: auto;
     margin-bottom: 20px;
     padding: 0;
-    font-size: var(--spfx_generic_font_size);
+    font-size: var(--spfx_font_size_generic);
     line-height: 1.2;
     color: inherit;
   }
@@ -188,7 +189,7 @@
   .text {
     @include text-line-clamp(4);
 
-    font-size: var(--spfx_generic_font_size);
+    font-size: var(--spfx_font_size_generic);
     line-height: 1.4;
     color: inherit;
   }
@@ -209,8 +210,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: var(--spfx_generic_font_size);
-    color: var(--spfx_theme_color_ui_white);
+    font-size: var(--spfx_font_size_generic);
+    color: var(--spfx_color_sticky_text);
   }
 
   .metaBarText {
@@ -288,20 +289,21 @@
     -webkit-line-clamp: 2;
     margin-bottom: 15px;
     padding: 0;
-    font-size: var(--spfx_title_font_size);
+    font-size: var(--spfx_font_size_title);
     font-weight: bold;
     line-height: 1.3;
     letter-spacing: -0.01em;
-    color: var(--spfx_theme_color_ui_black);
+    color: var(--spfx_color_text);
   }
 
   .subtitle {
     height: 18px;
     margin-bottom: 15px;
     padding: 0;
-    font-size: var(--spfx_generic_font_size);
+    font-size: var(--spfx_font_size_generic);
     line-height: 1;
-    color: var(--spfx_theme_color_ui_dark_grey);
+    color: var(--spfx_color_text);
+    filter: brightness(var(--spfx_color_text));
   }
 
   .text {
@@ -310,9 +312,9 @@
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 4;
-    font-size: var(--spfx_generic_font_size);
+    font-size: var(--spfx_font_size_generic);
     line-height: 1.4;
-    color: var(--spfx_theme_color_ui_black);
+    color: var(--spfx_color_text);
   }
 
   .imageWrapper {
@@ -333,10 +335,10 @@
     width: 72px;
     height: 72px;
     padding: 0.2em;
-    font-size: var(--spfx_generic_font_size);
+    font-size: var(--spfx_font_size_generic);
     letter-spacing: 0.02em;
-    background-color: var(--spfx_theme_color_ui_primary);
-    color: var(--spfx_theme_color_ui_white);
+    background-color: var(--spfx_color_primary);
+    color: var(--spfx_color_sticky_text);
   }
 
   .metaBarContainer {
@@ -350,8 +352,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: var(--spfx_generic_font_size);
-    color: var(--spfx_theme_color_ui_dark_grey);
+    font-size: var(--spfx_font_size_generic);
+    color: var(--spfx_color_text);
+    filter: brightness(var(--spfx_color_text_brightness_dark));
   }
 
   .commandBar {
@@ -381,10 +384,10 @@
     margin-top: -0.1em;
     margin-bottom: 18px;
     padding: 0;
-    font-size: var(--spfx_generic_font_size);
+    font-size: var(--spfx_font_size_generic);
     font-weight: 500;
     line-height: 1.3;
-    color: var(--spfx_theme_color_ui_black);
+    color: var(--spfx_color_text);
   }
 
   .details {
@@ -396,7 +399,7 @@
     position: absolute;
     left: 0;
     font-size: x-large;
-    color: var(--spfx_theme_color_ui_primary);
+    color: var(--spfx_color_primary);
     animation: tiltRinger 1.8s infinite ease-in-out;
   }
 
@@ -407,18 +410,21 @@
     padding: 14px 32px;
     border: 0;
     border-radius: var(--spfx_border_radius);
-    font-size: var(--spfx_generic_font_size);
+    font-size: var(--spfx_font_size_generic);
     line-height: 1.3;
-    background-color: var(--spfx_theme_color_ui_primary);
-    color: var(--spfx_theme_color_ui_white);
-    position: relative; // Ensure the pseudo-element is positioned correctly
-    overflow: hidden; // Ensure the pseudo-element does not overflow the button
+    background-color: var(--spfx_color_primary);
+    color: var(--spfx_color_sticky_text);
+    position: relative; 
+    overflow: hidden; 
 
     &:hover {
-      background-color: var(--spfx_theme_color_ui_dark_primary);
-      color: var(--spfx_theme_color_ui_white);
+      color: var(--spfx_color_sticky_text);
     }
-
+  
+    &:hover::before {
+      filter: brightness(var(--spfx_color_primary_brightness_dark));
+    }
+  
     // Pseudo-element for the shiny effect
     &::after {
       content: "";

@@ -1,6 +1,6 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
-  "id": "bd6bb470-57d5-4061-88f9-58d25d095f73",
+  "id": "cd4693ba-b279-4f16-84ec-0e460bb8aae8",
   "alias": "RealTimeNewsFeed",
   "componentType": "WebPart",
   "version": "*",

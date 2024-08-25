@@ -88,22 +88,22 @@ export function getStickyCommandBarInnerStyles(): Partial<ICommandBarStyles> {
             backgroundColor: 'transparent',
             selectors: {
                 '.ms-Icon': {
-                    color: rootEnv.css['--spfx_theme_color_ui_white'],
+                    color: rootEnv.css['--spfx_color_sticky_text'],
                     marginRight: 4,
                     marginBottom: -1,
                     transition: '0.15s linear color',
                 },
                 '.ms-Button': {
                     backgroundColor: 'transparent',
-                    color: rootEnv.css['--spfx_theme_color_ui_white'],
+                    color: rootEnv.css['--spfx_color_sticky_text'],
                     transition: '0.15s linear color',
                 },
                 '.ms-Button:hover, .ms-Button:active': {
                     backgroundColor: 'transparent',
-                    color: rootEnv.css['--spfx_theme_color_ui_white'],
+                    color: rootEnv.css['--spfx_color_sticky_text'],
                     selectors: {
                         '.ms-Icon': {
-                            color: rootEnv.css['--spfx_theme_color_ui_white'],
+                            color: rootEnv.css['--spfx_color_sticky_text'],
                         },
                     },
                 },
@@ -168,21 +168,23 @@ export function getNewsCommandBarInnerStyles(): Partial<ICommandBarStyles> {
             paddingRight: 0,
             selectors: {
                 '.ms-Icon': {
-                    color: rootEnv.css['--spfx_theme_color_ui_dark_grey'],
+                    color: rootEnv.css['--spfx_text_color'],
+                    filter: `brightness(${rootEnv.css['--spfx_text_color_brightness_dark']})`, 
                     marginRight: 4,
                     marginBottom: -1,
                     transition: '0.15s linear color',
                 },
                 '.ms-Button': {
-                    color: rootEnv.css['--spfx_theme_color_ui_dark_grey'],
+                    color: rootEnv.css['--spfx_text_color'],
+                    filter: `brightness(${rootEnv.css['--spfx_text_color_brightness_dark']})`, 
                     transition: '0.15s linear color',
                 },
                 '.ms-Button:hover, .ms-Button:active': {
                     backgroundColor: 'transparent',
-                    color: rootEnv.css['--spfx_theme_color_ui_black'],
+                    color: rootEnv.css['--spfx_color_text'],
                     selectors: {
                         '.ms-Icon': {
-                            color: rootEnv.css['--spfx_theme_color_ui_black'],
+                            color: rootEnv.css['--spfx_color_text'],
                         },
                     },
                 },

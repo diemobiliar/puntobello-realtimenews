@@ -41,7 +41,7 @@ build.rig.getTasks = function () {
 
 
 build.initialize(gulp);
-
+/*
 build.addSuppression(`Warning - [sass] The local CSS class 'ms-Grid' is not camelCase and will not be type-safe.`);
 build.addSuppression(`Warning - [sass] The local CSS class 'ms-newsFeed-itemCell' is not camelCase and will not be type-safe.`);
 build.addSuppression(`Warning - [sass] The local CSS class 'ms-Fabric' is not camelCase and will not be type-safe.`);
@@ -54,4 +54,4 @@ build.addSuppression(`Warning - [sass] The local CSS class 'ms-newsFeed-chevron'
 build.addSuppression(`Warning - [sass] The local CSS class 'ms-notificationCallout-callout' is not camelCase and will not be type-safe.`);
 build.addSuppression(`Warning - [sass] The local CSS class 'ms-notificationCallout-inner' is not camelCase and will not be type-safe.`);
 build.addSuppression(`Warning - [sass] The local CSS class 'ms-notificationCallout-subText' is not camelCase and will not be type-safe.`);
-
+*/

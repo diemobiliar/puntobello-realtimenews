@@ -2,7 +2,7 @@
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
     "name": "puntobello-realtimenews-spwp",
-    "id": "2f53fcae-b41c-4fec-ba55-ae0e3d03491f",
+    "id": "845c61b4-1f8f-4f6a-980b-87cad91fd55f",
     "version": "1.0.0.0",
     "includeClientSideAssets": true,
     "isDomainIsolated": false,

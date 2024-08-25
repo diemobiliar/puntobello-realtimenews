@@ -10,29 +10,29 @@ export const dropdownStyles: Partial<IDropdownStyles> = {
     },
   },
   title: {
-    fontSize: rootEnv.css['--spfx_generic_font_size'],
+    fontSize: rootEnv.css['--spfx_font_size_generic'],
     height: '40px',
     lineHeight: '37px',
     padding: '0 30px 0 12px',
     borderRadius: '3px',
-    borderColor: rootEnv.css['--spfx_theme_color_ui_dark_grey'],
-    color: rootEnv.css['--spfx_theme_color_ui_black'],
+    borderColor: rootEnv.css['--spfx_color_text'],
+    color: rootEnv.css['--spfx_color_text'],
   },
   dropdown: {
     selectors: {
       '&:hover .ms-Dropdown-title': {
-        borderColor: rootEnv.css['--spfx_theme_color_ui_dark_grey'],
-        color: rootEnv.css['--spfx_theme_color_ui_black'],
+        borderColor: rootEnv.css['--spfx_color_text'],
+        color: rootEnv.css['--spfx_color_text'],
       },
       '&:focus::after': {
         borderRadius: rootEnv.css['--spfx_border_radius'],
-        borderColor: rootEnv.css['--spfx_theme_color_ui_primary'],
+        borderColor: rootEnv.css['--spfx_color_primary'],
       },
     },
   },
   dropdownOptionText: {
     fontSize: rootEnv.css['--spfx_theme_generic_font_size'],
-    color: rootEnv.css['--spfx_theme_color_ui_black'],
+    color: rootEnv.css['--spfx_color_text'],
     lineHeight: '1.25',
   },
   caretDownWrapper: {
@@ -42,7 +42,7 @@ export const dropdownStyles: Partial<IDropdownStyles> = {
   },
   caretDown: {
     fontSize: rootEnv.css['--spfx_theme_generic_font_size'],
-    color: rootEnv.css['--spfx_theme_color_ui_black'],
+    color: rootEnv.css['--spfx_color_text'],
   },
   label: {
     position: 'absolute',

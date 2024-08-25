@@ -7,7 +7,6 @@
   },
   "dependencies": {
     "@fluentui/react": "8.106.4",
-    "@microsoft/applicationinsights-web": "3.1.1",
     "@microsoft/sp-core-library": "1.18.2",
     "@microsoft/sp-property-pane": "1.18.2",
     "@microsoft/sp-webpart-base": "1.18.2",
@@ -30,8 +29,9 @@
     "@types/react": "17.0.45",
     "@types/react-dom": "17.0.17",
     "@types/webpack-env": "1.18.2",
-    "dotenv": "^8.6.0",
-    "dotenv-expand": "^5.1.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
+    "dotenv-expand": "^11.0.6",
     "eslint": "8.7.0",
     "eslint-plugin-react-hooks": "4.3.0",
     "gulp": "4.0.2",
@@ -45,7 +45,10 @@
     "build": "gulp bundle",
     "clean": "gulp clean",
     "test": "gulp test",
-    "pbship": "gulp clean && gulp build && gulp bundle --ship && gulp package-solution --ship"
+    "start:dev": "cross-env NODE_ENV=dev gulp serve --nobrowser",
+    "start:prod": "cross-env NODE_ENV=prod gulp serve --nobrowser",
+    "pbship:dev": "cross-env NODE_ENV=dev gulp clean && gulp build && gulp bundle --ship && gulp package-solution --ship",
+    "pbship:prod": "cross-env NODE_ENV=prod gulp clean && gulp build && gulp bundle --ship && gulp package-solution --ship"
   },
   "author": {
     "name": "Nello D'Andrea - die Mobiliar -- PuntoBello"

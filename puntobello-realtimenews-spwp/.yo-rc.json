@@ -6,7 +6,7 @@
     "packageManager": "npm",
     "componentType": "webpart",
     "libraryName": "spfx-socket-io",
-    "libraryId": "2f53fcae-b41c-4fec-ba55-ae0e3d03491f",
+    "libraryId": "845c61b4-1f8f-4f6a-980b-87cad91fd55f",
     "framework": "react",
     "sdkVersions": {
       "@microsoft/teams-js": "2.12.0",
