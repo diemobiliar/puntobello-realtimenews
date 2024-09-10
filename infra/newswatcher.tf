@@ -1,5 +1,19 @@
-{
-    "definition": {
+resource "azapi_resource" "newswatcher_lapp" {
+  depends_on = [azurerm_api_connection.apic_sb]
+  type       = "Microsoft.Logic/workflows@2017-07-01"
+  name       = "redn-azd-${var.environment_name}-newswatcherde-lapp"
+  location   = azurerm_resource_group.rg.location
+  parent_id  = azurerm_resource_group.rg.id
+  tags       = var.tags
+  identity {
+    type = "SystemAssigned"
+  }
+  schema_validation_enabled = false
+  body = jsonencode(
+  {
+    properties = {
+      "state" : "Enabled",
+      "definition": {
         "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
         "actions": {
             "Condition_Main_Version_and_Page_is_a_News": {
@@ -61,7 +75,7 @@
                                         }
                                     },
                                     "method": "post",
-                                    "path": "/@{encodeURIComponent(encodeURIComponent('@@azureSBQueueName@@'))}/messages",
+                                    "path": "/@{encodeURIComponent(encodeURIComponent('${azurerm_servicebus_queue.sb_pagepublishing_queue.name}'))}/messages",
                                     "queries": {
                                         "systemProperties": "None"
                                     }
@@ -107,7 +121,7 @@
                                         }
                                     },
                                     "method": "patch",
-                                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('@@rtNewsListGuid@@'))}/items/@{encodeURIComponent(items('Apply_to_each_RTNews_but_just_one_in_fact')['ID'])}",
+                                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('${var.rtnews}'))}/items/@{encodeURIComponent(items('Apply_to_each_RTNews_but_just_one_in_fact')['ID'])}",
                                     "retryPolicy": {
                                         "type": "none"
                                     }
@@ -146,7 +160,7 @@
                                 }
                             },
                             "method": "post",
-                            "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('@@publishingLogListGuid@@'))}/items"
+                            "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('${var.publishinglog}'))}/items"
                         },
                         "metadata": {
                             "flowSystemMetadata": {
@@ -242,7 +256,7 @@
                                         }
                                     },
                                     "method": "post",
-                                    "path": "/@{encodeURIComponent(encodeURIComponent('@@azureSBQueueName@@'))}/messages",
+                                    "path": "/@{encodeURIComponent(encodeURIComponent('${azurerm_servicebus_queue.sb_pagepublishing_queue.name}'))}/messages",
                                     "queries": {
                                         "systemProperties": "None"
                                     }
@@ -485,7 +499,7 @@
                             "content": "@variables('varProcessingTerm')",
                             "schema": {
                                 "properties": {
-                                    "@@odata.type": {
+                                    "odata.type": {
                                         "type": "string"
                                     },
                                     "Label": {
@@ -553,7 +567,7 @@
                             "content": "@variables('varProcessingTerm')",
                             "schema": {
                                 "properties": {
-                                    "@@odata.type": {
+                                    "odata.type": {
                                         "type": "string"
                                     },
                                     "Label": {
@@ -621,7 +635,7 @@
                             "content": "@variables('varProcessingTerm')",
                             "schema": {
                                 "properties": {
-                                    "@@odata.type": {
+                                    "odata.type": {
                                         "type": "string"
                                     },
                                     "Label": {
@@ -689,7 +703,7 @@
                             "content": "@variables('varProcessingTerm')",
                             "schema": {
                                 "properties": {
-                                    "@@odata.type": {
+                                    "odata.type": {
                                         "type": "string"
                                     },
                                     "Label": {
@@ -991,7 +1005,7 @@
                         {
                             "name": "varRootUrl",
                             "type": "string",
-                            "value": "https://@@tenantName@@.sharepoint.com/sites/@@newsSite@@"
+                            "value": "https://${var.tenantname}.sharepoint.com/sites/${var.newsde}"
                         }
                     ]
                 },
@@ -1025,7 +1039,7 @@
                         {
                             "name": "varTargetUrl",
                             "type": "string",
-                            "value": "https://@@tenantName@@.sharepoint.com/sites/@@rednetHubSite@@"
+                            "value": "https://${var.tenantname}.sharepoint.com/sites/${var.hubsite}"
                         }
                     ]
                 },
@@ -1264,7 +1278,7 @@
                         }
                     },
                     "method": "get",
-                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent('https://@@tenantName@@.sharepoint.com/sites/@@newsSite@@'))}/tables/@{encodeURIComponent(encodeURIComponent('@@sitePageTriggerListGuid@@'))}/onupdatedfileitems"
+                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent('https://${var.tenantname}.sharepoint.com/sites/${var.newsde}'))}/tables/@{encodeURIComponent(encodeURIComponent('${var.newsdelist}'))}/onupdatedfileitems"
                 },
                 "metadata": {
                     "flowSystemMetadata": {
@@ -1272,28 +1286,31 @@
                     }
                 },
                 "recurrence": {
-                    "frequency": "@@frequency@@",
-                    "interval": @@interval@@
+                    "frequency": "Minute",
+                    "interval": 15
                 },
                 "splitOn": "@triggerBody()?['value']",
                 "type": "ApiConnection"
             }
         }
-    },
-    "parameters": {
+      },
+      "parameters": {
         "$connections": {
             "value": {
                 "servicebus": {
-                    "connectionId": "/subscriptions/@@azureSubscriptionId@@/resourceGroups/@@azureResourceGroup@@/providers/Microsoft.Web/connections/@@azureSBConnectionName@@",
-                    "connectionName": "@@azureSBConnectionName@@",
-                    "id": "/subscriptions/@@azureSubscriptionId@@/providers/Microsoft.Web/locations/@@azureLocation@@/managedApis/servicebus"
+                    "connectionId": "${azurerm_api_connection.apic_sb.id}",
+                    "connectionName": "${azurerm_api_connection.apic_sb.name}",
+                    "id": "${data.azurerm_subscription.sub.id}/providers/Microsoft.Web/locations/${azurerm_resource_group.rg.location}/managedApis/servicebus"
                 },
                 "sharepointonline": {
-                    "connectionId": "/subscriptions/@@azureSubscriptionId@@/resourceGroups/@@azureBaseResourceGroup@@/providers/Microsoft.Web/connections/@@azureSPOConnectionName@@",
-                    "connectionName": "@@azureSPOConnectionName@@",
-                    "id": "/subscriptions/@@azureSubscriptionId@@/providers/Microsoft.Web/locations/@@azureLocation@@/managedApis/sharepointonline"
+                    "connectionId": "${azurerm_api_connection.apic_spo.id}",
+                    "connectionName": "${azurerm_api_connection.apic_spo.name}",
+                    "id": "${data.azurerm_subscription.sub.id}/providers/Microsoft.Web/locations/${azurerm_resource_group.rg.location}/managedApis/sharepointonline"
                 }
             }
         }
+      }
     }
+  }
+  )
 }

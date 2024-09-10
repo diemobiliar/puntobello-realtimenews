@@ -1,0 +1,10 @@
+name: azd-starter
+resourceGroup: ${rg}
+infra:
+  provider: terraform
+services:
+  app:
+    resourceName: ${app_name}
+    project: ./puntobello-realtimenews-webapp
+    host: appservice
+    language: js

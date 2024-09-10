@@ -1,0 +1,8 @@
+{
+    "solutions": [
+        {
+            "solutionName": "puntobello-realtimenews-spwp",
+            "targets": ["pb_home"]
+        }
+    ]
+}

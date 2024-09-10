@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pnp:Provisioning xmlns:pnp="http://schemas.dev.office.com/PnP/2022/09/ProvisioningSchema">
+  <pnp:Preferences Generator="PnP.Framework, Version=1.13.1.0, Culture=neutral, PublicKeyToken=0d501f89f11b748c" />
+  <pnp:Templates ID="CONTAINER-TEMPLATE-854D99E05AC64545B380FC0927DAD41F">
+    <pnp:ProvisioningTemplate ID="TEMPLATE-854D99E05AC64545B380FC0927DAD41F" Version="1" BaseSiteTemplate="SITEPAGEPUBLISHING#0" Scope="RootSite">
+      <pnp:Lists>
+        <pnp:ListInstance Title="PublishingLog" Description="" DocumentTemplate="" TemplateType="100" Url="Lists/publishinglog" EnableVersioning="true" MinorVersionLimit="0" MaxVersionLimit="50" DraftVersionVisibility="0" TemplateFeatureID="00bfea71-de22-43b2-a848-c05709900100" EnableFolderCreation="false" NoCrawl="true" DefaultDisplayFormUrl="{site}/Lists/publishinglog/DispForm.aspx" DefaultEditFormUrl="{site}/Lists/publishinglog/EditForm.aspx" DefaultNewFormUrl="{site}/Lists/publishinglog/NewForm.aspx" ImageUrl="/_layouts/15/images/itgen.png?rev=47" IrmExpire="false" IrmReject="false" IsApplicationList="false" ValidationFormula="" ValidationMessage="">
+          <pnp:ContentTypeBindings>
+            <pnp:ContentTypeBinding ContentTypeID="0x01" Default="true" />
+            <pnp:ContentTypeBinding ContentTypeID="0x0120" />
+          </pnp:ContentTypeBindings>
+          <pnp:Views>
+            <View Name="{3F2662A3-E5BB-4705-AB6A-F7F3688C71ED}" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" Type="HTML" DisplayName="Alle Elemente" Url="{site}/Lists/publishinglog/AllItems.aspx" Level="1" BaseViewID="1" ContentTypeID="0x" ImageUrl="/_layouts/15/images/generic.png?rev=47">
+              <Query>
+                <OrderBy>
+                  <FieldRef Name="ID" />
+                </OrderBy>
+              </Query>
+              <ViewFields>
+                <FieldRef Name="LinkTitle" />
+                <FieldRef Name="REDN_PubFrom" />
+                <FieldRef Name="REDN_StatusCode" />
+                <FieldRef Name="REDN_StatusText" />
+                <FieldRef Name="REDN_PageName" />
+                <FieldRef Name="Created" />
+              </ViewFields>
+              <RowLimit Paged="TRUE">30</RowLimit>
+              <JSLink>clienttemplates.js</JSLink>
+            </View>
+          </pnp:Views>
+          <pnp:Fields>
+            <Field Type="DateTime" Name="REDN_PubFrom" DisplayName="Publiziert von" ID="{f97a970f-3750-418e-a962-6db6ff0f2fad}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:PublishingLog}}" StaticName="REDN_PubFrom" ColName="datetime1" RowOrdinal="0" />
+            <Field Type="Text" Name="REDN_StatusCode" DisplayName="Status Code" ID="{80c7cedc-3225-4026-84ad-4348e8dbd991}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:PublishingLog}}" StaticName="REDN_StatusCode" ColName="nvarchar4" RowOrdinal="0" />
+            <Field Type="Note" Name="REDN_StatusText" DisplayName="Status Text" ID="{8546e63a-9a0c-4dfa-b0f3-af37a439f161}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:PublishingLog}}" StaticName="REDN_StatusText" ColName="ntext2" RowOrdinal="0" />
+            <Field Type="URL" Name="REDN_PageName" DisplayName="Page Url" ID="{fb203152-4a92-4ce4-810f-8f6e5de2e91c}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:PublishingLog}}" StaticName="REDN_PageName" ColName="nvarchar5" RowOrdinal="0" ColName2="nvarchar6" RowOrdinal2="0" />
+            <Field ID="{76d13cd2-1bae-45a5-8b74-545b87b65037}" Name="_ColorTag" DisplaceOnUpgrade="TRUE" ShowInFileDlg="FALSE" ReadOnly="TRUE" Type="Text" DisplayName="Farbkennzeichnung" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="_ColorTag" FromBaseType="TRUE" ColName="nvarchar8" />
+          </pnp:Fields>
+          <pnp:FieldRefs>
+            <pnp:FieldRef ID="fa564e0f-0c70-4ab9-b863-0177e6ddd247" Name="Title" Required="true" DisplayName="Titel" />
+          </pnp:FieldRefs>
+        </pnp:ListInstance>
+      </pnp:Lists>
+    </pnp:ProvisioningTemplate>
+  </pnp:Templates>
+</pnp:Provisioning>

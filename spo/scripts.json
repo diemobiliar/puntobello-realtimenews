@@ -1,0 +1,26 @@
+{
+    "scripts": [
+        {
+            "scriptName": "Invoke-SiteTemplates.ps1",
+            "relativePath": "/usr/local/bin",
+            "sortOrder": 100,
+            "environment": [
+                "dev",
+                "test",
+                "preprod",
+                "prod"
+            ]
+        },
+        {
+            "scriptName": "Set-ListPermissions.ps1",
+            "relativePath": "/usr/local/bin",
+            "sortOrder": 200,
+            "environment": [
+                "dev",
+                "test",
+                "preprod",
+                "prod"
+            ]
+        }
+    ]
+}

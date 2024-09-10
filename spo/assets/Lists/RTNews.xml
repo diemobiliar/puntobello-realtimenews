@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pnp:Provisioning xmlns:pnp="http://schemas.dev.office.com/PnP/2022/09/ProvisioningSchema">
+  <pnp:Preferences Generator="PnP.Framework, Version=1.13.1.0, Culture=neutral, PublicKeyToken=0d501f89f11b748c" />
+  <pnp:Templates ID="CONTAINER-TEMPLATE-84E20FFDC1A54110B51B09A310B01A13">
+    <pnp:ProvisioningTemplate ID="TEMPLATE-84E20FFDC1A54110B51B09A310B01A13" Version="1" BaseSiteTemplate="SITEPAGEPUBLISHING#0" Scope="RootSite">
+      <pnp:Lists>
+        <pnp:ListInstance Title="RTNews" Description="" DocumentTemplate="" TemplateType="100" Url="Lists/RTNews" EnableVersioning="true" MinorVersionLimit="0" MaxVersionLimit="50" DraftVersionVisibility="0" TemplateFeatureID="00bfea71-de22-43b2-a848-c05709900100" EnableFolderCreation="false" DefaultDisplayFormUrl="{site}/Lists/RTNews/DispForm.aspx" DefaultEditFormUrl="{site}/Lists/RTNews/EditForm.aspx" DefaultNewFormUrl="{site}/Lists/RTNews/NewForm.aspx" ImageUrl="/_layouts/15/images/itgen.png?rev=47" IrmExpire="false" IrmReject="false" IsApplicationList="false" ValidationFormula="" ValidationMessage="">
+          <pnp:ContentTypeBindings>
+            <pnp:ContentTypeBinding ContentTypeID="0x01" Default="true" />
+            <pnp:ContentTypeBinding ContentTypeID="0x0120" />
+          </pnp:ContentTypeBindings>
+          <pnp:Views>
+            <View Name="{747ADAF7-CA83-453E-B037-47A68F5E5624}" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" Type="HTML" DisplayName="Alle Elemente" Url="{site}/Lists/RTNews/AllItems.aspx" Level="1" BaseViewID="1" ContentTypeID="0x" ImageUrl="/_layouts/15/images/generic.png?rev=47">
+              <Query>
+                <OrderBy>
+                  <FieldRef Name="Created" Ascending="FALSE" />
+                  <FieldRef Name="Title" />
+                </OrderBy>
+              </Query>
+              <ViewFields>
+                <FieldRef Name="LinkTitle" />
+                <FieldRef Name="REDN_Sticky" />
+                <FieldRef Name="REDN_StickyDate" />
+                <FieldRef Name="REDN_Locations" />
+                <FieldRef Name="REDN_Keywords" />
+                <FieldRef Name="REDN_Topics" />
+                <FieldRef Name="REDN_LangCd" />
+                <FieldRef Name="REDN_ImageUrl" />
+                <FieldRef Name="REDN_NewsHeader" />
+                <FieldRef Name="REDN_NewsTitle" />
+                <FieldRef Name="REDN_NewsUrl" />
+                <FieldRef Name="REDN_PageLayout" />
+                <FieldRef Name="REDN_PageName" />
+                <FieldRef Name="REDN_Unpublish" />
+                <FieldRef Name="REDN_Channels" />
+                <FieldRef Name="REDN_PubFrom" />
+                <FieldRef Name="REDN_PubTo" />
+                <FieldRef Name="REDN_CommentsNumber" />
+                <FieldRef Name="REDN_LikeNumber" />
+                <FieldRef Name="REDN_ViewNumber" />
+                <FieldRef Name="REDN_Lead" />
+                <FieldRef Name="REDN_IsGANL" />
+                <FieldRef Name="REDN_GANLWeek" />
+                <FieldRef Name="REDN_GANLYear" />
+                <FieldRef Name="Modified" />
+                <FieldRef Name="Created" />
+                <FieldRef Name="ID" />
+              </ViewFields>
+              <RowLimit Paged="TRUE">30</RowLimit>
+              <Aggregations Value="Off" />
+              <JSLink>clienttemplates.js</JSLink>
+              <ViewData />
+            </View>
+            <View Name="{B46E5352-191E-4360-89D8-69C4F849D6B0}" MobileView="TRUE" Type="HTML" DisplayName="testnello" Url="{site}/Lists/RTNews/testnello.aspx" Level="1" BaseViewID="1" ContentTypeID="0x" ImageUrl="/_layouts/15/images/generic.png?rev=47">
+              <Query>
+                <GroupBy Collapse="TRUE" GroupLimit="30">
+                  <FieldRef Name="Title" />
+                </GroupBy>
+                <OrderBy>
+                  <FieldRef Name="Title" />
+                  <FieldRef Name="Modified" />
+                </OrderBy>
+              </Query>
+              <ViewFields>
+                <FieldRef Name="LinkTitle" />
+                <FieldRef Name="REDN_Sticky" />
+                <FieldRef Name="REDN_StickyDate" />
+                <FieldRef Name="REDN_Locations" />
+                <FieldRef Name="REDN_Keywords" />
+                <FieldRef Name="REDN_Topics" />
+                <FieldRef Name="REDN_LangCd" />
+                <FieldRef Name="REDN_ImageUrl" />
+                <FieldRef Name="REDN_NewsHeader" />
+                <FieldRef Name="REDN_NewsTitle" />
+                <FieldRef Name="REDN_NewsUrl" />
+                <FieldRef Name="REDN_PageLayout" />
+                <FieldRef Name="REDN_PageName" />
+                <FieldRef Name="REDN_Unpublish" />
+                <FieldRef Name="REDN_Channels" />
+                <FieldRef Name="REDN_PubFrom" />
+                <FieldRef Name="REDN_PubTo" />
+                <FieldRef Name="REDN_CommentsNumber" />
+                <FieldRef Name="REDN_LikeNumber" />
+                <FieldRef Name="REDN_ViewNumber" />
+                <FieldRef Name="REDN_Lead" />
+                <FieldRef Name="REDN_IsGANL" />
+                <FieldRef Name="REDN_GANLWeek" />
+                <FieldRef Name="REDN_GANLYear" />
+                <FieldRef Name="Modified" />
+                <FieldRef Name="Created" />
+                <FieldRef Name="ID" />
+              </ViewFields>
+              <RowLimit Paged="TRUE">30</RowLimit>
+              <Aggregations Value="Off" />
+              <JSLink>clienttemplates.js</JSLink>
+              <ViewData />
+            </View>
+          </pnp:Views>
+          <pnp:Fields>
+            <Field Type="Boolean" Name="REDN_Sticky" DisplayName="Sticky" ID="{20cb9101-6947-43b8-887a-3449b47fdc2d}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_Sticky" ColName="bit1" RowOrdinal="0" />
+            <Field Type="DateTime" Name="REDN_StickyDate" DisplayName="Sticky bis" ID="{f4dc0b01-fb4b-432f-a225-39cc1744eae0}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_StickyDate" ColName="datetime1" RowOrdinal="0" />
+            <Field Name="REDN_Locations" FromBaseType="FALSE" Type="Text" DisplayName="RT Locations" Required="FALSE" EnforceUniqueValues="FALSE" Indexed="FALSE" MaxLength="255" ID="{a701d036-8bcb-4b2d-a089-8b4e348cd9c7}" Version="3" StaticName="REDN_Locations" SourceID="{{listid:RTNews}}" ColName="nvarchar4" RowOrdinal="0" Group="Mobiliar" />
+            <Field Type="Text" Name="REDN_Keywords" DisplayName="RT Keywords" ID="{9fcf9caf-bf02-457b-ac99-f1267c0a0f4a}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_Keywords" ColName="nvarchar5" RowOrdinal="0" />
+            <Field Type="Text" Name="REDN_Topics" DisplayName="RT Topics" ID="{70d51d02-b7c6-4afc-977d-cf43b1e760f0}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_Topics" ColName="nvarchar6" RowOrdinal="0" />
+            <Field Type="Text" Name="REDN_LangCd" DisplayName="RT Language" ID="{3f76d053-b69b-458d-b631-8bb90b0e5b0e}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_LangCd" ColName="nvarchar7" RowOrdinal="0" />
+            <Field Type="URL" Name="REDN_ImageUrl" DisplayName="RT Image Url" ID="{1da25fdb-325e-4cfa-8e0c-2ad055611d40}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_ImageUrl" ColName="nvarchar8" RowOrdinal="0" ColName2="nvarchar9" RowOrdinal2="0" />
+            <Field Type="Note" Name="REDN_NewsHeader" DisplayName="RT Header" ID="{d29fbd04-fd81-473f-8e05-b4901516111a}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_NewsHeader" ColName="ntext2" RowOrdinal="0" />
+            <Field Type="Text" Name="REDN_NewsTitle" DisplayName="RT Title" ID="{99095275-09fa-4e7f-bc8b-b24acfc4c322}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_NewsTitle" ColName="nvarchar10" RowOrdinal="0" />
+            <Field Type="URL" Name="REDN_NewsUrl" DisplayName="RT News Url" ID="{890e02b3-52a1-4116-909e-d1c51d50ad53}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_NewsUrl" ColName="nvarchar11" RowOrdinal="0" ColName2="nvarchar12" RowOrdinal2="0" />
+            <Field Type="Text" Name="REDN_PageLayout" DisplayName="RT Mobi Page Layout" ID="{482e1829-f2ee-46ed-90b6-85b51c70f44e}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_PageLayout" ColName="nvarchar13" RowOrdinal="0" />
+            <Field Type="Text" Name="REDN_PageName" DisplayName="RT Page Name" ID="{879b05e0-b057-4fec-b638-15ccd8498a7e}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_PageName" ColName="nvarchar14" RowOrdinal="0" />
+            <Field Type="Boolean" Name="REDN_Unpublish" DisplayName="RT Mobi Unpublish" ID="{f941e75f-2883-4676-921e-2d5b3f271ef5}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_Unpublish" ColName="bit2" RowOrdinal="0" />
+            <Field Type="Text" Name="REDN_Channels" DisplayName="RT Channels" ID="{499c9848-5428-4b93-b294-128ee1533487}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_Channels" ColName="nvarchar15" RowOrdinal="0" />
+            <Field Type="DateTime" Name="REDN_PubFrom" DisplayName="RT Publiziert von" ID="{f97a970f-3750-418e-a962-6db6ff0f2fad}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_PubFrom" ColName="datetime2" RowOrdinal="0" />
+            <Field Type="DateTime" Name="REDN_PubTo" DisplayName="RT Publiziert bis" ID="{28783bda-8f9e-44d0-93c4-cf3111d4c631}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_PubTo" ColName="datetime3" RowOrdinal="0" />
+            <Field Type="Number" Name="REDN_CommentsNumber" DisplayName="RT Comments number" ID="{66f09abd-7b0e-46e1-85e1-11938638bc6e}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_CommentsNumber" ColName="float1" RowOrdinal="0" />
+            <Field Type="Number" Name="REDN_LikeNumber" DisplayName="RT Like number" ID="{9bedda47-97a1-4486-83f4-d7e85b5337c3}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_LikeNumber" ColName="float2" RowOrdinal="0" />
+            <Field Type="Number" Name="REDN_ViewNumber" DisplayName="RT View number" ID="{8de0b635-12d5-43e9-89de-bdb5bebce39d}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_ViewNumber" ColName="float3" RowOrdinal="0" />
+            <Field Type="Text" Name="REDN_Lead" DisplayName="Lead Text" ID="{3c0c03e6-3fd0-43ff-9e05-46e73234f888}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_Lead" ColName="nvarchar16" RowOrdinal="0" />
+            <Field Type="Boolean" Name="REDN_IsGANL" DisplayName="Is GA Newsletter" ID="{f0cf456e-94df-4174-9a55-2800a1a0fdb9}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_IsGANL" ColName="bit3" RowOrdinal="0" Version="1">
+              <Default>0</Default>
+            </Field>
+            <Field Type="Text" Name="REDN_GANLWeek" DisplayName="GA Newsletter Week" ID="{256e6041-8ae6-4c33-8363-758d907e1f51}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_GANLWeek" ColName="nvarchar17" RowOrdinal="0" />
+            <Field Type="Text" Name="REDN_GANLYear" DisplayName="GA Newsletter Year" ID="{ddac8b52-12ab-4ed9-89d8-f37043818862}" Group="Mobiliar" Required="FALSE" SourceID="{{listid:RTNews}}" StaticName="REDN_GANLYear" ColName="nvarchar18" RowOrdinal="0" />
+            <Field ID="{76d13cd2-1bae-45a5-8b74-545b87b65037}" Name="_ColorTag" DisplaceOnUpgrade="TRUE" ShowInFileDlg="FALSE" ReadOnly="TRUE" Type="Text" DisplayName="Farbkennzeichnung" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="_ColorTag" FromBaseType="TRUE" ColName="nvarchar20" />
+          </pnp:Fields>
+          <pnp:FieldRefs>
+            <pnp:FieldRef ID="fa564e0f-0c70-4ab9-b863-0177e6ddd247" Name="Title" Required="true" DisplayName="Titel" />
+          </pnp:FieldRefs>
+        </pnp:ListInstance>
+      </pnp:Lists>
+    </pnp:ProvisioningTemplate>
+  </pnp:Templates>
+</pnp:Provisioning>

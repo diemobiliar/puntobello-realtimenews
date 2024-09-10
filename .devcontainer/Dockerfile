@@ -58,8 +58,7 @@ FROM --platform=linux/${ARCH} mcr.microsoft.com/cbl-mariner/base/nodejs:18.20.3-
 
     RUN --mount=type=cache,target=/var/cache/tdnf,rw \
         tdnf update -y \
-        && tdnf install -y icu less openssh-clients ca-certificates git dotnet-runtime-7.0 tar awk shadow-utils \
-        #python3 python3-pip \
+        && tdnf install -y icu less openssh-clients ca-certificates git dotnet-runtime-7.0 tar awk shadow-utils terraform azure-cli \
         && tdnf upgrade -y \
         && tdnf clean all
 

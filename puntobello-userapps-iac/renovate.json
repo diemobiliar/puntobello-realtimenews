@@ -1,6 +1,0 @@
-{
-    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "extends": [
-      "gitlab>diemobiliar/it/cin/system/cin-system-stack//renovate/everything"
-    ]
-}

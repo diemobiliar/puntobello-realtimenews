@@ -1,0 +1,28 @@
+{
+    "templates": [
+        {
+            "templateName": "RTNews.xml",
+            "targets": ["pb_config"],
+            "url": "rednet",
+            "sortOrder": 100
+        },
+        {
+            "templateName": "Rednet_ChannelsSubscription.xml",
+            "targets": ["pb_config"],
+            "url": "rednet",
+            "sortOrder": 200
+        },
+        {
+            "templateName": "Rednet_Channels2Loc.xml",
+            "targets": ["pb_config"],
+            "url": "rednet",
+            "sortOrder": 300
+        },
+        {
+            "templateName": "PublishingLog.xml",
+            "targets": ["pb_config"],
+            "url": "rednet",
+            "sortOrder": 400
+        }
+    ]
+}
