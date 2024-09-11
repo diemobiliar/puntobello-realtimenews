@@ -2,17 +2,18 @@ data "azurerm_subscription" "sub" {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = "redn-azd-${var.environment_name}-rg"
+  name     = "puntobello-realtimenews-${var.environment_name}-rg"
   location = var.location
   tags     = var.tags
 }
 
 resource "azurerm_service_plan" "plan_linux" {
-  name                = "redn-azd-${var.environment_name}-splan"
+  name                = "puntobello-realtimenews-${var.environment_name}-splan"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name  
   os_type             = "Linux"
-  sku_name            = "P1v2"
+  #sku_name            = "P1v2"
+  sku_name            = "S1"
   tags                = var.tags
 }
 
@@ -33,7 +34,7 @@ resource "azurerm_service_plan" "plan_linux" {
 
 # App Service
 resource "azurerm_linux_web_app" "app" {
-  name                = "redn-azd-${var.environment_name}-as"
+  name                = "puntobello-realtimenews-${var.environment_name}-as"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   service_plan_id = azurerm_service_plan.plan_linux.id
@@ -56,6 +57,7 @@ resource "azurerm_linux_web_app" "app" {
     "WEBSITE_NODE_DEFAULT_VERSION" = "~20"
     "SERVICEBUS_CONNECTION_STRING" = azurerm_servicebus_namespace.sb_pagepublishing.default_primary_connection_string
     "SERVICEBUS_QUEUE_NAME" = azurerm_servicebus_queue.sb_pagepublishing_queue.name
+    "CORS_ORIGIN" = var.app_sitepublishing_cors_origin
   }
 
   logs {
@@ -125,10 +127,10 @@ resource "azurerm_linux_web_app" "app" {
 # Service Bus
 # namespace
 resource "azurerm_servicebus_namespace" "sb_pagepublishing" {
-  name                = "redn-azd-${var.environment_name}-bus"
+  name                = "puntobello-realtimenews-${var.environment_name}-bus"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  sku                 = "Basic"
+  sku                 = "Standard"
   tags                = var.tags
   minimum_tls_version = "1.2"
 }
@@ -138,7 +140,6 @@ resource "azurerm_servicebus_queue" "sb_pagepublishing_queue" {
   name                  = "news"
   namespace_id          = azurerm_servicebus_namespace.sb_pagepublishing.id
   lock_duration         = "PT30S"
-  max_size_in_megabytes = 1024
 }
 
 # resource "azurerm_monitor_diagnostic_setting" "sb_pagepublishing_diag" {
@@ -216,7 +217,7 @@ data "azurerm_managed_api" "managed_api_spo" {
 # }
 
 resource "azurerm_api_connection" "apic_sb" {
-  name                = "redn-azd-${var.environment_name}-bus-apic"
+  name                = "puntobello-realtimenews-${var.environment_name}-bus-apic"
   resource_group_name = azurerm_resource_group.rg.name
   managed_api_id      = data.azurerm_managed_api.managed_api_sb.id
   tags                = var.tags
@@ -226,7 +227,7 @@ resource "azurerm_api_connection" "apic_sb" {
 }
 
 resource "azurerm_api_connection" "apic_spo" {
-  name                = "redn-azd-${var.environment_name}-spo-apic"
+  name                = "puntobello-realtimenews-${var.environment_name}-spo-apic"
   resource_group_name = azurerm_resource_group.rg.name
   managed_api_id      = data.azurerm_managed_api.managed_api_spo.id
   tags                = var.tags
@@ -349,7 +350,7 @@ resource "azurerm_api_connection" "apic_spo" {
 # }
 
 resource "azurerm_logic_app_workflow" "logic_newswatcher_fr" {
-  name                = "redn-azd-${var.environment_name}-newswatcherfr-lapp"
+  name                = "puntobello-realtimenews-${var.environment_name}-newswatcherfr-lapp"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   tags                = var.tags
@@ -381,7 +382,7 @@ resource "azurerm_logic_app_workflow" "logic_newswatcher_fr" {
 # }
 
 resource "azurerm_logic_app_workflow" "logic_newswatcher_it" {
-  name                = "redn-azd-${var.environment_name}-newswatcherit-lapp"
+  name                = "puntobello-realtimenews-${var.environment_name}-newswatcherit-lapp"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   tags                = var.tags
@@ -413,7 +414,7 @@ resource "azurerm_logic_app_workflow" "logic_newswatcher_it" {
 # }
 
 resource "azurerm_logic_app_workflow" "logic_newsliker_de" {
-  name                = "redn-azd-${var.environment_name}-newslikerde-lapp"
+  name                = "puntobello-realtimenews-${var.environment_name}-newslikerde-lapp"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   tags                = var.tags
@@ -445,7 +446,7 @@ resource "azurerm_logic_app_workflow" "logic_newsliker_de" {
 # }
 
 resource "azurerm_logic_app_workflow" "logic_newsliker_fr" {
-  name                = "redn-azd-${var.environment_name}-newslikerfr-lapp"
+  name                = "puntobello-realtimenews-${var.environment_name}-newslikerfr-lapp"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   tags                = var.tags
@@ -477,7 +478,7 @@ resource "azurerm_logic_app_workflow" "logic_newsliker_fr" {
 # }
 
 resource "azurerm_logic_app_workflow" "logic_newsliker_it" {
-  name                = "redn-azd-${var.environment_name}-newslikerit-lapp"
+  name                = "puntobello-realtimenews-${var.environment_name}-newslikerit-lapp"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   tags                = var.tags

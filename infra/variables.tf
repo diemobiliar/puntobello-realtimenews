@@ -30,13 +30,8 @@ variable "environment_name" {
 variable "tags" {
   type = map(string)
   default = {
-    AppID = "REDN"
-    Domain = "WCC"
-    FKID = "redn-base"
-    ITOwner = "DL_301823@mobi.ch"
-    Stage = "dev3"
-    TKID = "redn-base-iac"
-    TKTypeID = "iac"
+    AppID = "PuntoBello"
+    Stage = "dev"
   }
 }
 

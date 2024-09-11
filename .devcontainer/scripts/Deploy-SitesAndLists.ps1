@@ -29,11 +29,24 @@ Import-Module "$($importPath)/config.psm1" -Force
 Import-Module "$($importPath)/login.psm1" -Force
 Import-Module "$($importPath)/functions.psm1" -Force
 
-# Ensure target site collections configured in config.psm1 exist, create if required.
+# Ensure target site collections configured in exist, create if required.
 
 if (Test-Path "./spo/solutions.json"){
     foreach($site in  (Get-Content ./spo/solutions.json | ConvertFrom-Json).solutions.targets | Sort-Object -Unique) {
         Assert-SiteCollection -siteName $site -SiteTitle $site
+    }
+}
+
+if (Test-Path "./spo/templates.json"){
+    foreach($site in  (Get-Content ./spo/templates.json | ConvertFrom-Json).templates.targets | Sort-Object -Unique) {
+        Assert-SiteCollection -siteName $site -SiteTitle $site
+    }
+}
+
+# Process TermSets if present
+if (Test-Path "./spo/templates.json") {
+    foreach($termSet in (Get-Content ./spo/templates.json | ConvertFrom-Json).templates.termSets | Sort-Object -Unique) {
+        Ensure-TermSet -termSetPath $termSet
     }
 }
 

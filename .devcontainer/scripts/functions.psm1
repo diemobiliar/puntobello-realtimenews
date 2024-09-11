@@ -68,9 +68,7 @@ function Invoke-SiteTemplate {
       [PSObject]$template
     )
   
-    try {
-     
-      
+    try {   
       foreach ($site in $template.targets) {
         $siteUrl = "https://$($global:M365_TENANTNAME).sharepoint.com/sites/$($site)"
         $cnSite = Connect-PnPOnline -Url $siteUrl @global:PnPCreds -ReturnConnection
@@ -78,10 +76,55 @@ function Invoke-SiteTemplate {
         Invoke-PnPSiteTemplate -Path $templatePath -Connection $cnSite -Verbose
         Write-Host "SiteTemplate `'$($template.templateName)`' applied for site $($cnSite.Url)" -ForegroundColor Green
       }
-
     }
     catch {
       throw "Error applying `'$($template.templateName)`' for site $($cnSite.Url): $_"
     }
 }
 Export-ModuleMember -Function Invoke-SiteTemplate
+
+<#
+.SYNOPSIS
+    Ensures and creates a Termgroup and Termset
+
+.DESCRIPTION
+    This function verify if a Termgrouo and Termset exists in Term store. If not it will be created.
+
+.PARAMETER termGroupPath
+    The full path of the Termset.
+
+.EXAMPLE
+    Ensure-TermSet -termSetPath "Puntobello|Channels"
+
+.NOTES
+    This function requires the PnP PowerShell module and appropriate permissions to create a term set and group.
+#>
+function Ensure-TermSet {
+    param (
+      [PSObject]$termSetPath
+    )
+
+    # Define the term group and term set names
+    $termGroupName = $termSetPath.Split("|")[0]
+    $termSetName = $termSetPath.Split("|")[1]
+
+    # Check if the term group already exists
+    $termGroup = Get-PnPTermGroup -Identity $termGroupName -Connection $global:cnAdmin -ErrorAction SilentlyContinue
+
+    # If the term group doesn't exist, create it
+    if (!$termGroup) {
+        $termGroup = New-PnPTermGroup -Name $termGroupName -Connection $global:cnAdmin
+    }
+
+    # Check if the term set already exists
+    $termSet = Get-PnPTermSet -Identity $termSetName -TermGroup $termGroup -Connection $global:cnAdmin -ErrorAction SilentlyContinue
+
+    # If the term set doesn't exist, create it
+    if (!$termSet) {
+        $termSet = New-PnPTermSet -Name $termSetName -TermGroup $termGroup -Connection $global:cnAdmin
+    }
+
+    # Output the term set ID for reference
+    Write-Host "Term Set ID: $($termSet.Id)"
+}
+Export-ModuleMember -Function Ensure-TermSet

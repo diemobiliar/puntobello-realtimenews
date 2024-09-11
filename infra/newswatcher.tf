@@ -1,7 +1,7 @@
 resource "azapi_resource" "newswatcher_lapp" {
   depends_on = [azurerm_api_connection.apic_sb]
   type       = "Microsoft.Logic/workflows@2017-07-01"
-  name       = "redn-azd-${var.environment_name}-newswatcherde-lapp"
+  name       = "puntobello-realtimenews-${var.environment_name}-newswatcherde-lapp"
   location   = azurerm_resource_group.rg.location
   parent_id  = azurerm_resource_group.rg.id
   tags       = var.tags
