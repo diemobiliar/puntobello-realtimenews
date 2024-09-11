@@ -15,7 +15,7 @@ output "sb_pagepublishing_connection_string" {
   description = "outputting api connection service bus connection string"
   sensitive   = true
 }
-output "app_name" {
-  value       = azurerm_linux_web_app.app.name
-  description = "outputting app service name"
-}
+# output "app_name" {
+#  value       = azurerm_linux_web_app.app.name
+#  description = "outputting app service name"
+# }

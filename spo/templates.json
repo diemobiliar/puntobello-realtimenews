@@ -1,28 +1,24 @@
 {
     "templates": [
         {
-            "templateName": "RTNews.xml",
-            "targets": ["pb_config"],
-            "url": "rednet",
+            "templateName": "RealtimeNews.xml",
+            "targets": ["pb_home"],
+            "relativePath": "./spo/assets/lists",
             "sortOrder": 100
         },
         {
-            "templateName": "Rednet_ChannelsSubscription.xml",
-            "targets": ["pb_config"],
-            "url": "rednet",
+            "templateName": "SubscribedChannels.xml",
+            "targets": ["pb_home"],
+            "relativePath": "./spo/assets/lists",
+            "termSets": ["PuntoBello|Channels"],
             "sortOrder": 200
         },
         {
-            "templateName": "Rednet_Channels2Loc.xml",
-            "targets": ["pb_config"],
-            "url": "rednet",
+            "templateName": "SitePages.xml",
+            "targets": ["pb_newsde", "pb_newsen"],
+            "relativePath": "./spo/assets/lists",
+            "termSets": ["PuntoBello|Channels"],
             "sortOrder": 300
-        },
-        {
-            "templateName": "PublishingLog.xml",
-            "targets": ["pb_config"],
-            "url": "rednet",
-            "sortOrder": 400
         }
     ]
 }

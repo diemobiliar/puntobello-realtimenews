@@ -8,7 +8,7 @@ const port = process.env.port || 8080;
 
 const io = new Server({
   cors: {
-    origin: "@@corsOrigin@@"
+    origin: process.env.CORS_ORIGIN
   },
   serveClient: false,
   pingInterval: 40000,
@@ -39,10 +39,8 @@ io.on("connection", (socket) => {
 io.listen(port);
 
 // Handling for nd events aka news processing
-// @@azureSBConnectionString@@
-const serviceBusClient = new ServiceBusClient("@@azureSBConnectionString@@");
-// @azureSBQueueName@@
-const receiver = serviceBusClient.createReceiver("@@azureSBQueueName@@", { receiveMode: 'receiveAndDelete' });
+const serviceBusClient = new ServiceBusClient(process.env.SERVICEBUS_CONNECTION_STRING);
+const receiver = serviceBusClient.createReceiver(process.env.SERVICEBUS_QUEUE_NAME, { receiveMode: 'receiveAndDelete' });
 
 const newsHandler = async (message) => {
   io.emit('nd', message.applicationProperties);

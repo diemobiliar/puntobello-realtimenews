@@ -1,21 +1,11 @@
-# Input variables for the module
-variable "tenantname" {
-}
-
-variable "hubsite" {
-}
-
-variable "rtnews" {
-}
-
-variable "publishinglog" {
-}
-
-variable newsde {
-}
-
-variable newsdelist {
-}
+variable "tenantname" {}
+variable "pb_news_de" {}
+variable "pb_news_en" {}
+variable "pb_home" {}
+variable "rtnews_list_guid" {}
+variable "pb_news_en_site_page_guid" {}
+variable "recurrence_frequency" {}
+variable "recurrence_interval" {}
 
 variable "location" {
   description = "The supported Azure location where the resource deployed"

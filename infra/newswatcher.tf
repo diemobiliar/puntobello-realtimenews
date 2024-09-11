@@ -1,7 +1,7 @@
 resource "azapi_resource" "newswatcher_lapp" {
   depends_on = [azurerm_api_connection.apic_sb]
   type       = "Microsoft.Logic/workflows@2017-07-01"
-  name       = "puntobello-realtimenews-${var.environment_name}-newswatcherde-lapp"
+  name       = "puntobello-realtimenews-${var.environment_name}-newswatcheren-lapp"
   location   = azurerm_resource_group.rg.location
   parent_id  = azurerm_resource_group.rg.id
   tags       = var.tags
@@ -20,46 +20,6 @@ resource "azapi_resource" "newswatcher_lapp" {
                 "actions": {
                     "Apply_to_each_RTNews_but_just_one_in_fact": {
                         "actions": {
-                            "Determine_if_it_is_an_update_or_an_unpublishing_request": {
-                                "actions": {
-                                    "Set_variable_varServiceBusRequestType_to_unpublish": {
-                                        "inputs": {
-                                            "name": "varServiceBusRequestType",
-                                            "value": "X"
-                                        },
-                                        "runAfter": {},
-                                        "type": "SetVariable"
-                                    }
-                                },
-                                "else": {
-                                    "actions": {
-                                        "Set_variable_varServiceBusRequestType_to_update": {
-                                            "inputs": {
-                                                "name": "varServiceBusRequestType",
-                                                "value": "U"
-                                            },
-                                            "runAfter": {},
-                                            "type": "SetVariable"
-                                        }
-                                    }
-                                },
-                                "expression": {
-                                    "and": [
-                                        {
-                                            "equals": [
-                                                "@triggerBody()?['REDN_Unpublish']",
-                                                true
-                                            ]
-                                        }
-                                    ]
-                                },
-                                "runAfter": {
-                                    "Set_variable_varRTNewsExists_to_true": [
-                                        "Succeeded"
-                                    ]
-                                },
-                                "type": "If"
-                            },
                             "Send_message_to_news_service_bus_update_item_is_here": {
                                 "inputs": {
                                     "body": {
@@ -81,7 +41,7 @@ resource "azapi_resource" "newswatcher_lapp" {
                                     }
                                 },
                                 "runAfter": {
-                                    "Determine_if_it_is_an_update_or_an_unpublishing_request": [
+                                    "Set_variable_varServiceBusRequestType_to_update": [
                                         "Succeeded"
                                     ]
                                 },
@@ -95,25 +55,32 @@ resource "azapi_resource" "newswatcher_lapp" {
                                 "runAfter": {},
                                 "type": "SetVariable"
                             },
+                            "Set_variable_varServiceBusRequestType_to_update": {
+                                "inputs": {
+                                    "name": "varServiceBusRequestType",
+                                    "value": "U"
+                                },
+                                "runAfter": {
+                                    "Set_variable_varRTNewsExists_to_true": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "SetVariable"
+                            },
                             "Update_item": {
                                 "inputs": {
                                     "body": {
-                                        "REDN_Channels": "@variables('varChannels')",
-                                        "REDN_ImageUrl": "@triggerBody()?['BannerImageUrl']",
-                                        "REDN_Keywords": "@variables('varKeywords')",
-                                        "REDN_LangCd": "@variables('varItemLanguage')",
-                                        "REDN_Locations": "@variables('varLocations')",
-                                        "REDN_NewsHeader": "@triggerBody()?['REDN_Lead']",
-                                        "REDN_NewsTitle": "@variables('varNewsTitle')",
-                                        "REDN_NewsUrl": "@variables('varItemUrl')",
-                                        "REDN_PageName": "@{uriComponent(variables('varFileNameWithExt'))}",
-                                        "REDN_PubFrom": "@triggerBody()?['REDN_PubFrom']",
-                                        "REDN_PubTo": "@triggerBody()?['REDN_PubTo']",
-                                        "REDN_Sticky": "@triggerBody()?['REDN_Sticky']",
-                                        "REDN_StickyDate": "@triggerBody()?['REDN_StickyDate']",
-                                        "REDN_Topics": "@variables('varTopics')",
-                                        "REDN_Unpublish": "@triggerBody()?['REDN_Unpublish']",
-                                        "Title": "@{concat(variables('varItemLanguage'),'_', variables('varFileNameWithExt'))}"
+                                        "Title": "@variables('varNewsTitle')",
+                                        "pb_Channels": "@variables('varChannels')",
+                                        "pb_Header": "@variables('varNewsHeader')",
+                                        "pb_ImageUrl": "@triggerBody()?['BannerImageUrl']",
+                                        "pb_Language": "@variables('varItemLanguage')",
+                                        "pb_NewsUrl": "@variables('varItemUrl')",
+                                        "pb_PageName": "@{uriComponent(variables('varFileNameWithExt'))}",
+                                        "pb_PublishedFrom": "@triggerBody()?['pb_PublishedFrom']",
+                                        "pb_PublishedTo": "@triggerBody()?['pb_PublishedTo']",
+                                        "pb_Sticky": "@triggerBody()?['pb_Sticky']",
+                                        "pb_StickyDate": "@triggerBody()?['pb_StickyDate']"
                                     },
                                     "host": {
                                         "connection": {
@@ -121,7 +88,7 @@ resource "azapi_resource" "newswatcher_lapp" {
                                         }
                                     },
                                     "method": "patch",
-                                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('${var.rtnews}'))}/items/@{encodeURIComponent(items('Apply_to_each_RTNews_but_just_one_in_fact')['ID'])}",
+                                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('${var.rtnews_list_guid}'))}/items/@{encodeURIComponent(items('Apply_to_each_RTNews_but_just_one_in_fact')['ID'])}",
                                     "retryPolicy": {
                                         "type": "none"
                                     }
@@ -147,29 +114,6 @@ resource "azapi_resource" "newswatcher_lapp" {
                         },
                         "type": "Foreach"
                     },
-                    "Create_item_Publishing_Log": {
-                        "inputs": {
-                            "body": {
-                                "REDN_StatusCode": "10",
-                                "REDN_StatusText": "Publishing initialized",
-                                "Title": "@{concat('Publishing for ', variables('varFileNameWithExt'), ' ', variables('varID'))}"
-                            },
-                            "host": {
-                                "connection": {
-                                    "name": "@parameters('$connections')['sharepointonline']['connectionId']"
-                                }
-                            },
-                            "method": "post",
-                            "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('${var.publishinglog}'))}/items"
-                        },
-                        "metadata": {
-                            "flowSystemMetadata": {
-                                "swaggerOperationId": "PostItem"
-                            }
-                        },
-                        "runAfter": {},
-                        "type": "ApiConnection"
-                    },
                     "Get_items_RTNews": {
                         "inputs": {
                             "host": {
@@ -178,9 +122,9 @@ resource "azapi_resource" "newswatcher_lapp" {
                                 }
                             },
                             "method": "get",
-                            "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('RTNews'))}/items",
+                            "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('${var.rtnews_list_guid}'))}/items",
                             "queries": {
-                                "$filter": "(REDN_LangCd eq '@{variables('varItemLanguage')}') and ((REDN_PageName eq '@{replace(variables('varFileNameWithExt'),'''','''''')}') or  (REDN_PageName eq '@{uriComponent(variables('varFileNameWithExt'))}'))",
+                                "$filter": "(pb_Language eq '@{variables('varItemLanguage')}') and ((pb_PageName eq '@{replace(variables('varFileNameWithExt'),'''','''''')}') or  (pb_PageName eq '@{uriComponent(variables('varFileNameWithExt'))}'))",
                                 "$top": 1,
                                 "viewScopeOption": "Default"
                             }
@@ -190,11 +134,7 @@ resource "azapi_resource" "newswatcher_lapp" {
                                 "swaggerOperationId": "GetItems"
                             }
                         },
-                        "runAfter": {
-                            "Send_an_HTTP_request_to_SharePoint_Write_url_in_publishing_log": [
-                                "Succeeded"
-                            ]
-                        },
+                        "runAfter": {},
                         "type": "ApiConnection"
                     },
                     "No_RTNews_item_means_we_create_one": {
@@ -202,25 +142,17 @@ resource "azapi_resource" "newswatcher_lapp" {
                             "Create_item_RTNews": {
                                 "inputs": {
                                     "body": {
-                                        "REDN_Channels": "@variables('varChannels')",
-                                        "REDN_CommentsNumber": 0,
-                                        "REDN_ImageUrl": "@triggerBody()?['BannerImageUrl']",
-                                        "REDN_Keywords": "@variables('varKeywords')",
-                                        "REDN_LangCd": "@variables('varItemLanguage')",
-                                        "REDN_LikeNumber": 0,
-                                        "REDN_Locations": "@variables('varLocations')",
-                                        "REDN_NewsHeader": "@triggerBody()?['REDN_Lead']",
-                                        "REDN_NewsTitle": "@variables('varNewsTitle')",
-                                        "REDN_NewsUrl": "@variables('varItemUrl')",
-                                        "REDN_PageName": "@{uriComponent(variables('varFileNameWithExt'))}",
-                                        "REDN_PubFrom": "@triggerBody()?['REDN_PubFrom']",
-                                        "REDN_PubTo": "@triggerBody()?['REDN_PubTo']",
-                                        "REDN_Sticky": "@triggerBody()?['REDN_Sticky']",
-                                        "REDN_StickyDate": "@triggerBody()?['REDN_StickyDate']",
-                                        "REDN_Topics": "@variables('varTopics')",
-                                        "REDN_Unpublish": "@triggerBody()?['REDN_Unpublish']",
-                                        "REDN_ViewNumber": 0,
-                                        "Title": "@{concat(variables('varItemLanguage'),'_', variables('varFileNameWithExt'))}"
+                                        "Title": "@variables('varNewsTitle')",
+                                        "pb_Channels": "@variables('varChannels')",
+                                        "pb_Header": "@variables('varNewsHeader')",
+                                        "pb_ImageUrl": "@triggerBody()?['BannerImageUrl']",
+                                        "pb_Language": "@variables('varItemLanguage')",
+                                        "pb_NewsUrl": "@variables('varItemUrl')",
+                                        "pb_PageName": "@{uriComponent(variables('varFileNameWithExt'))}",
+                                        "pb_PublishedFrom": "@triggerBody()?['pb_PublishedFrom']",
+                                        "pb_PublishedTo": "@triggerBody()?['pb_PublishedTo']",
+                                        "pb_Sticky": "@triggerBody()?['pb_Sticky']",
+                                        "pb_StickyDate": "@triggerBody()?['pb_StickyDate']"
                                     },
                                     "host": {
                                         "connection": {
@@ -228,7 +160,7 @@ resource "azapi_resource" "newswatcher_lapp" {
                                         }
                                     },
                                     "method": "post",
-                                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('RTNews'))}/items",
+                                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('${var.rtnews_list_guid}'))}/items",
                                     "retryPolicy": {
                                         "type": "none"
                                     }
@@ -298,51 +230,6 @@ resource "azapi_resource" "newswatcher_lapp" {
                             ]
                         },
                         "type": "If"
-                    },
-                    "Send_an_HTTP_request_to_SharePoint_Write_url_in_publishing_log": {
-                        "inputs": {
-                            "body": {
-                                "body": "{\n'__metadata': { 'type': 'SP.Data.PublishinglogListItem' },\n'REDN_PageName': {\n'__metadata': { 'type': 'SP.FieldUrlValue' },\n'Description': '@{encodeURIComponent(variables('varFileNameWithExt'))}',\n'Url': '@{replace(variables('varItemUrl'),'''','%27')}'\n}\n}\n",
-                                "headers": {
-                                    "Content-Type": "application/json;odata=verbose",
-                                    "IF-Match": "*",
-                                    "X-HTTP-Method": "Merge",
-                                    "accept": "application/json;odata=verbose"
-                                },
-                                "method": "PATCH",
-                                "uri": "_api/web/Lists/GetByTitle('PublishingLog')/items(@{body('Create_item_Publishing_Log')?['ID']})"
-                            },
-                            "host": {
-                                "connection": {
-                                    "name": "@parameters('$connections')['sharepointonline']['connectionId']"
-                                }
-                            },
-                            "method": "post",
-                            "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/httprequest"
-                        },
-                        "metadata": {
-                            "flowSystemMetadata": {
-                                "swaggerOperationId": "HttpRequest"
-                            }
-                        },
-                        "runAfter": {
-                            "Create_item_Publishing_Log": [
-                                "Succeeded"
-                            ]
-                        },
-                        "type": "ApiConnection"
-                    },
-                    "Set_variable_varLogText": {
-                        "inputs": {
-                            "name": "varLogText",
-                            "value": "@{body('Send_an_HTTP_request_to_SharePoint_Get_promoted_state')}"
-                        },
-                        "runAfter": {
-                            "No_RTNews_item_means_we_create_one": [
-                                "Succeeded"
-                            ]
-                        },
-                        "type": "SetVariable"
                     }
                 },
                 "expression": {
@@ -368,113 +255,41 @@ resource "azapi_resource" "newswatcher_lapp" {
                 },
                 "type": "If"
             },
-            "Condition_if_page_is_a_translation": {
+            "Condition_when_the_page_item_is_a_translation": {
                 "actions": {
-                    "Condition_if_page_is_french": {
-                        "actions": {
-                            "Set_variable_varItemLanguage_to_french": {
-                                "inputs": {
-                                    "name": "varItemLanguage",
-                                    "value": "FR"
-                                },
-                                "runAfter": {},
-                                "type": "SetVariable"
-                            },
-                            "Set_variable_varItemUrl_for_french_page": {
-                                "inputs": {
-                                    "name": "varItemUrl",
-                                    "value": "@{concat(variables('varRootUrl'), '/SitePages/fr/', variables('varFileNameWithExt'))}"
-                                },
-                                "runAfter": {
-                                    "Set_variable_varItemLanguage_to_french": [
-                                        "Succeeded"
-                                    ]
-                                },
-                                "type": "SetVariable"
-                            }
-                        },
-                        "else": {
-                            "actions": {
-                                "Condition_if_page_is_german": {
-                                    "actions": {
-                                        "Set_variable_varItemLanguage_to_german": {
-                                            "inputs": {
-                                                "name": "varItemLanguage",
-                                                "value": "DE"
-                                            },
-                                            "runAfter": {},
-                                            "type": "SetVariable"
-                                        },
-                                        "Set_variable_varItemUrl_for_german_page": {
-                                            "inputs": {
-                                                "name": "varItemUrl",
-                                                "value": "@{concat(variables('varRootUrl'), '/SitePages/de/', variables('varFileNameWithExt'))}"
-                                            },
-                                            "runAfter": {
-                                                "Set_variable_varItemLanguage_to_german": [
-                                                    "Succeeded"
-                                                ]
-                                            },
-                                            "type": "SetVariable"
-                                        }
-                                    },
-                                    "else": {
-                                        "actions": {
-                                            "Set_variable_varItemLanguage_to_italian": {
-                                                "inputs": {
-                                                    "name": "varItemLanguage",
-                                                    "value": "IT"
-                                                },
-                                                "runAfter": {},
-                                                "type": "SetVariable"
-                                            },
-                                            "Set_variable_varItemUrl_for_italian_page": {
-                                                "inputs": {
-                                                    "name": "varItemUrl",
-                                                    "value": "@{concat(variables('varRootUrl'), '/SitePages/it/', variables('varFileNameWithExt'))}"
-                                                },
-                                                "runAfter": {
-                                                    "Set_variable_varItemLanguage_to_italian": [
-                                                        "Succeeded"
-                                                    ]
-                                                },
-                                                "type": "SetVariable"
-                                            }
-                                        }
-                                    },
-                                    "expression": {
-                                        "and": [
-                                            {
-                                                "equals": [
-                                                    "@variables('varPageTranslationLanguage')",
-                                                    "de"
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    "runAfter": {},
-                                    "type": "If"
-                                }
-                            }
-                        },
-                        "expression": {
-                            "contains": [
-                                "@variables('varPageTranslationLanguage')",
-                                "fr"
-                            ]
+                    "Set_variable_varItemLanguage_to_the_page_language": {
+                        "inputs": {
+                            "name": "varItemLanguage",
+                            "value": "@triggerBody()?['OData__SPTranslationLanguage']?['Value']"
                         },
                         "runAfter": {},
-                        "type": "If"
+                        "type": "SetVariable"
+                    }
+                },
+                "else": {
+                    "actions": {
+                        "Set_variable_varItemLanguage_to_the_web_language_lcid": {
+                            "inputs": {
+                                "name": "varItemLanguage",
+                                "value": "@{body('Send_an_HTTP_request_to_SharePoint_to_get_current_web_language')['d']['Language']}"
+                            },
+                            "runAfter": {},
+                            "type": "SetVariable"
+                        }
                     }
                 },
                 "expression": {
-                    "equals": [
-                        "@variables('varPageIsTranslated')",
-                        true
+                    "and": [
+                        {
+                            "equals": [
+                                "@triggerBody()?['OData__SPIsTranslation']",
+                                true
+                            ]
+                        }
                     ]
                 },
                 "runAfter": {
-                    "Initialize_variable_varItemUrl_for_root_page": [
+                    "Initialize_variable_varItemLanguage": [
                         "Succeeded"
                     ]
                 },
@@ -499,7 +314,7 @@ resource "azapi_resource" "newswatcher_lapp" {
                             "content": "@variables('varProcessingTerm')",
                             "schema": {
                                 "properties": {
-                                    "odata.type": {
+                                    "@@odata.type": {
                                         "type": "string"
                                     },
                                     "Label": {
@@ -535,213 +350,9 @@ resource "azapi_resource" "newswatcher_lapp" {
                         "type": "SetVariable"
                     }
                 },
-                "foreach": "@triggerBody()?['REDN_Channels']",
+                "foreach": "@triggerBody()?['pb_Channels']",
                 "runAfter": {
                     "Initialize_variable_varProcessingTerm": [
-                        "Succeeded"
-                    ]
-                },
-                "runtimeConfiguration": {
-                    "concurrency": {
-                        "repetitions": 1
-                    }
-                },
-                "type": "Foreach"
-            },
-            "For_each_Keywords_from_page": {
-                "actions": {
-                    "Append_the_termguid_to_varKeywords": {
-                        "inputs": {
-                            "name": "varKeywords",
-                            "value": "@concat(body('Parse_JSON_2')?['TermGuid'], ';')"
-                        },
-                        "runAfter": {
-                            "Parse_JSON_2": [
-                                "Succeeded"
-                            ]
-                        },
-                        "type": "AppendToStringVariable"
-                    },
-                    "Parse_JSON_2": {
-                        "inputs": {
-                            "content": "@variables('varProcessingTerm')",
-                            "schema": {
-                                "properties": {
-                                    "odata.type": {
-                                        "type": "string"
-                                    },
-                                    "Label": {
-                                        "type": "string"
-                                    },
-                                    "Path": {},
-                                    "TermGuid": {
-                                        "type": "string"
-                                    },
-                                    "Value": {
-                                        "type": "string"
-                                    },
-                                    "WssId": {
-                                        "type": "integer"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        },
-                        "runAfter": {
-                            "Set_variable_varProcessingTerm_to_keyword": [
-                                "Succeeded"
-                            ]
-                        },
-                        "type": "ParseJson"
-                    },
-                    "Set_variable_varProcessingTerm_to_keyword": {
-                        "inputs": {
-                            "name": "varProcessingTerm",
-                            "value": "@{items('For_each_Keywords_from_page')}"
-                        },
-                        "runAfter": {},
-                        "type": "SetVariable"
-                    }
-                },
-                "foreach": "@triggerBody()?['REDN_Keywords']",
-                "runAfter": {
-                    "Initialize_variable_varKeywords": [
-                        "Succeeded"
-                    ]
-                },
-                "runtimeConfiguration": {
-                    "concurrency": {
-                        "repetitions": 1
-                    }
-                },
-                "type": "Foreach"
-            },
-            "For_each_Locations_from_page": {
-                "actions": {
-                    "Append_the_termguid_to_varLocations_": {
-                        "inputs": {
-                            "name": "varLocations",
-                            "value": "@concat(slice(body('Parse_JSON')?['TermGuid'], 0, indexOf(body('Parse_JSON')?['TermGuid'], '-')), ';')"
-                        },
-                        "runAfter": {
-                            "Parse_JSON": [
-                                "Succeeded"
-                            ]
-                        },
-                        "type": "AppendToStringVariable"
-                    },
-                    "Parse_JSON": {
-                        "inputs": {
-                            "content": "@variables('varProcessingTerm')",
-                            "schema": {
-                                "properties": {
-                                    "odata.type": {
-                                        "type": "string"
-                                    },
-                                    "Label": {
-                                        "type": "string"
-                                    },
-                                    "Path": {},
-                                    "TermGuid": {
-                                        "type": "string"
-                                    },
-                                    "Value": {
-                                        "type": "string"
-                                    },
-                                    "WssId": {
-                                        "type": "integer"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        },
-                        "runAfter": {
-                            "Set_variable_varProcessingTerm_to_location": [
-                                "Succeeded"
-                            ]
-                        },
-                        "type": "ParseJson"
-                    },
-                    "Set_variable_varProcessingTerm_to_location": {
-                        "inputs": {
-                            "name": "varProcessingTerm",
-                            "value": "@{items('For_each_Locations_from_page')}"
-                        },
-                        "runAfter": {},
-                        "type": "SetVariable"
-                    }
-                },
-                "foreach": "@triggerBody()?['REDN_Locations']",
-                "runAfter": {
-                    "Initialize_variable_varLocations": [
-                        "Succeeded"
-                    ]
-                },
-                "runtimeConfiguration": {
-                    "concurrency": {
-                        "repetitions": 1
-                    }
-                },
-                "type": "Foreach"
-            },
-            "For_each_Topics_from_page": {
-                "actions": {
-                    "Append_the_termguid_to_varTopics": {
-                        "inputs": {
-                            "name": "varTopics",
-                            "value": "@concat(body('Parse_JSON_3')?['TermGuid'],';')"
-                        },
-                        "runAfter": {
-                            "Parse_JSON_3": [
-                                "Succeeded"
-                            ]
-                        },
-                        "type": "AppendToStringVariable"
-                    },
-                    "Parse_JSON_3": {
-                        "inputs": {
-                            "content": "@variables('varProcessingTerm')",
-                            "schema": {
-                                "properties": {
-                                    "odata.type": {
-                                        "type": "string"
-                                    },
-                                    "Label": {
-                                        "type": "string"
-                                    },
-                                    "Path": {},
-                                    "TermGuid": {
-                                        "type": "string"
-                                    },
-                                    "Value": {
-                                        "type": "string"
-                                    },
-                                    "WssId": {
-                                        "type": "integer"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        },
-                        "runAfter": {
-                            "Set_variable_varProcessingTerm_to_topic": [
-                                "Succeeded"
-                            ]
-                        },
-                        "type": "ParseJson"
-                    },
-                    "Set_variable_varProcessingTerm_to_topic": {
-                        "inputs": {
-                            "name": "varProcessingTerm",
-                            "value": "@{items('For_each_Topics_from_page')}"
-                        },
-                        "runAfter": {},
-                        "type": "SetVariable"
-                    }
-                },
-                "foreach": "@triggerBody()?['REDN_Topics']",
-                "runAfter": {
-                    "Initialize_variable_varTopics": [
                         "Succeeded"
                     ]
                 },
@@ -798,35 +409,17 @@ resource "azapi_resource" "newswatcher_lapp" {
                 },
                 "type": "InitializeVariable"
             },
-            "Initialize_variable_varID": {
-                "inputs": {
-                    "variables": [
-                        {
-                            "name": "varID",
-                            "type": "integer",
-                            "value": "@triggerBody()?['ID']"
-                        }
-                    ]
-                },
-                "runAfter": {
-                    "Initialize_variable_varVersionNumber": [
-                        "Succeeded"
-                    ]
-                },
-                "type": "InitializeVariable"
-            },
-            "Initialize_variable_varItemLanguage_default_to_german": {
+            "Initialize_variable_varItemLanguage": {
                 "inputs": {
                     "variables": [
                         {
                             "name": "varItemLanguage",
-                            "type": "string",
-                            "value": "DE"
+                            "type": "string"
                         }
                     ]
                 },
                 "runAfter": {
-                    "Initialize_variable_var_SPWebLCID": [
+                    "Send_an_HTTP_request_to_SharePoint_to_get_current_web_language": [
                         "Succeeded"
                     ]
                 },
@@ -843,56 +436,24 @@ resource "azapi_resource" "newswatcher_lapp" {
                     ]
                 },
                 "runAfter": {
-                    "Switch_normalize_varPageTranslationLanguage": [
+                    "Condition_when_the_page_item_is_a_translation": [
                         "Succeeded"
                     ]
                 },
                 "type": "InitializeVariable"
             },
-            "Initialize_variable_varKeywords": {
+            "Initialize_variable_varNewsHeader": {
                 "inputs": {
                     "variables": [
                         {
-                            "name": "varKeywords",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "runAfter": {
-                    "For_each_Locations_from_page": [
-                        "Succeeded"
-                    ]
-                },
-                "type": "InitializeVariable"
-            },
-            "Initialize_variable_varLocations": {
-                "inputs": {
-                    "variables": [
-                        {
-                            "name": "varLocations",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "runAfter": {
-                    "For_each_Channels_from_page": [
-                        "Succeeded"
-                    ]
-                },
-                "type": "InitializeVariable"
-            },
-            "Initialize_variable_varLogText": {
-                "inputs": {
-                    "variables": [
-                        {
-                            "name": "varLogText",
+                            "name": "varNewsHeader",
                             "type": "string",
-                            "value": "@{body('Send_an_HTTP_request_to_SharePoint_Get_Promoted_State')}"
+                            "value": "@{body('Send_an_HTTP_request_to_SharePoint_Get_Promoted_State')['d']['Description']}"
                         }
                     ]
                 },
                 "runAfter": {
-                    "Condition_if_page_is_a_translation": [
+                    "Initialize_variable_varNewsTitle": [
                         "Succeeded"
                     ]
                 },
@@ -909,58 +470,7 @@ resource "azapi_resource" "newswatcher_lapp" {
                     ]
                 },
                 "runAfter": {
-                    "Initialize_variable_varRTNewsExists": [
-                        "Succeeded"
-                    ]
-                },
-                "type": "InitializeVariable"
-            },
-            "Initialize_variable_varPageIsTranslated": {
-                "inputs": {
-                    "variables": [
-                        {
-                            "name": "varPageIsTranslated",
-                            "type": "boolean",
-                            "value": "@body('Send_an_HTTP_request_to_SharePoint_Get_Promoted_State')['d']['OData__SPIsTranslation']\r\n"
-                        }
-                    ]
-                },
-                "runAfter": {
-                    "Switch_set_default_language_according_to_web_LCID": [
-                        "Succeeded"
-                    ]
-                },
-                "type": "InitializeVariable"
-            },
-            "Initialize_variable_varPageRawData": {
-                "inputs": {
-                    "variables": [
-                        {
-                            "name": "varPageRawData",
-                            "type": "string",
-                            "value": "@{body('Send_an_HTTP_request_to_SharePoint_Get_Promoted_State')['d']['CanvasContent1']}"
-                        }
-                    ]
-                },
-                "runAfter": {
-                    "Initialize_variable_varNewsTitle": [
-                        "Succeeded"
-                    ]
-                },
-                "type": "InitializeVariable"
-            },
-            "Initialize_variable_varPageTranslationLanguage": {
-                "inputs": {
-                    "variables": [
-                        {
-                            "name": "varPageTranslationLanguage",
-                            "type": "string",
-                            "value": "@{body('Send_an_HTTP_request_to_SharePoint_Get_Promoted_State')['d']['OData__SPTranslationLanguage']}"
-                        }
-                    ]
-                },
-                "runAfter": {
-                    "Initialize_variable_varPageIsTranslated": [
+                    "Initialize_variable_varVersionNumber": [
                         "Succeeded"
                     ]
                 },
@@ -993,7 +503,7 @@ resource "azapi_resource" "newswatcher_lapp" {
                     ]
                 },
                 "runAfter": {
-                    "Initialize_variable_varLogText": [
+                    "Initialize_variable_varItemUrl_for_root_page": [
                         "Succeeded"
                     ]
                 },
@@ -1005,12 +515,12 @@ resource "azapi_resource" "newswatcher_lapp" {
                         {
                             "name": "varRootUrl",
                             "type": "string",
-                            "value": "https://${var.tenantname}.sharepoint.com/sites/${var.newsde}"
+                            "value": "https://${var.tenantname}.sharepoint.com/sites/${var.pb_news_en}"
                         }
                     ]
                 },
                 "runAfter": {
-                    "For_each_Topics_from_page": [
+                    "For_each_Channels_from_page": [
                         "Succeeded"
                     ]
                 },
@@ -1027,7 +537,7 @@ resource "azapi_resource" "newswatcher_lapp" {
                     ]
                 },
                 "runAfter": {
-                    "Initialize_variable_varPageRawData": [
+                    "Initialize_variable_varRTNewsExists": [
                         "Succeeded"
                     ]
                 },
@@ -1039,28 +549,12 @@ resource "azapi_resource" "newswatcher_lapp" {
                         {
                             "name": "varTargetUrl",
                             "type": "string",
-                            "value": "https://${var.tenantname}.sharepoint.com/sites/${var.hubsite}"
+                            "value": "https://${var.tenantname}.sharepoint.com/sites/${var.pb_home}"
                         }
                     ]
                 },
                 "runAfter": {
                     "Initialize_variable_varRootUrl": [
-                        "Succeeded"
-                    ]
-                },
-                "type": "InitializeVariable"
-            },
-            "Initialize_variable_varTopics": {
-                "inputs": {
-                    "variables": [
-                        {
-                            "name": "varTopics",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "runAfter": {
-                    "For_each_Keywords_from_page": [
                         "Succeeded"
                     ]
                 },
@@ -1078,23 +572,6 @@ resource "azapi_resource" "newswatcher_lapp" {
                 },
                 "runAfter": {
                     "Initialize_variable_varFileNameWithExt": [
-                        "Succeeded"
-                    ]
-                },
-                "type": "InitializeVariable"
-            },
-            "Initialize_variable_var_SPWebLCID": {
-                "inputs": {
-                    "variables": [
-                        {
-                            "name": "varSPWebLCID",
-                            "type": "string",
-                            "value": "@body('Send_an_HTTP_request_to_SharePoint_to_get_current_web_language')['d']['Language']"
-                        }
-                    ]
-                },
-                "runAfter": {
-                    "Send_an_HTTP_request_to_SharePoint_to_get_current_web_language": [
                         "Succeeded"
                     ]
                 },
@@ -1149,117 +626,11 @@ resource "azapi_resource" "newswatcher_lapp" {
                     "path": "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varRootUrl')))}/httprequest"
                 },
                 "runAfter": {
-                    "Initialize_variable_varID": [
+                    "Initialize_variable_varNewsHeader": [
                         "Succeeded"
                     ]
                 },
                 "type": "ApiConnection"
-            },
-            "Switch_normalize_varPageTranslationLanguage": {
-                "cases": {
-                    "Case": {
-                        "actions": {
-                            "Set_variable_varPageTranslationLanguage_to_de": {
-                                "inputs": {
-                                    "name": "varPageTranslationLanguage",
-                                    "value": "de"
-                                },
-                                "runAfter": {},
-                                "type": "SetVariable"
-                            }
-                        },
-                        "case": "de-de"
-                    },
-                    "Case_2": {
-                        "actions": {
-                            "Set_variable_varPageTranslationLanguage_to_fr": {
-                                "inputs": {
-                                    "name": "varPageTranslationLanguage",
-                                    "value": "fr"
-                                },
-                                "runAfter": {},
-                                "type": "SetVariable"
-                            }
-                        },
-                        "case": "fr-fr"
-                    },
-                    "Case_3": {
-                        "actions": {
-                            "Set_variable_varPageTranslationLanguage_to_it": {
-                                "inputs": {
-                                    "name": "varPageTranslationLanguage",
-                                    "value": "it"
-                                },
-                                "runAfter": {},
-                                "type": "SetVariable"
-                            }
-                        },
-                        "case": "it-it"
-                    }
-                },
-                "default": {
-                    "actions": {}
-                },
-                "expression": "@variables('varPageTranslationLanguage')",
-                "runAfter": {
-                    "Initialize_variable_varPageTranslationLanguage": [
-                        "Succeeded"
-                    ]
-                },
-                "type": "Switch"
-            },
-            "Switch_set_default_language_according_to_web_LCID": {
-                "cases": {
-                    "Case": {
-                        "actions": {
-                            "Set_variable_varItemLanguage_to_german_from_LCID": {
-                                "inputs": {
-                                    "name": "varItemLanguage",
-                                    "value": "DE"
-                                },
-                                "runAfter": {},
-                                "type": "SetVariable"
-                            }
-                        },
-                        "case": "1031"
-                    },
-                    "Case_2": {
-                        "actions": {
-                            "Set_variable_varItemLanguage_to_french_from_LCID": {
-                                "inputs": {
-                                    "name": "varItemLanguage",
-                                    "value": "FR"
-                                },
-                                "runAfter": {},
-                                "type": "SetVariable"
-                            }
-                        },
-                        "case": "1036"
-                    },
-                    "Case_3": {
-                        "actions": {
-                            "Set_variable_varItemLanguage_to_italian_from_LCID": {
-                                "inputs": {
-                                    "name": "varItemLanguage",
-                                    "value": "IT"
-                                },
-                                "runAfter": {},
-                                "type": "SetVariable"
-                            }
-                        },
-                        "case": "1040"
-                    }
-                },
-                "default": {
-                    "actions": {}
-                },
-                "expression": "@variables('varSPWebLCID')",
-                "runAfter": {
-                    "Initialize_variable_varItemLanguage_default_to_german": [
-                        "Succeeded"
-                    ]
-                },
-                "type": "Switch"
             }
         },
         "contentVersion": "1.0.0.0",
@@ -1271,6 +642,10 @@ resource "azapi_resource" "newswatcher_lapp" {
         },
         "triggers": {
             "When_a_file_is_created_or_modified_(properties_only)": {
+                "evaluatedRecurrence": {
+                    "frequency": "Day",
+                    "interval": 5
+                },
                 "inputs": {
                     "host": {
                         "connection": {
@@ -1278,7 +653,7 @@ resource "azapi_resource" "newswatcher_lapp" {
                         }
                     },
                     "method": "get",
-                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent('https://${var.tenantname}.sharepoint.com/sites/${var.newsde}'))}/tables/@{encodeURIComponent(encodeURIComponent('${var.newsdelist}'))}/onupdatedfileitems"
+                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent('https://${var.tenantname}.sharepoint.com/sites/${var.pb_news_en}'))}/tables/@{encodeURIComponent(encodeURIComponent('${var.pb_news_en_site_page_guid}'))}/onupdatedfileitems"
                 },
                 "metadata": {
                     "flowSystemMetadata": {
@@ -1286,8 +661,8 @@ resource "azapi_resource" "newswatcher_lapp" {
                     }
                 },
                 "recurrence": {
-                    "frequency": "Minute",
-                    "interval": 15
+                    "frequency": "${var.recurrence_frequency}",
+                    "interval": "${var.recurrence_interval}"
                 },
                 "splitOn": "@triggerBody()?['value']",
                 "type": "ApiConnection"
