@@ -15,7 +15,7 @@ if (Test-Path /proc/1/cgroup) {
 } else {
     $importPath = "./.devcontainer/scripts"
 }
-Import-Module "$($importPath)/config.psm1" -Force
+Import-Module "$($importPath)/config.psm1" -Force -DisableNameChecking
 
 if ([string]::IsNullOrEmpty($env:NODE_ENV)) {
     Write-Error '$env:NODE_ENV needs to be set'

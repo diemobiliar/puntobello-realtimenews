@@ -19,7 +19,7 @@
 .NOTES
     This function requires the PnP PowerShell module and appropriate permissions to create site collections.
 #>
-Function Assert-SiteCollection {
+function Assert-SiteCollection {
     param (
         [Parameter()]
         [String]$SiteName,
@@ -65,7 +65,8 @@ Export-ModuleMember -Function Assert-SiteCollection
 #>
 function Invoke-SiteTemplate {
     param (
-      [PSObject]$template
+        [Parameter()]
+        [PSObject]$template
     )
   
     try {   
@@ -101,7 +102,8 @@ Export-ModuleMember -Function Invoke-SiteTemplate
 #>
 function Ensure-TermSet {
     param (
-      [PSObject]$termSetPath
+        [Parameter()]
+        [String]$termSetPath
     )
 
     # Define the term group and term set names
@@ -126,5 +128,6 @@ function Ensure-TermSet {
 
     # Output the term set ID for reference
     Write-Host "Term Set ID: $($termSet.Id)"
+    return $($termSet.Id)
 }
 Export-ModuleMember -Function Ensure-TermSet

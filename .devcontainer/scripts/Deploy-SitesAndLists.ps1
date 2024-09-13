@@ -25,12 +25,11 @@ if (Test-Path /proc/1/cgroup) {
 } else {
     $importPath = "./.devcontainer/scripts"
 }
-Import-Module "$($importPath)/config.psm1" -Force
-Import-Module "$($importPath)/login.psm1" -Force
-Import-Module "$($importPath)/functions.psm1" -Force
+Import-Module "$($importPath)/config.psm1" -Force -DisableNameChecking
+Import-Module "$($importPath)/login.psm1" -Force -DisableNameChecking
+Import-Module "$($importPath)/functions.psm1" -Force -DisableNameChecking
 
 # Ensure target site collections configured in exist, create if required.
-
 if (Test-Path "./spo/solutions.json"){
     foreach($site in  (Get-Content ./spo/solutions.json | ConvertFrom-Json).solutions.targets | Sort-Object -Unique) {
         Assert-SiteCollection -siteName $site -SiteTitle $site

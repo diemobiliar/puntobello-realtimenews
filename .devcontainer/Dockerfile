@@ -40,7 +40,7 @@ FROM --platform=linux/${ARCH} mcr.microsoft.com/cbl-mariner/base/nodejs:18.20.3-
     SPFX_VERSION=1.18.2 \
     YEOMAN_VERSION=5.0.0 \
     M365CLI_VERSION=7.3.0 \
-    PNP_VERSION=2.10.0 \
+    PNP_VERSION=2.12.0 \
     AZ_VERSION=12.2.0
 
     ENV PS_INSTALL_FOLDER=/opt/microsoft/powershell/$PS_INSTALL_VERSION \

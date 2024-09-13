@@ -1,9 +1,10 @@
-variable "tenantname" {}
-variable "pb_news_de" {}
-variable "pb_news_en" {}
-variable "pb_home" {}
+variable "tenant_name" {}
+variable "rtnews_de" {}
+variable "rtnews_de_sitepages_list_guid" {}
+variable "rtnews_en_sitepages_list_guid" {}
+variable "rtnews_en" {}
+variable "rtnews_home" {}
 variable "rtnews_list_guid" {}
-variable "pb_news_en_site_page_guid" {}
 variable "recurrence_frequency" {}
 variable "recurrence_interval" {}
 

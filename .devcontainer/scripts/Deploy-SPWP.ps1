@@ -16,8 +16,8 @@ if (Test-Path /proc/1/cgroup) {
 } else {
     $importPath = "./.devcontainer/scripts"
 }
-Import-Module "$($importPath)/config.psm1" -Force
-Import-Module "$($importPath)/login.psm1" -Force
+Import-Module "$($importPath)/config.psm1" -Force -DisableNameChecking
+Import-Module "$($importPath)/login.psm1" -Force -DisableNameChecking
 
 foreach($solution in (Get-Content ./spo/solutions.json | ConvertFrom-Json).solutions){
     try {
