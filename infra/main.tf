@@ -12,7 +12,7 @@ resource "azurerm_service_plan" "plan_linux" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name  
   os_type             = "Linux"
-  #sku_name            = "P1v3"
+  #sku_name            = "P1v2"
   sku_name            = "B1"
   tags                = var.tags
 }
@@ -34,7 +34,7 @@ resource "azurerm_linux_web_app" "app" {
     application_stack {
       node_version   = "20-lts"
     }
-    app_command_line = "cd site\\wwwroot && npm install && npm run start"
+    app_command_line = "npm install && npm run start"
   }
 
   app_settings = {
