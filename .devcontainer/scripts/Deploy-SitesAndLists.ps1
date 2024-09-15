@@ -52,6 +52,12 @@ if (Test-Path "./spo/templates.json") {
 # Process template.json if present
 if (Test-Path "./spo/templates.json") {
     foreach($template in (Get-Content ./spo/templates.json | ConvertFrom-Json).templates | Sort-Object sortOrder) {
-        Invoke-SiteTemplate -template $template
+        if($template.templateName -eq "SitePages.xml") {
+            Add-SitePagesFields -template $template
+        }
+        else {
+            Invoke-SiteTemplate -template $template
+        }
+        
     }
 }

@@ -131,3 +131,70 @@ function Ensure-TermSet {
     return $($termSet.Id)
 }
 Export-ModuleMember -Function Ensure-TermSet
+
+<#
+.SYNOPSIS
+    Add real time news field to site pages list
+
+.DESCRIPTION
+    New fields added with site template won't be added to default content type and must be added manually.
+    Works on other lists than site pages, so this list is special or it's a bug.
+
+.PARAMETER $template
+    Full template to get site urls
+
+.EXAMPLE
+    Add-SitePagesFields -template $template
+
+.NOTES
+    This function requires the PnP PowerShell module and appropriate permissions to add list fields.
+#>
+function Add-SitePagesFields {
+    param (
+        [Parameter()]
+        [PSObject]$template
+    )
+
+    try {   
+        foreach ($site in $template.targets) {
+            $siteUrl = "https://$($global:M365_TENANTNAME).sharepoint.com/sites/$($site)"
+            $cnSite = Connect-PnPOnline -Url $siteUrl @global:PnPCreds -ReturnConnection
+
+            $GUID_pb_Sticky = "e04bb79c-9414-4232-9db5-4d40f4f05f08"
+            $GUID_pb_StickyDate = "253d0d96-60a4-4e91-9e17-8f650071c2bd"
+            $GUID_pb_Channels = "85fdf7a1-66b5-4075-b2f4-ebc07d91e628"
+            $GUID_pb_PublishedFrom = "abcfd13d-2645-4886-8086-cabb7cf18683"
+            $GUID_pb_PublishedTo = "1ed63437-a63b-4a67-bc02-c02e3525d1d3"
+            
+            # Helper function to check if a field exists
+            function FieldExists($listName, $internalName, $connection) {
+                $field = Get-PnPField -List $listName -Identity $internalName -Connection $connection -ErrorAction SilentlyContinue
+                return $null -ne $field
+            }
+
+            if (-not (FieldExists -listName "SitePages" -internalName "pb_Sticky" -connection $cnSite)) {
+                Add-PnPField -List "SitePages" -DisplayName "Sticky" -InternalName "pb_Sticky" -Id $GUID_pb_Sticky -Group "PuntoBello" -AddToDefaultView  -Type Boolean -Connection $cnSite
+            }
+            
+            if (-not (FieldExists -listName "SitePages" -internalName "pb_StickyDate" -connection $cnSite)) {   
+                Add-PnPField -List "SitePages" -DisplayName "Sticky date" -InternalName "pb_StickyDate" -Id $GUID_pb_StickyDate -Group "PuntoBello" -AddToDefaultView  -Type DateTime -Connection $cnSite
+            }
+
+            if (-not (FieldExists -listName "SitePages" -internalName "pb_Channels" -connection $cnSite)) {
+                Add-PnPTaxonomyField -List "SitePages" -DisplayName "Channels" -InternalName "pb_Channels" -TermSetPath "PuntoBello|Channels" -Group "PuntoBello" -AddToDefaultView -Id $GUID_pb_Channels -MultiValue -Connection $cnSite
+            }
+
+            if (-not (FieldExists -listName "SitePages" -internalName "pb_PublishedFrom" -connection $cnSite)) {
+                Add-PnPField -List "SitePages" -DisplayName "Published from" -InternalName "pb_PublishedFrom" -Id $GUID_pb_PublishedFrom -Group "PuntoBello" -AddToDefaultView -Type DateTime -Connection $cnSite
+            }
+
+            if (-not (FieldExists -listName "SitePages" -internalName "pb_PublishedTo" -connection $cnSite)) {
+                Add-PnPField -List "SitePages" -DisplayName "Published to" -InternalName "pb_PublishedTo" -Id $GUID_pb_PublishedTo -Group "PuntoBello" -AddToDefaultView -Type DateTime -Connection $cnSite
+            }
+        }
+    }
+    catch {
+      throw "Error applying Site Pages Fields for site $($cnSite.Url): $_"
+    }
+}
+Export-ModuleMember -Function Add-SitePagesFields
