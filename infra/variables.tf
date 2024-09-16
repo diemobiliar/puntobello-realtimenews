@@ -21,12 +21,11 @@ variable "environment_name" {
 variable "tags" {
   type = map(string)
   default = {
-    AppID = "PuntoBello"
-    Stage = "dev"
+    AppID   = "PuntoBello"
+    Stage   = "dev"
   }
 }
 
-variable "app_sitepublishing_cors_origin" {
-  type    = string
-  default = "https://fhu365.sharepoint.com"
+locals {
+  app_sitepublishing_cors_origin = "https://${var.tenant_name}.sharepoint.com"
 }
