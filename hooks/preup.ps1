@@ -4,9 +4,6 @@ if (Test-Path /proc/1/cgroup) {
     $importPath = "./.devcontainer/scripts"
 }
 
-Import-Module "$($importPath)/config.psm1" -Force -DisableNameChecking
-Import-Module "$($importPath)/login.psm1" -Force -DisableNameChecking
-
 Invoke-Expression -Command $importPath/Deploy-SitesAndLists.ps1
 
 azd env set tenant_name $global:M365_TENANTNAME
