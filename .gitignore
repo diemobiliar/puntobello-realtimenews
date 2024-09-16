@@ -1,1 +1,5 @@
 node_modules
+.azure/dev/infra/main.tfplan
+.azure/dev/infra/terraform.tfstate.backup
+.azure/dev/infra/terraform.tfstate
+.azure/dev/infra/.terraform
