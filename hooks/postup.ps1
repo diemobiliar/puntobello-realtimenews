@@ -4,10 +4,6 @@ if (Test-Path /proc/1/cgroup) {
     $importPath = "./.devcontainer/scripts"
 }
 
-Import-Module "$($importPath)/config.psm1" -Force -DisableNameChecking
-Import-Module "$($importPath)/login.psm1" -Force -DisableNameChecking
-Import-Module "$($importPath)/functions.psm1" -Force -DisableNameChecking
-
 $env:SPFX_URL_SOCKET = "$(azd env get-value app_name).azurewebsites.net"
 $env:SPFX_LIST_ID_REALTIMENEWSLIST = $(azd env get-value rtnews_list_guid)
 
