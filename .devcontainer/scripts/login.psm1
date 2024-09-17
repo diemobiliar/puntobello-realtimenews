@@ -102,7 +102,12 @@ switch ($global:loginSelector) {
     4 {
         # Interactive Login to Azure with your Account
         try {
-            Connect-AzAccount -UseDeviceAuthentication -SubscriptionId $global:keyVaultSubscriptionId
+            if (Get-AzContext) {
+                Write-Host "Already connected with AzAccount"
+            } else {
+                Connect-AzAccount -UseDeviceAuthentication -SubscriptionId $global:keyVaultSubscriptionId
+            }
+            
             $CLIMICROSOFT365_AADAPPID = Get-AzKeyVaultSecret -VaultName $global:keyVaultName -Name $global:secretNameAppId -AsPlainText 
             $global:M365_TENANTNAME = Get-AzKeyVaultSecret -VaultName $global:keyVaultName -Name $global:secretNameTenantName -AsPlainText
             $CLIMICROSOFT365_CERT = Get-AzKeyVaultSecret -VaultName $global:keyVaultName -Name $global:secretNameCertificate -AsPlainText
@@ -144,6 +149,7 @@ switch ($global:loginSelector) {
         $creds = New-Object System.Management.Automation.PSCredential ($global:adminUser, $global:password)
         $global:PnPCreds = @{
             Credentials = $creds
+            ClientId = $global:delegatedAppId
         }
     }
 }

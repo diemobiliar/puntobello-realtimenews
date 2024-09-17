@@ -1,6 +1,11 @@
 data "azurerm_subscription" "sub" {
 }
 
+resource "random_string" "random" {
+  length  = 6
+  special = false
+  upper   = false
+}
 resource "azurerm_resource_group" "rg" {
   name     = "puntobello-realtimenews-${var.environment_name}-rg"
   location = var.location
@@ -10,29 +15,29 @@ resource "azurerm_resource_group" "rg" {
 resource "azurerm_service_plan" "plan_linux" {
   name                = "puntobello-realtimenews-${var.environment_name}-splan"
   location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name  
+  resource_group_name = azurerm_resource_group.rg.name
   os_type             = "Linux"
   #sku_name            = "P1v2"
-  sku_name            = "B1"
-  tags                = var.tags
+  sku_name = "B1"
+  tags     = var.tags
 }
 
 resource "azurerm_linux_web_app" "app" {
-  name                = "puntobello-realtimenews-${var.environment_name}-as"
+  name                = "puntobello-rtnews-${random_string.random.result}-${var.environment_name}-as"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  service_plan_id = azurerm_service_plan.plan_linux.id
+  service_plan_id     = azurerm_service_plan.plan_linux.id
 
   site_config {
-    http2_enabled            = true
-    minimum_tls_version      = "1.2"
-    ftps_state               = "FtpsOnly"
-    always_on                = true
+    http2_enabled       = true
+    minimum_tls_version = "1.2"
+    ftps_state          = "FtpsOnly"
+    always_on           = true
     cors {
-      allowed_origins = [var.app_sitepublishing_cors_origin]
+      allowed_origins = [local.app_sitepublishing_cors_origin]
     }
     application_stack {
-      node_version   = "20-lts"
+      node_version = "20-lts"
     }
     app_command_line = "npm install && npm run start"
   }
@@ -40,8 +45,8 @@ resource "azurerm_linux_web_app" "app" {
   app_settings = {
     "WEBSITE_NODE_DEFAULT_VERSION" = "~20"
     "SERVICEBUS_CONNECTION_STRING" = azurerm_servicebus_namespace.sb_pagepublishing.default_primary_connection_string
-    "SERVICEBUS_QUEUE_NAME" = azurerm_servicebus_queue.sb_pagepublishing_queue.name
-    "CORS_ORIGIN" = var.app_sitepublishing_cors_origin
+    "SERVICEBUS_QUEUE_NAME"        = azurerm_servicebus_queue.sb_pagepublishing_queue.name
+    "CORS_ORIGIN"                  = local.app_sitepublishing_cors_origin
   }
 
   logs {
@@ -66,9 +71,9 @@ resource "azurerm_servicebus_namespace" "sb_pagepublishing" {
 }
 
 resource "azurerm_servicebus_queue" "sb_pagepublishing_queue" {
-  name                  = "news"
-  namespace_id          = azurerm_servicebus_namespace.sb_pagepublishing.id
-  lock_duration         = "PT30S"
+  name          = "news"
+  namespace_id  = azurerm_servicebus_namespace.sb_pagepublishing.id
+  lock_duration = "PT30S"
 }
 
 data "azurerm_managed_api" "managed_api_sb" {

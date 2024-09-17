@@ -4,11 +4,7 @@ if (Test-Path /proc/1/cgroup) {
     $importPath = "./.devcontainer/scripts"
 }
 
-Import-Module "$($importPath)/config.psm1" -Force -DisableNameChecking
-Import-Module "$($importPath)/login.psm1" -Force -DisableNameChecking
-
 Invoke-Expression -Command $importPath/Deploy-SitesAndLists.ps1
-
 azd env set tenant_name $global:M365_TENANTNAME
 
 if (Test-Path "./spo/templates.json"){
@@ -30,4 +26,11 @@ if (Test-Path "./spo/templates.json"){
     $cnSite = Connect-PnPOnline -Url "https://$($global:M365_TENANTNAME).sharepoint.com/sites/$($sites[1])" @PnPCreds -ReturnConnection
     azd env set rtnews_en_sitepages_list_guid (Get-PnPList -Identity "SitePages" -Connection $cnSite).Id
     azd env set rtnews_en  $sites[1]
+}
+# sometimes the az cli connection is lost. in this case - connect again.
+$azAccount = az account show 2>$null
+if ($azAccount) {
+    Write-Host "Azure CLI is connected."
+} else {
+    az login
 }
