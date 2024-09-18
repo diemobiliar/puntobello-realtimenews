@@ -11,7 +11,7 @@
     Start the script with Deploy-SPWP.ps1
 #>
 
-if (Test-Path /proc/1/cgroup) {
+if (Test-Path -Path "/.dockerenv") {
     $importPath = "/usr/local/bin"
 } else {
     $importPath = "./.devcontainer/scripts"
@@ -27,7 +27,7 @@ foreach($solution in (Get-Content ./spo/solutions.json | ConvertFrom-Json).solut
         Publish-PnPApp -Identity $app.Id -Connection $global:cnAppCatalog
         Write-Host "$($app.Title) published."
         foreach($site in $solution.targets){
-            $cnSite = Connect-PnPOnline -Url "https://$($global:M365_TENANTNAME).sharepoint.com/sites/$($site)" @PnPCreds -ReturnConnection
+            $cnSite = Connect-PnPOnline -Url "https://$($global:M365_TENANTNAME).sharepoint.com/sites/$($site)" @PnPCreds -ReturnConnection -WarningAction Ignore
             $web = Get-PnPWeb -Includes AppTiles -Connection $cnSite
             if($null -eq ($web.AppTiles | Where-Object {$_.Title -eq $app.Title})){
                 Install-PnPApp -Identity $app.Id -Connection $cnSite

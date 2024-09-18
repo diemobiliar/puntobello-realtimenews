@@ -20,7 +20,7 @@
 #>
 
 # Import required modules
-if (Test-Path /proc/1/cgroup) {
+if (Test-Path -Path "/.dockerenv") {
     $importPath = "/usr/local/bin"
 } else {
     $importPath = "./.devcontainer/scripts"
@@ -45,7 +45,7 @@ if (Test-Path "./spo/templates.json"){
 # Process TermSets if present
 if (Test-Path "./spo/templates.json") {
     foreach($termSet in (Get-Content ./spo/templates.json | ConvertFrom-Json).templates.termSets | Sort-Object -Unique) {
-        Ensure-TermSet -termSetPath $termSet
+        Add-TermSet -termSetPath $termSet
     }
 }
 

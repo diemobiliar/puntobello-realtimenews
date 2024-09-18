@@ -159,8 +159,8 @@ switch ($global:loginSelector) {
 #################################################################
 
 try {
-    $global:cnAdmin = Connect-PnPOnline -Url "https://$($global:M365_TENANTNAME)-admin.sharepoint.com" @global:PnPCreds -ReturnConnection
-    $global:cnAppCatalog = Connect-PnPOnline -Url (Get-PnPTenantAppCatalogUrl -Connection $global:cnAdmin) @global:PnPCreds -ReturnConnection
+    $global:cnAdmin = Connect-PnPOnline -Url "https://$($global:M365_TENANTNAME)-admin.sharepoint.com" @global:PnPCreds -ReturnConnection -WarningAction Ignore
+    $global:cnAppCatalog = Connect-PnPOnline -Url (Get-PnPTenantAppCatalogUrl -Connection $global:cnAdmin) @global:PnPCreds -ReturnConnection -WarningAction Ignore
 }
 catch {
     Write-Host "Error occurred while authenticating: $($_.Exception.Message)" -ForegroundColor Red

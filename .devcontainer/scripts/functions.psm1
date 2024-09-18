@@ -72,7 +72,7 @@ function Invoke-SiteTemplate {
     try {   
       foreach ($site in $template.targets) {
         $siteUrl = "https://$($global:M365_TENANTNAME).sharepoint.com/sites/$($site)"
-        $cnSite = Connect-PnPOnline -Url $siteUrl @global:PnPCreds -ReturnConnection
+        $cnSite = Connect-PnPOnline -Url $siteUrl @global:PnPCreds -ReturnConnection -WarningAction Ignore
         $templatePath = "$($template.relativePath)/$($template.templateName)"
         Invoke-PnPSiteTemplate -Path $templatePath -Connection $cnSite -Verbose
         Write-Host "SiteTemplate `'$($template.templateName)`' applied for site $($cnSite.Url)" -ForegroundColor Green
@@ -95,12 +95,12 @@ Export-ModuleMember -Function Invoke-SiteTemplate
     The full path of the Termset.
 
 .EXAMPLE
-    Ensure-TermSet -termSetPath "Puntobello|Channels"
+    Add-TermSet -termSetPath "Puntobello|Channels"
 
 .NOTES
     This function requires the PnP PowerShell module and appropriate permissions to create a term set and group.
 #>
-function Ensure-TermSet {
+function Add-TermSet {
     param (
         [Parameter()]
         [String]$termSetPath
@@ -123,14 +123,14 @@ function Ensure-TermSet {
 
     # If the term set doesn't exist, create it
     if (!$termSet) {
-        $termSet = New-PnPTermSet -Name $termSetName -TermGroup $termGroup -Connection $global:cnAdmin
+        $termSet = New-PnPTermSet -Name $termSetName -TermGroup $termGroup -Lcid 1033 -Connection $global:cnAdmin
     }
 
     # Output the term set ID for reference
     Write-Host "Term Set ID: $($termSet.Id)"
-    return $($termSet.Id)
+    return $($termSet.Id).Guid
 }
-Export-ModuleMember -Function Ensure-TermSet
+Export-ModuleMember -Function Add-TermSet
 
 <#
 .SYNOPSIS
@@ -158,7 +158,7 @@ function Add-SitePagesFields {
     try {   
         foreach ($site in $template.targets) {
             $siteUrl = "https://$($global:M365_TENANTNAME).sharepoint.com/sites/$($site)"
-            $cnSite = Connect-PnPOnline -Url $siteUrl @global:PnPCreds -ReturnConnection
+            $cnSite = Connect-PnPOnline -Url $siteUrl @global:PnPCreds -ReturnConnection -WarningAction Ignore
 
             $GUID_pb_Sticky = "e04bb79c-9414-4232-9db5-4d40f4f05f08"
             $GUID_pb_StickyDate = "253d0d96-60a4-4e91-9e17-8f650071c2bd"

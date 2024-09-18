@@ -10,7 +10,7 @@
     Start the script with Build-SPWP.ps1
 #>
 
-if (Test-Path /proc/1/cgroup) {
+if (Test-Path -Path "/.dockerenv") {
     $importPath = "/usr/local/bin"
 } else {
     $importPath = "./.devcontainer/scripts"
