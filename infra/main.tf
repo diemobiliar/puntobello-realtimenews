@@ -7,13 +7,13 @@ resource "random_string" "random" {
   upper   = false
 }
 resource "azurerm_resource_group" "rg" {
-  name     = "puntobello-realtimenews-${var.environment_name}-rg"
+  name     = "puntobello-rtnews-${random_string.random.result}-${var.environment_name}-rg"
   location = var.location
   tags     = var.tags
 }
 
 resource "azurerm_service_plan" "plan_linux" {
-  name                = "puntobello-realtimenews-${var.environment_name}-splan"
+  name                = "puntobello-rtnews-${random_string.random.result}-${var.environment_name}-splan"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   os_type             = "Linux"
@@ -62,7 +62,7 @@ resource "azurerm_linux_web_app" "app" {
 }
 
 resource "azurerm_servicebus_namespace" "sb_pagepublishing" {
-  name                = "puntobello-realtimenews-${var.environment_name}-bus"
+  name                = "puntobello-rtnews-${random_string.random.result}-${var.environment_name}-bus"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   sku                 = "Standard"
@@ -87,7 +87,7 @@ data "azurerm_managed_api" "managed_api_spo" {
 }
 
 resource "azurerm_api_connection" "apic_sb" {
-  name                = "puntobello-realtimenews-${var.environment_name}-bus-apic"
+  name                = "puntobello-rtnews-${random_string.random.result}-${var.environment_name}-bus-apic"
   resource_group_name = azurerm_resource_group.rg.name
   managed_api_id      = data.azurerm_managed_api.managed_api_sb.id
   tags                = var.tags
@@ -97,7 +97,7 @@ resource "azurerm_api_connection" "apic_sb" {
 }
 
 resource "azurerm_api_connection" "apic_spo" {
-  name                = "puntobello-realtimenews-${var.environment_name}-spo-apic"
+  name                = "puntobello-rtnews-${random_string.random.result}-${var.environment_name}-spo-apic"
   resource_group_name = azurerm_resource_group.rg.name
   managed_api_id      = data.azurerm_managed_api.managed_api_spo.id
   tags                = var.tags
