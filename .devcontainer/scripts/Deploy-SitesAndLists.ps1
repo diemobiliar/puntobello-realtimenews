@@ -20,44 +20,35 @@
 #>
 
 # Import required modules
-if (Test-Path -Path "/.dockerenv") {
-    $importPath = "/usr/local/bin"
+if (Test-Path -Path '/.dockerenv') {
+    $importPath = '/usr/local/bin'
 } else {
-    $importPath = "./.devcontainer/scripts"
+    $importPath = './.devcontainer/scripts'
 }
 Import-Module "$($importPath)/config.psm1" -Force -DisableNameChecking
 Import-Module "$($importPath)/login.psm1" -Force -DisableNameChecking
 Import-Module "$($importPath)/functions.psm1" -Force -DisableNameChecking
 
 # Ensure target site collections configured in exist, create if required.
-if (Test-Path "./spo/solutions.json"){
-    foreach($site in  (Get-Content ./spo/solutions.json | ConvertFrom-Json).solutions.targets | Sort-Object -Unique) {
-        Assert-SiteCollection -siteName $site -SiteTitle $site
-    }
-}
+if (Test-Path './spo/solutions.json') {
+    Write-Information 'deploy sites'
+    foreach ($site in  (Get-Content ./spo/solutions.json | ConvertFrom-Json).sites) {
+        Assert-SiteCollection -siteDefinition $site
+        Write-Information "apply site templates"
+        foreach ($template in $site.templates | Sort-Object sortOrder) {
+            if ($template.templateName -eq 'SitePages.xml') {
+                Add-SitePagesFields -template $template -urlStub $site.Url
+            } else {
+                Invoke-SiteTemplate -template $template -urlStub $site.Url
+            }
+        }
 
-if (Test-Path "./spo/templates.json"){
-    foreach($site in  (Get-Content ./spo/templates.json | ConvertFrom-Json).templates.targets | Sort-Object -Unique) {
-        Assert-SiteCollection -siteName $site -SiteTitle $site
     }
-}
-
-# Process TermSets if present
-if (Test-Path "./spo/templates.json") {
-    foreach($termSet in (Get-Content ./spo/templates.json | ConvertFrom-Json).templates.termSets | Sort-Object -Unique) {
+    Write-Information 'create termSets'
+    foreach ($termSet in ((Get-Content ./spo/solutions.json | ConvertFrom-Json).termStore.termSets)) {
         Add-TermSet -termSetPath $termSet
     }
+} else {
+    Write-Error 'solutions.json not found'
 }
 
-# Process template.json if present
-if (Test-Path "./spo/templates.json") {
-    foreach($template in (Get-Content ./spo/templates.json | ConvertFrom-Json).templates | Sort-Object sortOrder) {
-        if($template.templateName -eq "SitePages.xml") {
-            Add-SitePagesFields -template $template
-        }
-        else {
-            Invoke-SiteTemplate -template $template
-        }
-        
-    }
-}
