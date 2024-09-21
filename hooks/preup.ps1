@@ -27,10 +27,4 @@ if (Test-Path "./spo/templates.json"){
     azd env set rtnews_en_sitepages_list_guid (Get-PnPList -Identity "SitePages" -Connection $cnSite).Id
     azd env set rtnews_en  $sites[1]
 }
-# sometimes the az cli connection is lost. in this case - connect again.
-$azAccount = az account show 2>$null
-if ($azAccount) {
-    Write-Host "Azure CLI is connected."
-} else {
-    az login
-}
+
