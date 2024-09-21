@@ -3,3 +3,4 @@ node_modules
 .azure/dev/infra/terraform.tfstate.backup
 .azure/dev/infra/terraform.tfstate
 .azure/dev/infra/.terraform
+infra/.terraform
