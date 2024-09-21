@@ -1,8 +1,57 @@
 {
-    "solutions": [
+    "sites": [
         {
-            "solutionName": "puntobello-realtimenews-spwp",
-            "targets": ["pb_home"]
+            "Url": "pb_home",
+            "Title": "Intranet Home",
+            "LCID": 1033,
+            "solutions": [
+                {
+                    "Name": "puntobello-realtimenews-spwp"
+                }
+            ],
+            "templates": [
+                {
+                    "templateName": "RealtimeNews.xml",
+                    "relativePath": "./spo/assets/lists",
+                    "sortOrder": 100
+                },
+                {
+                    "templateName": "SubscribedChannels.xml",
+                    "targets": [
+                        "pb_home"
+                    ],
+                    "relativePath": "./spo/assets/lists",
+                    "termSets": [
+                        "PuntoBello|Channels"
+                    ],
+                    "sortOrder": 200
+                },
+                {
+                    "templateName": "SitePages.xml",
+                    "relativePath": "./spo/assets/lists",
+                    "sortOrder": 300
+                }
+            ]
+        },
+        {
+            "Url": "pb_newsde",
+            "Title": "News Publishing for German News",
+            "LCID": 1031,
+            "solutions": [],
+            "templates": [
+                {
+                    "templateName": "SitePages.xml",
+                    "relativePath": "./spo/assets/lists",
+                    "sortOrder": 100
+                }
+            ]
+        }
+    ],
+    "termStore": [
+        {
+            "termSets": [
+                "PuntoBello|Channels"
+            ]
         }
     ]
 }
