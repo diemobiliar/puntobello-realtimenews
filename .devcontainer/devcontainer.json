@@ -3,9 +3,14 @@
 	"build": {
 		"dockerfile": "Dockerfile",
 		"args": { 
-			"ARCH": "arm64"
+			"ARCH": "amd64"
 		}
     },
+	"customizations": {
+		"vscode": {
+			"extensions": ["ms-vscode.PowerShell"]
+		}
+	},
 	"postStartCommand": "pwsh",
 	"forwardPorts": [
 		4321,

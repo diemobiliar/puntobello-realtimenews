@@ -15,8 +15,8 @@
     This script requires the PnP PowerShell module and appropriate permissions to create site collections and apply templates.
 
 .EXAMPLE
-    .\Deploy-SitesAndLists.ps1
-    Ensures the specified site collections exist and applies templates from the templates.json file.
+    .\Deploy-SitesAndLists
+    Ensures the specified site collections exist and applies templates from the solutions.json file.
 #>
 
 # Import required modules
@@ -31,10 +31,14 @@ Import-Module "$($importPath)/functions.psm1" -Force -DisableNameChecking
 
 # Ensure target site collections configured in exist, create if required.
 if (Test-Path './spo/solutions.json') {
-    Write-Information 'deploy sites'
+    Write-Information "`e[34mCreate termSets`e[0m"
+    foreach ($termSet in ((Get-Content ./spo/solutions.json | ConvertFrom-Json).termStore.termSets)) {
+        Add-TermSet -termSetPath $termSet
+    }
+    Write-Information "`e[34mDeploy sites`e[0m"
     foreach ($site in  (Get-Content ./spo/solutions.json | ConvertFrom-Json).sites) {
         Assert-SiteCollection -siteDefinition $site
-        Write-Information "apply site templates"
+        Write-Information "Apply site templates for $($site.Url)"
         foreach ($template in $site.templates | Sort-Object sortOrder) {
             if ($template.templateName -eq 'SitePages.xml') {
                 Add-SitePagesFields -template $template -urlStub $site.Url
@@ -44,11 +48,8 @@ if (Test-Path './spo/solutions.json') {
         }
 
     }
-    Write-Information 'create termSets'
-    foreach ($termSet in ((Get-Content ./spo/solutions.json | ConvertFrom-Json).termStore.termSets)) {
-        Add-TermSet -termSetPath $termSet
-    }
 } else {
     Write-Error 'solutions.json not found'
+    exit 1
 }
 

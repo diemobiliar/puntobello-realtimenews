@@ -31,6 +31,8 @@ function Assert-SiteCollection {
         try {
             Write-Information "Creating Site $($Url)"
             New-PnPSite -Type "CommunicationSite" -Title $siteDefinition.Title -Url $Url -Lcid $siteDefinition.LCID -Owner $global:adminUser -Connection $global:cnAdmin    
+            Write-Information "\e[90mWait 30 seconds after site creation`e[0m"
+            Start-Sleep 30
         }
         catch {
             throw "Site Creation for $($Url) failed: $_"
@@ -189,7 +191,8 @@ function Add-SitePagesFields {
             }
 
             if (-not (FieldExists -listName "SitePages" -internalName "pb_Channels" -connection $cnSite)) {
-                Add-PnPTaxonomyField -List "SitePages" -DisplayName "Channels" -InternalName "pb_Channels" -TermSetPath "PuntoBello|Channels" -Group "PuntoBello" -AddToDefaultView -Id $GUID_pb_Channels -MultiValue -Connection $cnSite | Out-Null
+                Start-Sleep -Seconds 5
+                Add-PnPTaxonomyField -List "SitePages" -DisplayName "Channels" -InternalName "pb_Channels" -TermSetPath "PuntoBello|Channels" -Group "PuntoBello" -AddToDefaultView -Id $GUID_pb_Channels -MultiValue -Connection $cnSite  | Out-Null
                 Write-Information "`e[32mAdded field pb_Channels to SitePages for site $siteUrl`e[0m"
             }
 
