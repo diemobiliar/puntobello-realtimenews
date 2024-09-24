@@ -179,7 +179,7 @@ export function changeChannelSettings(spo, newsChannelsRef, item, isChecked, cha
     });
   }
   // Update the channel settings for the current user
-  spo.updateMultiMeta(channels, getRootEnv().config.spfxRealtimenewsListId, 'pb_Channels', channelsubItemIdRef.current).then().catch((error) => {
+  spo.updateMultiMeta(channels, getRootEnv().config.spfxSubscribedChannelsListTitle, 'pb_Channels', channelsubItemIdRef.current).then().catch((error) => {
     Logger.getInstance().error('CHANGE_CHANNEL_SETTINGS', error);
   });
 }
