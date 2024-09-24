@@ -75,8 +75,16 @@ You can find more information about Artillery [here](https://www.artillery.io/do
 ### Running a Test:
 In the `development` subfolder, run:
 
+**Linux/macOS:**
 ```bash
 export PUNTOBELLO_TARGET_URL="wss://yoursocketserver.azurewebsites.net"
+npx artillery run loadteststandard.yml
+```
+
+**Windows PowerShell:**
+```powershell
+
+$env:PUNTOBELLO_TARGET_URL="wss://yoursocketserver.azurewebsites.net"
 npx artillery run loadteststandard.yml
 ```
 
