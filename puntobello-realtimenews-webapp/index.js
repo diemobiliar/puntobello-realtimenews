@@ -1,4 +1,4 @@
-console.log("Telemetry initialized, webapp PuntoBello realtimenew webapp started");
+console.log("Webapp PuntoBello Realtimenews Webapp started");
 
 // Port will be assigned automatically by the Azure Web App (process.env.port ). For localhost debugging, we use 8080.
 const { ServiceBusClient } = require("@azure/service-bus");
@@ -9,12 +9,16 @@ const port = process.env.port || 8080;
 const io = new Server({
   cors: {
     origin: "@@corsOrigin@@"
+    //origin: true  // Allows all origins, DO NOT USE IN PRODUCTION
   },
   serveClient: false,
   pingInterval: 40000,
   pingTimeout: 30000,
   transports: ["websocket"]
 });
+
+// Log the CORS origin value
+console.log("CORS origin configured as:", io.opts.cors.origin);
 
 var clientCount = 0;
 

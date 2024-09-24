@@ -1,56 +1,103 @@
-# Development setup
+# Development Setup
 
-## Variable to be replaced
-In order to run this project, you will need to replace the following variables :
-For the server config, in index.js 
-- @@corsOrigin@@                : the domain where the client web app is running, which connects to the socket server (e.g. http://localhost:3000)
-- @@azureSBConnectionString@@   : the connection string for the service bus
-- @@azureSBQueueName@@          : the name of the service bus queue
-For the client config, in testsocket.html
-- @@azureWebapp@@               : Url of the socket server, e.g. http://localhost:8080
+## Variables to Replace
+In order to develop and test locally, you will need to replace the following placeholders:
 
-## Running fully locally
+### For the server config (in `index.js`):
+- `@@corsOrigin@@`: The domain where the client web app is running, which connects to the socket server (e.g., `http://localhost:3000`).
+- `@@azureSBConnectionString@@`: The connection string for the Azure Service Bus.
+- `@@azureSBQueueName@@`: The name of the Service Bus queue.
 
-### Node server
-You can start the server with the following command :
+### For the client config (in `testsocket.html`):
+Replace any necessary variables or configuration in `testsocket.html` based on your local setup.
+
+---
+
+## Running Fully Locally
+
+You can run both the socket server and a simple web app that connects your client to the socket server fully locally.
+
+### 1. **Node Server (Socket Server)**:
+Start the server with the following command:
+
+```bash
 node index.js
-Starts your server on localhost:8080
+```
 
-### Local http server
-You can start the local server with the following command from the subdirectory "development" :
+This starts your server on `localhost:8080`.
+
+### 2. **Local HTTP Server (Web App)**:
+To run the local web app, go to the subdirectory `development` and run the following command:
+
+```bash
 node testsocket.js
-Start an http server on localhost:3000 which serves by default the file testsocket.html
+```
 
-### Testing
-Start a browser and browse http:localhost:3000
+This starts an HTTP server on `localhost:3000` that serves the `testsocket.html` file by default.
 
-## Hybrid setup
-You can run the node server from azure and connects locally, in this case you just need to ajust the following parameters :
-For the server config, in index.js
-- @@corsOrigin@@
-For the client config, in testsocket.html
-- @@azureWebapp@@
+### 3. **Testing**:
+Open a browser and navigate to `http://localhost:3000` to test the setup.
 
-## Load testing with Artillery
-The node server was load tested with the Artillery.
-You can find further informations about Artillery here :
-[Artillery.io Socket Io Reference](https://www.artillery.io/docs/guides/guides/socketio-reference)
+---
 
-You will also find two configuration files :
-- loadteststandard.yml
-Runs for 20 seconds with an arrival rate of 10 clients per seconds, the clients stay connected for 10 minutes
-- loadtesthighlongrunning.yml
-Runs for 20 minutes with an arrival rate of 10 clients per seconds, ramping up to 20 clients per seconds. The clients stay connected for 10 minutes
-10 clients per sec = 600 clients per minutes or 1200 clients when full ramp is in progress.
-This test goes up to 11k connections
+## Hybrid Setup
 
-In the development subfolder run :
+You can run the Node server on Azure and connect locally from your client. When developing or load testing, you might need to adjust your socket server to allow CORS. To bypass CORS during development, modify your `index.js` as follows:
+
+```javascript
+const io = new Server({
+  cors: {
+    origin: true  // Allows all origins, DO NOT USE IN PRODUCTION
+  },
+  // other configurations
+});
+```
+
+---
+
+## Load Testing Your Azure Web App with Artillery
+
+You can find more information about Artillery [here](https://www.artillery.io/docs/guides/guides/socketio-reference).
+
+### Available Configuration Files:
+- **`loadteststandard.yml`**: Runs for 20 seconds with an arrival rate of 10 clients per second. The clients stay connected for 10 minutes.
+- **`loadtesthighlongrunning.yml`**: Runs for 20 minutes with an arrival rate of 10 clients per second, ramping up to 20 clients per second. The clients stay connected for 10 minutes.
+- **`loadtestveryhighshorterrun.yml`**: Runs for 5 minutes with an arrival rate of 40 clients per second, ramping up to 80 clients per second. The clients stay connected for 10 minutes.
+
+### Important Notes on Load Testing:
+- **Do not load test against your production environment**, as these stress tests may overload your web app.
+- For example:
+  - 10 clients per second = 600 clients per minute or 1,200 clients when full ramp is in progress.
+  - 40 clients per second = 2,400 clients per minute or 4,800 clients when full ramp is in progress.
+  
+- Tests have been performed with up to 11,000 simultaneous connections.
+
+### Running a Test:
+In the `development` subfolder, run:
+
+```bash
+export PUNTOBELLO_TARGET_URL="wss://yoursocketserver.azurewebsites.net"
 npx artillery run loadteststandard.yml
+```
 
-## _Notes_
-- The yml key ...engine: "socketio-v3" ... is correct, it uses the v4 socket configuration
-- Be prudent when adjusting arrival and ramp up rates as this values are per seconds
+---
 
-## Load testing with Artillery and debugging
-In the development subfolder run :
+## Notes
+- The YAML key `engine: "socketio-v3"` is correct, as it uses the v4 Socket.IO configuration.
+- Be careful when adjusting **arrival rate** and **ramp-up rate** since these values are per second.
+
+---
+
+## Debugging Artillery Load Testing
+
+If you experience issues during load tests (e.g., too many client errors), it may indicate a problem with your setup. You can debug Artillery by running the following command from the `development` subfolder:
+
+### For debugging socketio only issues
+```bash
 DEBUG=socketio npx artillery run loadteststandard.yml
+```
+
+### Full debug mode
+```bash
+DEBUG=* npx artillery run loadteststandard.yml
+```

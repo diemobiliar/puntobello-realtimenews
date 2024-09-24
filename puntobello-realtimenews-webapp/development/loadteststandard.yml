@@ -1,5 +1,5 @@
 config:
-  target: "@@azureWebapp@@"
+  target: {{ PUNTOBELLO_TARGET_URL }}   # the url of your socket.io server in the format wss://your-url.com
   phases:
     - duration: 20
       arrivalRate: 10
@@ -10,7 +10,7 @@ config:
      pingTimeout: 30000
      transports: ["websocket"]
 scenarios:
-  - name: Load test RedNet PubSub
+  - name: Load test PuntoBello PubSub
     engine: "socketio-v3"
     flow:
       - think: 600 # do nothing for 10m and disconnect
