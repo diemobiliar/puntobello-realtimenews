@@ -38,3 +38,6 @@ jspm_packages
 
 # azure local deployment config
 .azure
+
+# text files
+.txt
