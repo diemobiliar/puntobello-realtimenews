@@ -1,6 +1,6 @@
 {
-    "name": "redn-realtimenews-sitepub-webapp",
-    "description": "RedNet Azure Bus listener & socket emitter",
+    "name": "puntobello-realtimenews-sitepub-webapp",
+    "description": "PuntoBello Azure Bus listener & socket emitter",
     "private": true,
     "author": "Nello D'Andrea, die Mobiliar",
     "scripts": {

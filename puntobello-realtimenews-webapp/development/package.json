@@ -1,6 +1,6 @@
 {
-    "name": "load-test-for-redn",
-    "description": "Load Tester for RedNet",
+    "name": "load-test-for-puntobello",
+    "description": "Load Tester for PuntoBello",
     "private": true,
     "author": "Nello D'Andrea, die Mobiliar",
     "scripts": {

@@ -74,11 +74,11 @@ export const customCheckboxStyles: Partial<ICheckboxStyles> = {
     backgroundColor: 'transparent !important',
   },
   checkmark: {
-    color: rootEnv.css['--spfx_color_text'],
+    color: rootEnv.css['--spfx_color_primary'],
     fontWeight: FontWeights.semibold,
     selectors: {
       ':hover': {
-        color: rootEnv.css['--spfx_color_primary'],  
+        color: rootEnv.css['--spfx_color_text'],  
       },
     },
   },
