@@ -88,7 +88,7 @@ resource "azapi_resource" "newswatcherde_lapp" {
                           }
                         },
                         "method" : "patch",
-                        "path" : "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('${var.rtnews_list_guid}'))}/items/@{encodeURIComponent(items('Apply_to_each_RTNews_but_just_one_in_fact')['ID'])}",
+                        "path" : "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('${var.RTNEWS_LIST_GUID}'))}/items/@{encodeURIComponent(items('Apply_to_each_RTNews_but_just_one_in_fact')['ID'])}",
                         "retryPolicy" : {
                           "type" : "none"
                         }
@@ -122,7 +122,7 @@ resource "azapi_resource" "newswatcherde_lapp" {
                       }
                     },
                     "method" : "get",
-                    "path" : "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('${var.rtnews_list_guid}'))}/items",
+                    "path" : "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('${var.RTNEWS_LIST_GUID}'))}/items",
                     "queries" : {
                       "$filter" : "(pb_Language eq '@{variables('varItemLanguage')}') and ((pb_PageName eq '@{replace(variables('varFileNameWithExt'),'''','''''')}') or  (pb_PageName eq '@{uriComponent(variables('varFileNameWithExt'))}'))",
                       "$top" : 1,
@@ -160,7 +160,7 @@ resource "azapi_resource" "newswatcherde_lapp" {
                           }
                         },
                         "method" : "post",
-                        "path" : "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('${var.rtnews_list_guid}'))}/items",
+                        "path" : "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('${var.RTNEWS_LIST_GUID}'))}/items",
                         "retryPolicy" : {
                           "type" : "none"
                         }
@@ -515,7 +515,7 @@ resource "azapi_resource" "newswatcherde_lapp" {
                   {
                     "name" : "varRootUrl",
                     "type" : "string",
-                    "value" : "https://${var.tenant_name}.sharepoint.com/sites/${var.rtnews_de}"
+                    "value" : "https://${var.TENANT_NAME}.sharepoint.com/sites/${var.RTNEWS_DE}"
                   }
                 ]
               },
@@ -549,7 +549,7 @@ resource "azapi_resource" "newswatcherde_lapp" {
                   {
                     "name" : "varTargetUrl",
                     "type" : "string",
-                    "value" : "https://${var.tenant_name}.sharepoint.com/sites/${var.rtnews_home}"
+                    "value" : "https://${var.TENANT_NAME}.sharepoint.com/sites/${var.RTNEWS_HOME}"
                   }
                 ]
               },
@@ -653,7 +653,7 @@ resource "azapi_resource" "newswatcherde_lapp" {
                   }
                 },
                 "method" : "get",
-                "path" : "/datasets/@{encodeURIComponent(encodeURIComponent('https://${var.tenant_name}.sharepoint.com/sites/${var.rtnews_de}'))}/tables/@{encodeURIComponent(encodeURIComponent('${var.rtnews_de_sitepages_list_guid}'))}/onupdatedfileitems"
+                "path" : "/datasets/@{encodeURIComponent(encodeURIComponent('https://${var.TENANT_NAME}.sharepoint.com/sites/${var.RTNEWS_DE}'))}/tables/@{encodeURIComponent(encodeURIComponent('${var.RTNEWS_DE_SITEPAGES_LIST_GUID}'))}/onupdatedfileitems"
               },
               "metadata" : {
                 "flowSystemMetadata" : {
@@ -780,7 +780,7 @@ resource "azapi_resource" "newswatcheren_lapp" {
                           }
                         },
                         "method" : "patch",
-                        "path" : "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('${var.rtnews_list_guid}'))}/items/@{encodeURIComponent(items('Apply_to_each_RTNews_but_just_one_in_fact')['ID'])}",
+                        "path" : "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('${var.RTNEWS_LIST_GUID}'))}/items/@{encodeURIComponent(items('Apply_to_each_RTNews_but_just_one_in_fact')['ID'])}",
                         "retryPolicy" : {
                           "type" : "none"
                         }
@@ -814,7 +814,7 @@ resource "azapi_resource" "newswatcheren_lapp" {
                       }
                     },
                     "method" : "get",
-                    "path" : "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('${var.rtnews_list_guid}'))}/items",
+                    "path" : "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('${var.RTNEWS_LIST_GUID}'))}/items",
                     "queries" : {
                       "$filter" : "(pb_Language eq '@{variables('varItemLanguage')}') and ((pb_PageName eq '@{replace(variables('varFileNameWithExt'),'''','''''')}') or  (pb_PageName eq '@{uriComponent(variables('varFileNameWithExt'))}'))",
                       "$top" : 1,
@@ -852,7 +852,7 @@ resource "azapi_resource" "newswatcheren_lapp" {
                           }
                         },
                         "method" : "post",
-                        "path" : "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('${var.rtnews_list_guid}'))}/items",
+                        "path" : "/datasets/@{encodeURIComponent(encodeURIComponent(variables('varTargetUrl')))}/tables/@{encodeURIComponent(encodeURIComponent('${var.RTNEWS_LIST_GUID}'))}/items",
                         "retryPolicy" : {
                           "type" : "none"
                         }
@@ -1207,7 +1207,7 @@ resource "azapi_resource" "newswatcheren_lapp" {
                   {
                     "name" : "varRootUrl",
                     "type" : "string",
-                    "value" : "https://${var.tenant_name}.sharepoint.com/sites/${var.rtnews_en}"
+                    "value" : "https://${var.TENANT_NAME}.sharepoint.com/sites/${var.RTNEWS_EN}"
                   }
                 ]
               },
@@ -1241,7 +1241,7 @@ resource "azapi_resource" "newswatcheren_lapp" {
                   {
                     "name" : "varTargetUrl",
                     "type" : "string",
-                    "value" : "https://${var.tenant_name}.sharepoint.com/sites/${var.rtnews_home}"
+                    "value" : "https://${var.TENANT_NAME}.sharepoint.com/sites/${var.RTNEWS_HOME}"
                   }
                 ]
               },
@@ -1345,7 +1345,7 @@ resource "azapi_resource" "newswatcheren_lapp" {
                   }
                 },
                 "method" : "get",
-                "path" : "/datasets/@{encodeURIComponent(encodeURIComponent('https://${var.tenant_name}.sharepoint.com/sites/${var.rtnews_en}'))}/tables/@{encodeURIComponent(encodeURIComponent('${var.rtnews_en_sitepages_list_guid}'))}/onupdatedfileitems"
+                "path" : "/datasets/@{encodeURIComponent(encodeURIComponent('https://${var.TENANT_NAME}.sharepoint.com/sites/${var.RTNEWS_EN}'))}/tables/@{encodeURIComponent(encodeURIComponent('${var.RTNEWS_EN_SITEPAGES_LIST_GUID}'))}/onupdatedfileitems"
               },
               "metadata" : {
                 "flowSystemMetadata" : {

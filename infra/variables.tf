@@ -1,10 +1,10 @@
-variable "tenant_name" {}
-variable "rtnews_de" {}
-variable "rtnews_de_sitepages_list_guid" {}
-variable "rtnews_en_sitepages_list_guid" {}
-variable "rtnews_en" {}
-variable "rtnews_home" {}
-variable "rtnews_list_guid" {}
+variable "TENANT_NAME" {}
+variable "RTNEWS_DE" {}
+variable "RTNEWS_DE_SITEPAGES_LIST_GUID" {}
+variable "RTNEWS_EN_SITEPAGES_LIST_GUID" {}
+variable "RTNEWS_EN" {}
+variable "RTNEWS_HOME" {}
+variable "RTNEWS_LIST_GUID" {}
 variable "recurrence_frequency" {}
 variable "recurrence_interval" {}
 
@@ -27,5 +27,5 @@ variable "tags" {
 }
 
 locals {
-  app_sitepublishing_cors_origin = "https://${var.tenant_name}.sharepoint.com"
+  app_sitepublishing_cors_origin = "https://${var.TENANT_NAME}.sharepoint.com"
 }
