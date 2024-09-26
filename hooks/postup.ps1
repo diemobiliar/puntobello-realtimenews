@@ -4,9 +4,9 @@ if (Test-Path -Path '/.dockerenv') {
     $importPath = './.devcontainer/scripts'
 }
 
+Import-Module "$($importPath)/config.psm1" -Force -DisableNameChecking
+Import-Module "$($importPath)/login.psm1" -Force -DisableNameChecking
 Import-Module "$($importPath)/functions.psm1" -Force -DisableNameChecking
-
-Get-ChildItem env: | ? {$_.Name -like "SPFX_*"}
 
 $env:SPFX_URL_SOCKET = "$(azd env get-value APP_NAME).azurewebsites.net"
 azd env set SPFX_URL_SOCKET $env:SPFX_URL_SOCKET

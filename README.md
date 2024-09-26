@@ -39,6 +39,19 @@ We have also implemented a mini framework across all solutions, which you can ea
 
 todo @bumatt @fabianhutzli
 
+Installation process:
+- Set parameters in config.psm1 of devcontainer
+- Run devcontainer
+- Login to azd and az (azd auth login, az login)
+- Run deployment with "azd up" - this will run following steps without additional config of guid's etc needed.
+    - Deploy-SitesAndLists.ps1 as preup hook with parameters
+    - Infra deployment with terraform, definied in infra
+    - Build and deploy webapp to app service
+    - Build-SPWP.ps1 and Deploy-SPWP.ps1 as postup hook with automated parameters
+- Config SPO API Connection in Azure Portal
+    - Set an user which has access to the sites/lists
+- Create new terms in term set "PuntoBello|Channels"
+
 ### Puntobello Installer
 
 https://github.com/diemobiliar/puntobello-installer/ is configured as a submodule und provides a docker image containing build and deploy scripts for SPFx and SharePoint Scripts. When cloning this repository, include the submodule:
