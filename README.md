@@ -1,137 +1,108 @@
-# Project Boilerplate
+# PuntoBello real time news
 
-This project contains a template to use when creating a new project. It comes with all the standard files which there is expected to be in an open source project on Github. 
+## Use Case
 
-## How to use
+## PuntoBello Artifacts
+All lists and fields associated with the PuntoBello solution are prefixed with `pb_`
 
-1. Clone this project and copy the files into your own project
-2. Start developing!
-3. Ensure you are in compliance with Mobiliar Open-Source Developer Guide 
-4. If in doubt, get in touch with opensource@mobi.ch
+## Structure
 
-## Readme template
+You can find additional information in each respective repository.
 
-Below you can find a complete readme template for a project (based on [work](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2) by [@PurpleBooth](https://github.com/PurpleBooth)), this will help you communicate the vision and goals of the project as well as answering common questions from future contributors.
-
-The readme file is the single most important documentation of your project, so make sure you spend time on giving a great first impression to new users and provide the needed information to interested contributors.
+## Multilinguality
 
 
----- 
+### Configuring / Translating Languages
 
+
+### Rendering of Text-Based Information
+
+
+### Gathering the User Language
+
+
+#### SPFx Solutions on a SharePoint Page
+
+
+#### SPFx Solutions Outside of a SharePoint Page
+
+
+## Additional Configuration Possibilites
+Across all the PuntoBello solutions, we have put considerable effort into enabling you to configure your solutions at build time, so that you can:
+
+- Brand the solution with your specific colors, fonts, etc.
+- Deploy the solutions easily on multiple tenants if needed (e.g., dev/test/prod environments).
+
+We have also implemented a mini framework across all solutions, which you can easily extend with additional properties if you want to configure further aspects of the solutions.
+
+## Minimal Path to Awesome
+
+todo @bumatt @fabianhutzli
+
+### Puntobello Installer
+
+https://github.com/diemobiliar/puntobello-installer/ is configured as a submodule und provides a docker image containing build and deploy scripts for SPFx and SharePoint Scripts. When cloning this repository, include the submodule:
+
+```shell
+git clone --recurse-submodules https://github.com/diemobiliar/puntobello-multilingualdocument.git
 ```
-Readme.md template below, when setup is complete, delete all content above this.
+Alternatively, configure the submodule after cloning the repository:
+
+```shell
+git submodule update --init
 ```
 
+With the Puntobello Installer, there is the possibility to execute the installation of all artifacts in various variants. These are described below. They are:
+- [Use Dev Container in VS code](#install_devcontainer)
+- [Use commands in docker container locally](#install_docker)
+- [Build and Deploy locally](#install_locally)
 
-# _projectname_
+Alternatively, your own preferred methods can be used to build and deploy the solutions - see [Build and serve Webpart or Extension locally using nvm](#install_nvm).
 
-_description_
+### Azure Developer CLI
 
-Describe what this project does. Keep this language human and friendly, so avoid internal references, acronyms and if you 
-have dependencies, provide a direct link to these.
+For the real-time news, more resources are required than just SharePoint artifacts such as sites and lists, as well as SPFx solutions. We also need various Azure resources to ensure the entire process. For this, we have planned an integration with the Azure Developer CLI. In doing so, we are integrating the scripts of the Puntobello Installer into a complete solution with the Azure Developer CLI.
 
-When describing features of your project, remember to explain why these are a benefit and advantage to the user:
-
-```
-This project allows you to scale X (feature) in a fast and predictable way (benefit) - meaning you will use fewer resources and can be confident in your X environment (Advantage).
-```
-
-Think about your project as a product, consider who your audience is, and how your decisions affect the number of potential users, below is a handy checklist of things to consider before open sourcing any code. 
-
-- **Avoid internal dependencies** Obviously projects that require Mobi specific infrastructure, configuration or process have very limited use to anyone outside die Mobiliar. 
-- **Avoid narrow usecases** Does this solve a Mobiliar-only problem or does it have broader application - are there things you could change to make it a more general product
-- **Have a Product vision** Do you know where you want to take this product? - then be open about it so future contributors are aware. Being opinionated is great and it helps set expectations and the direction for the project
-- **Take ownership** Are you are benevolent dictator or open to anything? - consider how you will interact with future contributors who expect you to be an active maintainer
-- **Safe defaults** How do people get up and running - are there a lot of ceremony involved or can you provide a simple out of the box experience, so it is easy for users to evaluate your project
-
-
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
-```
-If possible, provide a quick exemple of how to get this running with minimal effort, so anyone curious can get up and running as fast as possible 
-```
+To read more about the Azure Developer CLI please consult the documentation: [What is the Azure Developer CLI?](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/overview) and [Quickstart: Deploy an Azure Developer CLI template](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/get-started?tabs=localinstall&pivots=programming-language-nodejs).
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+> 📝 **NOTE:**
+> The Dockerfile can be used for arm64 or amd64 CPU architectures. The architecture can be set to "arm64" or "amd64" in the devcontainer.json under build.args. The architecture can also be set using the `ARCH` argument for use with `docker build`. Only arm64 and amd64 are supported. It is set to amd64 if you don't change.
 
-```
-Give examples
-```
+> 📝 **NOTE:**
+> If the scripts are executed locally on the client and not in the Dev container, it must be ensured that the following prerequisites are installed:
+> - Prerequisites for building SPFx solutions
+> - Azure Developer CLI, Terraform and Az CLI
+> - The corresponding PowerShell modules
 
-### Installing
+> 💡 **TIP:**
+> In order to use the scripts you have to configure login mechanism and other parameters in `./.devcontainer/scripts/config.psm1`. Every authentication mechanism is based on the PnP.PowerShell examples. For setting up an Entra ID app registration and its corresponding API permissions, as well as the necessary permissions when using a user, consult the documentation: [Connect-PnPOnline](https://pnp.github.io/powershell/cmdlets/Connect-PnPOnline.html) and [Authentication](https://pnp.github.io/powershell/articles/authentication.html).
 
-A step by step series of examples that tell you have to get a development env running
+> ⚠️ **Caution:** Never commit files containing secrets or passwords!
 
-Say what the step will be
+### <a id="install_devcontainer"></a>Use Dev Container in VS code
+The Visual Studio Code Dev Containers extension lets you use a container as a full-featured development environment.
 
-```
-Give the example
-```
+> 💡 **TIP:**
+> If you're interested in getting started with dev containers, you may find this [Dev Containers tutorial](https://code.visualstudio.com/docs/devcontainers/tutorial) helpful. It provides step-by-step instructions to help you get up and running quickly.
 
-And repeat
+#### Use fully automated setup with azd
 
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our process for submitting pull requests to us, and please ensure
-you follow the [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. 
 
 ## Authors
 
-* **Your Name** - [your home page](https://your-home-page.com/)
-
-See also the list of [contributors](CONTRIBUTORS) who participated in this project.
+* **Nicole Beck Dekkara** - [PuntoBello](https://www.puntobello.ch/)
+* **Mattias Bürgi** - [PuntoBello](https://www.puntobello.ch/)
+* **Fabian Hutzli** - [PuntoBello](https://www.puntobello.ch/)
+* **Nello D'Andrea** - [PuntoBello](https://www.puntobello.ch/)
 
 ## License
 
-This project is licensed under the LGPL - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT - see the [LICENSE.md](LICENSE.md) file for details
 
-## Acknowledgments
-Acknowledge Peopel helping you build this projekt.
-* Thanks to [@PurpleBooth](https://github.com/PurpleBooth) for the original readme
-* Thanks to the [@zalando/Nakadi](https://github.com/zalando/nakadi) project for Contribution file
-* Thanks to [@SteveMao](https://github.com/stevemao) for [Issue templates](https://github.com/stevemao/github-issue-templates)
-* Thanks to [@perploug](https://github/perploug) for the zalando [new-project](https://github.com/zalando-incubator/new-project) which this template is based on.
+## Acknowledgment Request
 
+If you find this software useful and incorporate it into your own projects, especially for commercial purposes, we kindly ask that you acknowledge its use. This acknowledgment can be as simple as mentioning "Powered by Die Mobiliar - PuntoBello" in your product's documentation, website, or any related materials.
+
+While this is not a requirement of the MIT License and is entirely voluntary, it helps support and recognize the efforts of the developers who contributed to this project. We appreciate your support!
