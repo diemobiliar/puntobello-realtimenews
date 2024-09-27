@@ -26,7 +26,7 @@ if (Test-Path "./spo/solutions.json"){
     azd env set RTNEWS_DE $sites[0]
     $cnSite = Connect-PnPOnline -Url "https://$($global:M365_TENANTNAME).sharepoint.com/sites/$($sites[1])" @PnPCreds -ReturnConnection -WarningAction Ignore
     azd env set RTNEWS_EN_SITEPAGES_LIST_GUID (Get-PnPList -Identity "SitePages" -Connection $cnSite).Id
-    azd env set rtnews_en  $sites[1]
+    azd env set RTNEWS_EN $sites[1]
 }
 
 ((Get-Content -Path "./spo/solutions.json" | ConvertFrom-Json).sites | Where-Object {$_.templates.templateName -eq "SitePages.xml" }).Url
