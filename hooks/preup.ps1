@@ -20,13 +20,19 @@ if (Test-Path "./spo/solutions.json"){
     azd env set RTNEWS_LIST_GUID (Get-PnPList -Identity $listUrl -Connection $cnSite).Id
     azd env set RTNEWS_HOME $Url
 
-    $sites = ((Get-Content -Path "./spo/solutions.json" | ConvertFrom-Json).sites | Where-Object {$_.templates.templateName -eq "SitePages.xml" }).Url
-    $cnSite = Connect-PnPOnline -Url "https://$($global:M365_TENANTNAME).sharepoint.com/sites/$($sites[0])" @PnPCreds -ReturnConnection -WarningAction Ignore
-    azd env set RTNEWS_DE_SITEPAGES_LIST_GUID (Get-PnPList -Identity "SitePages" -Connection $cnSite).Id
-    azd env set RTNEWS_DE $sites[0]
-    $cnSite = Connect-PnPOnline -Url "https://$($global:M365_TENANTNAME).sharepoint.com/sites/$($sites[1])" @PnPCreds -ReturnConnection -WarningAction Ignore
-    azd env set RTNEWS_EN_SITEPAGES_LIST_GUID (Get-PnPList -Identity "SitePages" -Connection $cnSite).Id
-    azd env set RTNEWS_EN $sites[1]
+    $sites = ((Get-Content -Path "./spo/solutions.json" | ConvertFrom-Json).sites | Where-Object {$_.templates.templateName -eq "SitePages.xml" })
+    $siteUrls = @()
+    $siteLCIDs = @()
+    $sitePagesLists = @()
+    foreach($site in $sites){
+        $cnSite = Connect-PnPOnline -Url "https://$($global:M365_TENANTNAME).sharepoint.com/sites/$($site.Url)" @PnPCreds -ReturnConnection -WarningAction Ignore
+        $siteUrls += $site.Url
+        $siteLCIDs += $site.LCID
+        $sitePagesLists += (Get-PnPList -Identity "SitePages" -Connection $cnSite).Id.Guid
+    }
+    azd env set RTNEWS_SITES $($siteUrls -join ",")
+    azd env set RTNEWS_LCIDS $($siteLCIDs -join ",")
+    azd env set RTNEWS_SITEPAGES_GUIDS $($sitePagesLists -join ",")
 }
 
 ((Get-Content -Path "./spo/solutions.json" | ConvertFrom-Json).sites | Where-Object {$_.templates.templateName -eq "SitePages.xml" }).Url
