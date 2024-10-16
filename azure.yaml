@@ -1,0 +1,16 @@
+name: azd-starter
+hooks:
+  preup:
+    shell: pwsh
+    run: ./hooks/preup.ps1
+  postup:
+    shell: pwsh
+    run: ./hooks/postup.ps1
+infra:
+  provider: terraform
+services:
+  app:
+    resourceName: ${APP_NAME}
+    project: ./puntobello-realtimenews-webapp
+    host: appservice
+    language: js

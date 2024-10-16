@@ -1,0 +1,59 @@
+{
+    "sites": [
+        {
+            "Url": "pb_home",
+            "Title": "Intranet Home",
+            "LCID": 1033,
+            "solutions": [
+                {
+                    "Name": "puntobello-realtimenews-spwp"
+                }
+            ],
+            "templates": [
+                {
+                    "templateName": "RealtimeNews.xml",
+                    "relativePath": "./spo/assets/lists",
+                    "sortOrder": 100
+                },
+                {
+                    "templateName": "SubscribedChannels.xml",
+                    "relativePath": "./spo/assets/lists",
+                    "sortOrder": 200
+                }
+            ]
+        },
+        {
+            "Url": "pb_newsde",
+            "Title": "News Publishing for News in German",
+            "LCID": 1031,
+            "solutions": [],
+            "templates": [
+                {
+                    "templateName": "SitePages.xml",
+                    "relativePath": "./spo/assets/lists",
+                    "sortOrder": 100
+                }
+            ]
+        },
+        {
+            "Url": "pb_newsen",
+            "Title": "News Publishing for News in English",
+            "LCID": 1033,
+            "solutions": [],
+            "templates": [
+                {
+                    "templateName": "SitePages.xml",
+                    "relativePath": "./spo/assets/lists",
+                    "sortOrder": 100
+                }
+            ]
+        }
+    ],
+    "termStore": [
+        {
+            "termSets": [
+                "PuntoBello|Channels"
+            ]
+        }
+    ]
+}

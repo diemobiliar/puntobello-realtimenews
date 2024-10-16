@@ -1,0 +1,41 @@
+<html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js"
+    integrity="sha512-luMnTJZ7oEchNDZAtQhgjomP1eZefnl82ruTH/3Oj/Yu5qYtwL7+dVRccACS/Snp1lFXq188XFipHKYE75IaQQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer">
+</script>
+<script>
+    console.log('client running');
+    // When running on localhost, will connect on localhost:8080 by default
+    // if you set the port, change it accordingly here
+    const socket = io("wss://puntobello-socket-publishing.azurewebsites.net", {
+        pingInterval: 40000,
+        pingTimeout: 30000,
+        transports: ["websocket"]
+    });
+
+    console.log('socket ', socket);
+
+    socket.on("connect", () => {
+        console.log('connect', socket.id, socket);
+    });
+
+    socket.on("nd", (data) => {
+        console.log('emit with data : ', JSON.stringify(data));
+    });
+
+    socket.on("disconnect", () => {
+        console.log('disconnect', socket.id);
+    });
+
+    socket.on("connect_error", (error) => {
+        console.log('error', error);
+    });
+</script>
+
+<body>
+    <h1>Testsocket</h1>
+    <p>Start this page spinning up a node server with node testsocket.js, start your browser and navigate to
+        localhost:3000 check your dev toolbar and console.logs ;-)</p>
+</body>
+
+</html>

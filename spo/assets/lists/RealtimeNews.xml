@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pnp:Provisioning xmlns:pnp="http://schemas.dev.office.com/PnP/2022/09/ProvisioningSchema">
+  <pnp:Preferences Generator="PnP.Framework, Version=1.17.15.0, Culture=neutral, PublicKeyToken=0d501f89f11b748c" />
+  <pnp:Templates ID="CONTAINER-TEMPLATE-DF2746925256469D8A3D8552AAE41EA0">
+    <pnp:ProvisioningTemplate ID="TEMPLATE-DF2746925256469D8A3D8552AAE41EA0" Version="1" BaseSiteTemplate="SITEPAGEPUBLISHING#0" Scope="RootSite">
+      <pnp:Lists>
+        <pnp:ListInstance Title="Realtime News" Description="" DocumentTemplate="" OnQuickLaunch="true" TemplateType="100" Url="Lists/pb_realtime_news" EnableVersioning="true" MinorVersionLimit="0" MaxVersionLimit="50" DraftVersionVisibility="0" TemplateFeatureID="00bfea71-de22-43b2-a848-c05709900100" EnableAttachments="false" EnableFolderCreation="false" DefaultDisplayFormUrl="{site}/Lists/pb_realtime_news/DispForm.aspx" DefaultEditFormUrl="{site}/Lists/pb_realtime_news/EditForm.aspx" DefaultNewFormUrl="{site}/Lists/pb_realtime_news/NewForm.aspx" ImageUrl="/_layouts/15/images/itgen.png?rev=47" IrmExpire="false" IrmReject="false" IsApplicationList="false" ValidationFormula="" ValidationMessage="">
+          <pnp:ContentTypeBindings>
+            <pnp:ContentTypeBinding ContentTypeID="0x01" Default="true" />
+            <pnp:ContentTypeBinding ContentTypeID="0x0120" />
+          </pnp:ContentTypeBindings>
+          <pnp:Views RemoveExistingViews="true">
+            <View Name="{6AB33D1D-4C71-4FFA-B36A-8995AD0391CF}" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" Type="HTML" DisplayName="All Items" Url="{site}/Lists/pb_realtime_news/AllItems.aspx" Level="1" BaseViewID="1" ContentTypeID="0x" ImageUrl="/_layouts/15/images/generic.png?rev=47">
+              <Query>
+                <OrderBy>
+                  <FieldRef Name="ID" />
+                </OrderBy>
+              </Query>
+              <ViewFields>
+                <FieldRef Name="LinkTitle" />
+                <FieldRef Name="pb_Sticky" />
+                <FieldRef Name="pb_StickyDate" />
+                <FieldRef Name="pb_Language" />
+                <FieldRef Name="pb_ImageUrl" />
+                <FieldRef Name="pb_Header" />
+                <FieldRef Name="pb_NewsUrl" />
+                <FieldRef Name="pb_PageName" />
+                <FieldRef Name="pb_Channels" />
+                <FieldRef Name="pb_PublishedFrom" />
+                <FieldRef Name="pb_PublishedTo" />
+              </ViewFields>
+              <RowLimit Paged="TRUE">30</RowLimit>
+              <JSLink>clienttemplates.js</JSLink>
+            </View>
+          </pnp:Views>
+          <pnp:Fields>
+            <Field Type="Boolean" Name="pb_Sticky" DisplayName="Sticky" ID="{e04bb79c-9414-4232-9db5-4d40f4f05f08}" Group="PuntoBello" Required="FALSE" SourceID="{{listid:Realtime News}}" StaticName="pb_Sticky" ColName="bit1" RowOrdinal="0" />
+            <Field Type="DateTime" Name="pb_StickyDate" DisplayName="Sticky date" ID="{253d0d96-60a4-4e91-9e17-8f650071c2bd}" Group="PuntoBello" Required="FALSE" SourceID="{{listid:Realtime News}}" StaticName="pb_StickyDate" ColName="datetime1" RowOrdinal="0" />
+            <Field Type="Text" Name="pb_Language" DisplayName="Language" ID="{f4825232-a8f6-436e-a0c1-1accb195cf7a}" Group="PuntoBello" Required="FALSE" SourceID="{{listid:Realtime News}}" StaticName="pb_Language" ColName="nvarchar7" RowOrdinal="0" />
+            <Field Type="URL" Name="pb_ImageUrl" DisplayName="Image url" ID="{596c6a9a-8e73-4b27-ab79-4a0898559ee3}" Group="PuntoBello" Required="FALSE" SourceID="{{listid:Realtime News}}" StaticName="pb_ImageUrl" ColName="nvarchar8" RowOrdinal="0" ColName2="nvarchar9" RowOrdinal2="0" />
+            <Field Type="Note" Name="pb_Header" DisplayName="Header" ID="{00eb9d6b-901d-4440-9522-6b41b981b1dd}" Group="PuntoBello" Required="FALSE" SourceID="{{listid:Realtime News}}" StaticName="pb_Header" ColName="ntext2" RowOrdinal="0" />
+            <Field Type="URL" Name="pb_NewsUrl" DisplayName="News url" ID="{5cab36a1-3b57-4243-8e3d-6545e5c2cd74}" Group="PuntoBello" Required="FALSE" SourceID="{{listid:Realtime News}}" StaticName="pb_NewsUrl" ColName="nvarchar10" RowOrdinal="0" ColName2="nvarchar11" RowOrdinal2="0" />
+            <Field Type="Text" Name="pb_PageName" DisplayName="Page name" ID="{02dcc130-d56c-412e-b54a-dc049b209267}" Group="PuntoBello" Required="FALSE" SourceID="{{listid:Realtime News}}" StaticName="pb_PageName" ColName="nvarchar12" RowOrdinal="0" />
+            <Field Type="Text" Name="pb_Channels" DisplayName="Channels" ID="{85fdf7a1-66b5-4075-b2f4-ebc07d91e628}" Group="PuntoBello" Required="FALSE" SourceID="{{listid:Realtime News}}" StaticName="pb_Channels" ColName="nvarchar13" RowOrdinal="0" />
+            <Field Type="DateTime" Name="pb_PublishedFrom" DisplayName="Published from" ID="{abcfd13d-2645-4886-8086-cabb7cf18683}" Group="PuntoBello" Required="FALSE" SourceID="{{listid:Realtime News}}" StaticName="pb_PublishedFrom" ColName="datetime2" RowOrdinal="0" />
+            <Field Type="DateTime" Name="pb_PublishedTo" DisplayName="Published to" ID="{1ed63437-a63b-4a67-bc02-c02e3525d1d3}" Group="PuntoBello" Required="FALSE" SourceID="{{listid:Realtime News}}" StaticName="pb_PublishedTo" ColName="datetime3" RowOrdinal="0" />
+          </pnp:Fields>
+          <pnp:FieldRefs>
+            <pnp:FieldRef ID="fa564e0f-0c70-4ab9-b863-0177e6ddd247" Name="Title" Required="true" DisplayName="Title" />
+            <pnp:FieldRef ID="76d13cd2-1bae-45a5-8b74-545b87b65037" Name="_ColorTag" DisplayName="Color Tag" />
+          </pnp:FieldRefs>
+        </pnp:ListInstance>
+      </pnp:Lists>
+    </pnp:ProvisioningTemplate>
+  </pnp:Templates>
+</pnp:Provisioning>

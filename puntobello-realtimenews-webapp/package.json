@@ -1,0 +1,16 @@
+{
+    "name": "puntobello-realtimenews-sitepub-webapp",
+    "description": "PuntoBello Azure Bus listener & socket emitter",
+    "private": true,
+    "author": "Nello D'Andrea, die Mobiliar",
+    "scripts": {
+        "start": "node index.js"
+    },
+    "dependencies": {
+        "@azure/service-bus": "7.9.4",
+        "socket.io": "4.7.5"
+    },
+    "engines": {
+        "node": "node|20-lts"
+    }
+}
