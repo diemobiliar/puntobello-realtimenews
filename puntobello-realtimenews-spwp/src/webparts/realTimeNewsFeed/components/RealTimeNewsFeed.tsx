@@ -168,8 +168,8 @@ export function RealTimeNewsFeed() {
           {newsItemsRef.current.length > 0 ?
             <Stack tokens={{ childrenGap: 14 }} className={styles.newsletterList}>
               {newsItemsRef.current.map((currnews, index) => (
-                (index == 0 && stickyRef.current) ? <></> :
-                  <NewsItem NewsUrl={currnews.pb_NewsUrl.Url} ImageUrl={currnews.pb_ImageUrl} NewsTitle={currnews.Title} PublishedFrom={getEditedDate(currnews.pb_PublishedFrom)} NewsHeader={currnews.pb_Header}/>
+                (index == 0 && stickyRef.current) ? <React.Fragment key={currnews.Id || index} /> :
+                  <NewsItem key={currnews.Id || index} NewsUrl={currnews.pb_NewsUrl.Url} ImageUrl={currnews.pb_ImageUrl} NewsTitle={currnews.Title} PublishedFrom={getEditedDate(currnews.pb_PublishedFrom)} NewsHeader={currnews.pb_Header}/>
               ))}
             </Stack>
             : <h2>{Utility.getStringTranslation4Locale('noNewsText', pageLanguage.Language)}</h2>}

@@ -110,6 +110,7 @@ export function ChannelSettings(props: IChannelSettingsProps) {
                         if (myNewsGuid != item.TermGuid) {
                             return (
                                 <Checkbox
+                                    key={item.TermGuid}
                                     label={Utility.getChannelText(pageLanguage, item)}
                                     defaultChecked={item.Subscribed}
                                     onChange={channelCheckboxChanged.bind(this, item)}
