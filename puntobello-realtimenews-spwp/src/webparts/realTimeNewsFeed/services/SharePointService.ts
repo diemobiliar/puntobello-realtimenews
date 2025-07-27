@@ -8,12 +8,11 @@ import "@pnp/sp/site-users/web";
 import "@pnp/sp/lists";
 import "@pnp/sp/items";
 import "@pnp/sp/profiles";
-import "@pnp/sp/taxonomy";
 import "@pnp/sp/regional-settings/web";
 import { SPFI, spfi, SPFx } from "@pnp/sp";
-import { dateAdd, PnPClientStorage } from "@pnp/common";
-import { IItemAddResult } from "@pnp/sp/presets/all";
-import { IOrderedTermInfo } from "@pnp/sp/taxonomy";
+import { dateAdd, PnPClientStorage } from "@pnp/core";
+import "@pnp/graph/taxonomy";
+import { graphfi, GraphFI, SPFx as GraphSPFx } from "@pnp/graph";
 
 // Utility Libraries
 import { Logger, getRootEnv } from '../utils';
@@ -39,9 +38,9 @@ import { log } from "console";
 export interface ISharePointService {
     /**
      * Retrieves and caches all available channels from SharePoint Term Store.
-     * @returns {Promise<IOrderedTermInfo[]>} A promise that resolves with an array of ordered term information.
+     * @returns {Promise<any[]>} A promise that resolves with an array of ordered term information.
      */
-    getAndCacheAllChannels(): Promise<IOrderedTermInfo[]>;
+    getAndCacheAllChannels(): Promise<any[]>;
 
     /**
      * Gets the subscribed channels for the current user from SharePoint.
@@ -61,9 +60,9 @@ export interface ISharePointService {
 
     /**
      * Adds a new subscribed channels entry for the current user in SharePoint.
-     * @returns {Promise<IItemAddResult>} A promise that resolves with the result of the item addition.
+     * @returns {Promise<any>} A promise that resolves with the result of the item addition.
      */
-    addSubscribedChannels4CurrentUser(): Promise<IItemAddResult>;
+    addSubscribedChannels4CurrentUser(): Promise<any>;
 
     /**
      * Retrieves news items for the specified channel or channels in SharePoint.
@@ -113,6 +112,12 @@ export interface ISharePointService {
      * @type {SPFI}
      */
     sp: SPFI;
+
+    /** 
+     * The Graph Framework Interface instance.
+     * @type {GraphFI}
+     */
+    graph: GraphFI;
 }
 
 /**
@@ -129,6 +134,7 @@ export default class SharePointService implements ISharePointService {
     private rootEnv: IRootEnv; 
     public filterQuery4Socket: string;
     public sp: SPFI;
+    public graph: GraphFI;
 
     /**
      * Initializes a new instance of the SharePointService class.
@@ -143,7 +149,13 @@ export default class SharePointService implements ISharePointService {
             this.storage = new PnPClientStorage();
             this.rootEnv = getRootEnv();
 
-            this.sp = spfi().using(SPFx({ pageContext: this.pageContext }));
+            this.sp = spfi().using(SPFx({
+                pageContext: {
+                    web: this.pageContext.web,
+                    legacyPageContext: this.pageContext.legacyPageContext
+                }
+            }));
+            this.graph = graphfi().using(GraphSPFx({}));
         });
     }
 
@@ -171,10 +183,10 @@ export default class SharePointService implements ISharePointService {
      * Termstore guids are fix for PuntoBello
      * @returns {Promise<IOrderedTermInfo[]>} A promise that resolves with an array of ordered term information.
      */
-    public async getAndCacheAllChannels(): Promise<IOrderedTermInfo[]> {
+    public async getAndCacheAllChannels(): Promise<any[]> {
         const termStoreGuid4Channels = getRootEnv().config.spfxTermstoreChannelGuid;
-        return await this.storage.local.getOrPut<IOrderedTermInfo[]>(`pb_channels_${termStoreGuid4Channels}`, () => {
-            return this.sp.termStore.sets.getById(`${termStoreGuid4Channels}`).getAllChildrenAsOrderedTree();
+        return await this.storage.local.getOrPut<any[]>(`pb_channels_${termStoreGuid4Channels}`, () => {
+            return this.graph.termStore.sets.getById(`${termStoreGuid4Channels}`).getAllChildrenAsTree();
         }, dateAdd(new Date(), 'hour', 12));
     }
 
@@ -190,9 +202,9 @@ export default class SharePointService implements ISharePointService {
 
     /**
      * Adds a new subscribed channels entry for the current user in SharePoint.
-     * @returns {Promise<IItemAddResult>} A promise that resolves with the result of the item addition.
+     * @returns {Promise<any>} A promise that resolves with the result of the item addition.
      */
-    public async addSubscribedChannels4CurrentUser(): Promise<IItemAddResult> {
+    public async addSubscribedChannels4CurrentUser(): Promise<any> {
         return await this.sp.web.lists.getByTitle(this.rootEnv.config.spfxSubscribedChannelsListTitle).items.add({
             Title: this.pageContext.legacyPageContext.DisplayName,
             pb_SubscriberId: this.pageContext.legacyPageContext.userId
