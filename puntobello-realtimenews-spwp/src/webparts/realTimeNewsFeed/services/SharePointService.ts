@@ -11,8 +11,16 @@ import "@pnp/sp/profiles";
 import "@pnp/sp/regional-settings/web";
 import { SPFI, spfi, SPFx } from "@pnp/sp";
 import { dateAdd, PnPClientStorage } from "@pnp/core";
+// IItemAddResult has been removed in PnP v4, using built-in types
+// import { IItemAddResult } from "@pnp/sp/items";
+
+// PnP Graph Libraries for taxonomy
 import "@pnp/graph/taxonomy";
 import { graphfi, GraphFI, SPFx as GraphSPFx } from "@pnp/graph";
+// IOrderedTermInfo interface may have changed in PnP v4
+// Using any[] for now to preserve functionality
+// import { IOrderedTermInfo } from "@pnp/graph/taxonomy";
+import { AadTokenProviderFactory } from "@microsoft/sp-http";
 
 // Utility Libraries
 import { Logger, getRootEnv } from '../utils';
@@ -38,7 +46,7 @@ import { log } from "console";
 export interface ISharePointService {
     /**
      * Retrieves and caches all available channels from SharePoint Term Store.
-     * @returns {Promise<any[]>} A promise that resolves with an array of ordered term information.
+     * @returns {Promise<IOrderedTermInfo[]>} A promise that resolves with an array of ordered term information.
      */
     getAndCacheAllChannels(): Promise<any[]>;
 
@@ -60,7 +68,7 @@ export interface ISharePointService {
 
     /**
      * Adds a new subscribed channels entry for the current user in SharePoint.
-     * @returns {Promise<any>} A promise that resolves with the result of the item addition.
+     * @returns {Promise<IItemAddResult>} A promise that resolves with the result of the item addition.
      */
     addSubscribedChannels4CurrentUser(): Promise<any>;
 
@@ -112,12 +120,6 @@ export interface ISharePointService {
      * @type {SPFI}
      */
     sp: SPFI;
-
-    /** 
-     * The Graph Framework Interface instance.
-     * @type {GraphFI}
-     */
-    graph: GraphFI;
 }
 
 /**
@@ -134,7 +136,7 @@ export default class SharePointService implements ISharePointService {
     private rootEnv: IRootEnv; 
     public filterQuery4Socket: string;
     public sp: SPFI;
-    public graph: GraphFI;
+    private graph: GraphFI;
 
     /**
      * Initializes a new instance of the SharePointService class.
@@ -144,18 +146,16 @@ export default class SharePointService implements ISharePointService {
         this.logger = Logger.getInstance();
 
         serviceScope.whenFinished(() => {
-
             this.pageContext = serviceScope.consume(PageContext.serviceKey);
             this.storage = new PnPClientStorage();
             this.rootEnv = getRootEnv();
 
-            this.sp = spfi().using(SPFx({
-                pageContext: {
-                    web: this.pageContext.web,
-                    legacyPageContext: this.pageContext.legacyPageContext
-                }
-            }));
-            this.graph = graphfi().using(GraphSPFx({}));
+            // In PnP v4, SPFx expects the context directly
+            this.sp = spfi().using(SPFx(this.pageContext as any));
+            
+            // Initialize Graph API for termStore access
+            const aadTokenProviderFactory = serviceScope.consume(AadTokenProviderFactory.serviceKey);
+            this.graph = graphfi().using(GraphSPFx({aadTokenProviderFactory: aadTokenProviderFactory}));
         });
     }
 
@@ -202,7 +202,7 @@ export default class SharePointService implements ISharePointService {
 
     /**
      * Adds a new subscribed channels entry for the current user in SharePoint.
-     * @returns {Promise<any>} A promise that resolves with the result of the item addition.
+     * @returns {Promise<IItemAddResult>} A promise that resolves with the result of the item addition.
      */
     public async addSubscribedChannels4CurrentUser(): Promise<any> {
         return await this.sp.web.lists.getByTitle(this.rootEnv.config.spfxSubscribedChannelsListTitle).items.add({

@@ -145,7 +145,7 @@ export async function getChannelsAndSubscriptions(spo, myNewsGuidRef, newsChanne
     // The user has no subscriptions yet, so we create a new subscription item
     const newSubItem = await spo.addSubscribedChannels4CurrentUser();
     // and save this id in the ref
-    channelsubItemIdRef.current = newSubItem.data.ID;
+    channelsubItemIdRef.current = newSubItem.ID;
   }
 
   // The myNews channel is always available and visible, it shows all news for the channels subscribed by the user
