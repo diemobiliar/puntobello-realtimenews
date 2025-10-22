@@ -260,10 +260,10 @@ export default class SharePointService implements ISharePointService {
             const filterQuerySocket = channelFilter + " and (pb_Language eq '" + pageLanguage.LanguageDashedLC + "' or pb_Language eq '" + pageLanguage.lcid + "') and ";
             this.filterQuery4Socket = filterQuerySocket;
 
-            // Check if we have a sticky news which sticky date is not reached
+            // Check if we have a sticky news which sticky date has been reached
             newsResult.sticky = false;
-            const filterQuerySticky = filterQuery + ` and (pb_Sticky eq 1 and pb_StickyDate ge datetime'${currDate}')`;
-            const filterQueryWithoutSticky = filterQuery + ` and ((pb_Sticky eq 0 or pb_Sticky eq null) or (pb_Sticky eq 1 and pb_StickyDate le datetime'${currDate}'))`;
+            const filterQuerySticky = filterQuery + ` and (pb_Sticky eq 1 and pb_StickyDate le datetime'${currDate}')`;
+            const filterQueryWithoutSticky = filterQuery + ` and ((pb_Sticky eq 0 or pb_Sticky eq null) or (pb_Sticky eq 1 and pb_StickyDate ge datetime'${currDate}'))`;
             this.sp.web.lists.getById(this.rootEnv.config.spfxRealtimenewsListId).items.filter(filterQuerySticky).top(1)().then((item) => {
                 if (item.length > 0) {
                     newsResult.sticky = true;
