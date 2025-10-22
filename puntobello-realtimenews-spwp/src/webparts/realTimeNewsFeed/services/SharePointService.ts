@@ -40,10 +40,16 @@ import { log } from "console";
 
 /**
  * Interface representing the SharePoint Service.
- * This interface defines methods for interacting with SharePoint data, such as retrieving and caching channels, 
+ * This interface defines methods for interacting with SharePoint data, such as retrieving and caching channels,
  * getting news items, managing user subscriptions, and handling multilingual support.
  */
 export interface ISharePointService {
+    /**
+     * Sets the SPFx context and initializes the PnP SP instance.
+     * @param {any} context - The full SPFx context (e.g., WebPartContext)
+     */
+    setContext(context: any): void;
+
     /**
      * Retrieves and caches all available channels from SharePoint Term Store.
      * @returns {Promise<IOrderedTermInfo[]>} A promise that resolves with an array of ordered term information.
@@ -133,10 +139,11 @@ export default class SharePointService implements ISharePointService {
     private storage: PnPClientStorage;
     private pageContext: PageContext;
     private logger: Logger;
-    private rootEnv: IRootEnv; 
+    private rootEnv: IRootEnv;
     public filterQuery4Socket: string;
     public sp: SPFI;
     private graph: GraphFI;
+    private spfxContext: any; // Store the full SPFx context
 
     /**
      * Initializes a new instance of the SharePointService class.
@@ -150,13 +157,22 @@ export default class SharePointService implements ISharePointService {
             this.storage = new PnPClientStorage();
             this.rootEnv = getRootEnv();
 
-            // In PnP v4, SPFx expects the context directly
-            this.sp = spfi().using(SPFx(this.pageContext as any));
-            
+            // Note: SP instance will be initialized later with the full context via setContext()
             // Initialize Graph API for termStore access
             const aadTokenProviderFactory = serviceScope.consume(AadTokenProviderFactory.serviceKey);
             this.graph = graphfi().using(GraphSPFx({aadTokenProviderFactory: aadTokenProviderFactory}));
         });
+    }
+
+    /**
+     * Sets the SPFx context and initializes the PnP SP instance.
+     * This must be called before using any SP operations.
+     * @param {any} context - The full SPFx context (e.g., WebPartContext)
+     */
+    public setContext(context: any): void {
+        this.spfxContext = context;
+        // In PnP v4, SPFx behavior factory expects the full context object
+        this.sp = spfi().using(SPFx(context));
     }
 
     /**

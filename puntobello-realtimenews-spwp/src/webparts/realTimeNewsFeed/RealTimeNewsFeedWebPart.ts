@@ -56,9 +56,15 @@ export default class RealTimeNewsFeedWebPart extends BaseClientSideWebPart<IReal
       const listId = this.context.pageContext.list.id.toString();
       const listItemId = this.context.pageContext.listItem.id;
       const language = this.context.pageContext.web.language;
-      
+
       await super.onInit();
+
       const spo = this.context.serviceScope.consume(SharePointService.serviceKey);
+
+      // Set the full SPFx context on the SharePoint service
+      // This is required for PnP v4 to work correctly with authentication
+      spo.setContext(this.context);
+
       this.pageLanguage = await spo.calculateLanguage(listId, listItemId, language);
       this.initialized = true;
 
