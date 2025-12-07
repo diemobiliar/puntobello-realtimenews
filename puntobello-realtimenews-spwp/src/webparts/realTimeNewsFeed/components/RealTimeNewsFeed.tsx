@@ -70,12 +70,13 @@ export function RealTimeNewsFeed() {
   const newsItemsRef = useRef([]);
   // Number of new news items which are not yet displayed and shown in the system message
   const numberOfNewNewsRef = useRef<number>(0);
+  // Track pending timeouts for cleanup on unmount (prevents memory leaks and stale callbacks)
+  const pendingTimeoutsRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
   // State variables to manage loading, modal visibility, and system message visibility
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [systemMessageVisible, setSystemMessageVisible] = useState(false);
-  const [timeoutId, setTimeoutId] = React.useState(null);
 
   // Combined styles incorporating theming and environment-specific styles
   const combinedStyles = Object.assign(
@@ -98,7 +99,7 @@ export function RealTimeNewsFeed() {
 
     // Process socket event received from the webapp server
     socket.on("nd", (data) => {
-      processSocketEvent(data, spo, numberOfNewNewsRef, setSystemMessageVisible, setTimeoutId, processSocketAddEvent, processSocketErrorEvent, updateNews);
+      processSocketEvent(data, spo, numberOfNewNewsRef, setSystemMessageVisible, pendingTimeoutsRef, processSocketAddEvent, processSocketErrorEvent, updateNews);
     });
 
     socket.on("disconnect", () => {
@@ -112,9 +113,12 @@ export function RealTimeNewsFeed() {
     // Fetch initial data for the news feed
     getAllData(spo, newsChannelCurrentRef, myNewsGuidRef, newsChannelsRef, pageLanguage, newsCount, setLoading, newsItemsRef, stickyRef, channelsubItemIdRef);
 
-    // Clean up the socket connection when the component unmounts
+    // Clean up the socket connection and pending timeouts when the component unmounts
     return () => {
       socket.off();
+      // Clear all pending timeouts to prevent memory leaks and stale callbacks
+      pendingTimeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
+      pendingTimeoutsRef.current.clear();
     };
   }, []);
 
