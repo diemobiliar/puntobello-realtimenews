@@ -1,22 +1,34 @@
 import { Logger, Utility, getRootEnv } from '../utils';
 
 /**
+ * Helper function to calculate random delay for distributing SharePoint API load.
+ *
+ * @param {number} maxDelay - Maximum delay in milliseconds (default: 30000ms = 30 seconds)
+ * @returns {number} Random delay between 0 and maxDelay
+ */
+function getRandomDelay(maxDelay: number = 30000): number {
+  return Math.random() * maxDelay;
+}
+
+/**
  * Processes a socket event by determining its type and validating the associated news item.
  * Based on the event type, it calls the appropriate handler to update the UI or log an error.
- * Currently it only processes Add (A).
+ *
+ * All event types are processed with a random delay (0-30s) to distribute SharePoint API load
+ * and prevent HTTP 503 Service Unavailable errors when many users receive events simultaneously.
  *
  * @param {object} data - The data received from the socket event, where the key represents the event type and the value is the event ID.
  * @param {object} spo - The SharePoint service instance for interacting with the backend.
  * @param {React.MutableRefObject<number>} numberOfNewNewsRef - A ref that keeps track of the number of new news items.
  * @param {Function} setSystemMessageVisible - Function to set the visibility of the system message.
- * @param {Function} setTimeoutId - Function to set the timeout when refreshing the data.
+ * @param {React.MutableRefObject<Map<string, NodeJS.Timeout>>} pendingTimeoutsRef - Ref to track pending timeouts for cleanup.
  * @param {Function} processSocketAddEvent - Function to handle the addition of a new news item.
  * @param {Function} processSocketErrorEvent - Function to handle errors from the socket event.
  * @param {Function} updateNews - Function to reload the news from the list.
  *
- * @returns {Promise<void>}
+ * @returns {void}
  */
-export async function processSocketEvent(data, spo, numberOfNewNewsRef, setSystemMessageVisible, setTimeoutId, processSocketAddEvent, processSocketErrorEvent, updateNews) {
+export function processSocketEvent(data, spo, numberOfNewNewsRef, setSystemMessageVisible, pendingTimeoutsRef, processSocketAddEvent, processSocketErrorEvent, updateNews) {
   if (spo.filterQuery4Socket === undefined || spo.filterQuery4Socket.length == 0) {
     return;
   }
@@ -25,21 +37,36 @@ export async function processSocketEvent(data, spo, numberOfNewNewsRef, setSyste
   const eventType = Object.keys(data)[0];
   const eventId = Number(Object.values(data)[0]);
 
-  // Check if the news item is valid / existing
-  const validItem = await spo.checkValidNewsItem(eventId);
-  if (validItem) {
-    switch (eventType) {
-      case 'A':
-        processSocketAddEvent(numberOfNewNewsRef, setSystemMessageVisible);
-        break;
-      case 'U':
-        processSocketUpdateEvent(eventId, setTimeoutId, updateNews);
-        break;
-      default:
-        processSocketErrorEvent(eventId);
-        break;
+  // Apply random delay to distribute SharePoint API load (prevent 503 errors)
+  const delay = getRandomDelay();
+  const timeoutKey = `${eventType}_${eventId}`;
+
+  const timeout = setTimeout(async () => {
+    try {
+      // Check if the news item is valid / existing
+      const validItem = await spo.checkValidNewsItem(eventId);
+      if (validItem) {
+        switch (eventType) {
+          case 'A':
+            processSocketAddEvent(numberOfNewNewsRef, setSystemMessageVisible);
+            break;
+          case 'U':
+            processSocketUpdateEvent(updateNews);
+            break;
+          default:
+            processSocketErrorEvent(eventId);
+            break;
+        }
+      }
+    } catch (error) {
+      Logger.getInstance().error('RealTimeNewsFeed, processSocketEvent', error);
     }
-  }
+    // Clean up timeout from map after execution
+    pendingTimeoutsRef.current.delete(timeoutKey);
+  }, delay);
+
+  // Track timeout for cleanup
+  pendingTimeoutsRef.current.set(timeoutKey, timeout);
 }
 
 /**
@@ -57,24 +84,13 @@ export function processSocketAddEvent(numberOfNewNewsRef, setSystemMessageVisibl
 }
 
 /**
- * Handles the update of a news item by triggering a delayed update of the news feed.
- * The update is distributed randomly within a 30-second window to avoid service disruption.
+ * Handles the update of a news item by triggering an update of the news feed.
+ * Note: Random delay is already applied in processSocketEvent to distribute load.
  *
- * @param {string} id - The ID of the news item that needs to be updated.
- * @param {Function} setTimeoutId - A function to set the timeout ID, which can be used to cancel the timeout if needed.
  * @param {Function} updateNews - Function that triggers the update of the news feed.
  */
- function processSocketUpdateEvent(id, setTimeoutId, updateNews) {
-  // We distribute the update randomly within 30 seconds to avoid
-  // service disruption
-  const maxDelay = 30000; // 30 seconds
-  const delay = Math.random() * maxDelay; // random delay
-
-  const timeout = setTimeout(() => {
-    updateNews();
-  }, delay);
-
-  setTimeoutId(timeout);
+function processSocketUpdateEvent(updateNews) {
+  updateNews();
 }
 
 /**
