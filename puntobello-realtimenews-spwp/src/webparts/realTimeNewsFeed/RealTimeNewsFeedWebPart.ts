@@ -32,9 +32,9 @@ export interface IRealTimeNewsFeedWebPartProps {
 }
 
 export default class RealTimeNewsFeedWebPart extends BaseClientSideWebPart<IRealTimeNewsFeedWebPartProps> {
-  private logger: Logger;
-  private pageLanguage: ILanguageRepresentation;
-  private themeProvider: ThemeProvider;
+  private logger!: Logger;
+  private pageLanguage!: ILanguageRepresentation;
+  private themeProvider!: ThemeProvider;
   private themeVariant: IReadonlyTheme | undefined;
   private initialized: boolean = false;
 
@@ -53,8 +53,8 @@ export default class RealTimeNewsFeedWebPart extends BaseClientSideWebPart<IReal
       this.themeProvider = this.context.serviceScope.consume(ThemeProvider.serviceKey);
       this.themeVariant = this.themeProvider.tryGetTheme();
       this.themeProvider.themeChangedEvent.add(this, this._handleThemeChangedEvent);
-      const listId = this.context.pageContext.list.id.toString();
-      const listItemId = this.context.pageContext.listItem.id;
+      const listId = this.context.pageContext.list?.id.toString() ?? '';
+      const listItemId = this.context.pageContext.listItem?.id ?? 0;
       const language = this.context.pageContext.web.language;
 
       await super.onInit();
@@ -79,7 +79,7 @@ export default class RealTimeNewsFeedWebPart extends BaseClientSideWebPart<IReal
         this.context,
         this.logger,
         this.pageLanguage,
-        this.themeVariant,
+        this.themeVariant!,
         this.properties.newsCount
       );
   
@@ -91,6 +91,10 @@ export default class RealTimeNewsFeedWebPart extends BaseClientSideWebPart<IReal
       ReactDom.render(element, this.domElement);
   
     }
+  }
+
+  protected onDispose(): void {
+    ReactDom.unmountComponentAtNode(this.domElement);
   }
 
   protected get dataVersion(): Version {

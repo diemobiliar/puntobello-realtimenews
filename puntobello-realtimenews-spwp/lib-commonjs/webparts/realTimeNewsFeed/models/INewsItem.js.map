@@ -1,0 +1,1 @@
+{"version":3,"file":"INewsItem.js","sourceRoot":"","sources":["../../../../src/webparts/realTimeNewsFeed/models/INewsItem.ts"],"names":[],"mappings":"","sourcesContent":["export interface INewsItem {\n    NewsUrl: string;\n    ImageUrl: any;\n    NewsTitle: string;\n    PublishedFrom: string;\n    NewsHeader: string;\n}"]}

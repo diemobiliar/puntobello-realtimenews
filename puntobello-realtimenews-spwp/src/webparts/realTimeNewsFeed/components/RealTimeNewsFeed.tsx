@@ -67,11 +67,11 @@ export function RealTimeNewsFeed() {
   // Sticky news present or not
   const stickyRef = useRef(false);
   // All news items to be showed
-  const newsItemsRef = useRef([]);
+  const newsItemsRef = useRef<any[]>([]);
   // Number of new news items which are not yet displayed and shown in the system message
   const numberOfNewNewsRef = useRef<number>(0);
   // Track pending timeouts for cleanup on unmount (prevents memory leaks and stale callbacks)
-  const pendingTimeoutsRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
+  const pendingTimeoutsRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   // State variables to manage loading, modal visibility, and system message visibility
   const [loading, setLoading] = useState(true);
@@ -81,8 +81,8 @@ export function RealTimeNewsFeed() {
   // Combined styles incorporating theming and environment-specific styles
   const combinedStyles = Object.assign(
     {
-      backgroundColor: themeVariant.semanticColors.bodyBackground,
-      color: themeVariant.semanticColors.bodyText
+      backgroundColor: themeVariant?.semanticColors?.bodyBackground,
+      color: themeVariant?.semanticColors?.bodyText
     },
     getRootEnv().css
   );
@@ -90,7 +90,7 @@ export function RealTimeNewsFeed() {
   // useEffect hook to handle socket connections and data fetching on component mount
   useEffect(() => {
     // Establish a WebSocket connection
-    const socket = io(rootEnv.config.spfxSocketUrl, { transports: ["websocket"], timeout: +getRootEnv().config.spfxSocketTimeoutInMs });
+    const socket = io(rootEnv.config.spfxSocketUrl ?? '', { transports: ["websocket"], timeout: +(getRootEnv().config.spfxSocketTimeoutInMs ?? 0) });
 
     // Event listeners for WebSocket connection lifecycle and data events
     socket.on("connect", () => {
@@ -130,8 +130,8 @@ export function RealTimeNewsFeed() {
   }
 
   // Function to handle channel changes and update the displayed news items
-  function channelChange(ddKey) {
-    newsChannelCurrentRef.current = ddKey;
+  function channelChange(ddKey: string | number | undefined) {
+    newsChannelCurrentRef.current = String(ddKey ?? '');
     getAvailableItems(spo, newsChannelCurrentRef, myNewsGuidRef, newsChannelsRef, pageLanguage, newsCount, newsItemsRef, stickyRef, setLoading, logger);
   }
 
@@ -165,7 +165,7 @@ export function RealTimeNewsFeed() {
           }
           
           {/* Render the channel settings and command bar */}
-          <ChannelSettings myNewsGuid={myNewsGuidRef.current} channelsConfig={newsChannelsRef.current} modalVisible={modalVisible} modalSettingsTitle={Utility.getStringTranslation4Locale('modalSettingsTitle', pageLanguage.Language)} closeModal={hideChannelSettings} changeChannelSettings={(item, ev, isChecked) => changeChannelSettings(spo, newsChannelsRef, item, isChecked, channelsubItemIdRef)} />
+          <ChannelSettings myNewsGuid={myNewsGuidRef.current} channelsConfig={newsChannelsRef.current} modalVisible={modalVisible} modalSettingsTitle={Utility.getStringTranslation4Locale('modalSettingsTitle', pageLanguage.Language)} closeModal={hideChannelSettings} changeChannelSettings={(item: any, ev: any, isChecked: boolean) => changeChannelSettings(spo, newsChannelsRef, item, isChecked, channelsubItemIdRef)} />
           <CommandBarNewsFeed channelDropdown={getChannelDD(newsChannelsRef, myNewsGuidRef, pageLanguage)} selectedKey={newsChannelCurrentRef.current} channelDropdownChanged={channelChange} channelSettingsModalClicked={showChannelSettings}/>
           
           {/* Display the list of news items, or a message if no items are available */}

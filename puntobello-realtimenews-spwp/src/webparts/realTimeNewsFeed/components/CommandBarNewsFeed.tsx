@@ -83,8 +83,8 @@ export function CommandBarNewsFeed(props: ICommandBar): JSX.Element {
           styles={dropdownStyles}
           className={styles.dropdown}
           selectedKey={selectedKey}
-          onChange={(event, option, value) => {
-            channelDropdownChanged(option.key);
+          onChange={(event, option) => {
+            channelDropdownChanged(option?.key);
           }}
         />
       </div>

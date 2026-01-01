@@ -1,6 +1,6 @@
 {
   "@microsoft/generator-sharepoint": {
-    "version": "1.21.1",
+    "version": "1.22.1",
     "isDomainIsolated": false,
     "isCreatingSolution": true,
     "packageManager": "npm",
@@ -13,5 +13,6 @@
       "@microsoft/microsoft-graph-client": "3.0.2"
     },
     "nodeVersion": "22.15.0"
-  }
+  },
+  "useGulp": false
 }
