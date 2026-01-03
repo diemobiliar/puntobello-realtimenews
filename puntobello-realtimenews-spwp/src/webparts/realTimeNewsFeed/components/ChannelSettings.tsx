@@ -83,8 +83,8 @@ export function ChannelSettings(props: IChannelSettingsProps) {
      * @param {React.FormEvent<HTMLElement>} ev - The event object associated with the change.
      * @param {boolean} isChecked - The new checked status of the checkbox.
      */
-    function channelCheckboxChanged(item: IChannels2SubscriptionItem, ev: React.FormEvent<HTMLElement>, isChecked: boolean) {
-        changeChannelSettings(item, ev, isChecked);
+    function channelCheckboxChanged(item: IChannels2SubscriptionItem, ev?: React.FormEvent<HTMLElement | HTMLInputElement>, isChecked?: boolean) {
+        changeChannelSettings(item, ev, isChecked ?? false);
     }
 
     return (
@@ -113,7 +113,7 @@ export function ChannelSettings(props: IChannelSettingsProps) {
                                     key={item.TermGuid}
                                     label={Utility.getChannelText(pageLanguage, item)}
                                     defaultChecked={item.Subscribed}
-                                    onChange={channelCheckboxChanged.bind(this, item)}
+                                    onChange={(ev, isChecked) => channelCheckboxChanged(item, ev, isChecked)}
                                     styles={customCheckboxStyles}
                                 />
                             );

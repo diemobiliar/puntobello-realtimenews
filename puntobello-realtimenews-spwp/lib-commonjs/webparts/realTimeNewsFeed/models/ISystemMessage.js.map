@@ -1,0 +1,1 @@
+{"version":3,"file":"ISystemMessage.js","sourceRoot":"","sources":["../../../../src/webparts/realTimeNewsFeed/models/ISystemMessage.ts"],"names":[],"mappings":"","sourcesContent":["export interface ISystemMessage {\n    Title: string;\n    buttonUpdateNewsClicked: any;\n}"]}

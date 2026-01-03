@@ -28,14 +28,14 @@ function getRandomDelay(maxDelay: number = 30000): number {
  *
  * @returns {void}
  */
-export function processSocketEvent(data, spo, numberOfNewNewsRef, setSystemMessageVisible, pendingTimeoutsRef, processSocketAddEvent, processSocketErrorEvent, updateNews) {
+export function processSocketEvent(data: any, spo: any, numberOfNewNewsRef: any, setSystemMessageVisible: any, pendingTimeoutsRef: any, processSocketAddEvent: any, processSocketErrorEvent: any, updateNews: any) {
   if (spo.filterQuery4Socket === undefined || spo.filterQuery4Socket.length == 0) {
     return;
   }
   // Extract the event type and ID from the data object
   // The event id is the id of the list item in the news list
   const eventType = Object.keys(data)[0];
-  const eventId = Number(Object.values(data)[0]);
+  const eventId = Number(Object.keys(data).map(k => data[k])[0]);
 
   // Apply random delay to distribute SharePoint API load (prevent 503 errors)
   const delay = getRandomDelay();
@@ -76,7 +76,7 @@ export function processSocketEvent(data, spo, numberOfNewNewsRef, setSystemMessa
 * @param {React.MutableRefObject<number>} numberOfNewNewsRef - A ref that keeps track of the number of new news items.
 * @param {Function} setSystemMessageVisible - Function to set the visibility of the system message.
 */
-export function processSocketAddEvent(numberOfNewNewsRef, setSystemMessageVisible) {
+export function processSocketAddEvent(numberOfNewNewsRef: any, setSystemMessageVisible: any) {
   setSystemMessageVisible(false);
   // Increase the number of new news items which are not yet displayed and shown in the system message
   numberOfNewNewsRef.current++;
@@ -89,7 +89,7 @@ export function processSocketAddEvent(numberOfNewNewsRef, setSystemMessageVisibl
  *
  * @param {Function} updateNews - Function that triggers the update of the news feed.
  */
-function processSocketUpdateEvent(updateNews) {
+function processSocketUpdateEvent(updateNews: any) {
   updateNews();
 }
 
@@ -98,7 +98,7 @@ function processSocketUpdateEvent(updateNews) {
 *
 * @param {number} eventId - The ID of the event that triggered the error.
 */
-export function processSocketErrorEvent(eventId) {
+export function processSocketErrorEvent(eventId: any) {
   Logger.getInstance().error("Undefined event-type has been received from socket webapp", eventId);
 }
 
@@ -119,7 +119,7 @@ export function processSocketErrorEvent(eventId) {
 *
 * @returns {Promise<void>}
 */
-export async function getAllData(spo, newsChannelCurrentRef, myNewsGuidRef, newsChannelsRef, pageLanguage, newsCount, setLoading, newsItemsRef, stickyRef, channelsubItemIdRef) {
+export async function getAllData(spo: any, newsChannelCurrentRef: any, myNewsGuidRef: any, newsChannelsRef: any, pageLanguage: any, newsCount: any, setLoading: any, newsItemsRef: any, stickyRef: any, channelsubItemIdRef: any) {
   setLoading(true);
   try {
     await getChannelsAndSubscriptions(spo, myNewsGuidRef, newsChannelsRef, pageLanguage, channelsubItemIdRef);
@@ -144,14 +144,14 @@ export async function getAllData(spo, newsChannelCurrentRef, myNewsGuidRef, news
 *
 * @returns {Promise<void>}
 */
-export async function getChannelsAndSubscriptions(spo, myNewsGuidRef, newsChannelsRef, pageLanguage, channelsubItemIdRef) {
-  const currNewsChannels = [];
-  const newsChannelConfig = [];
+export async function getChannelsAndSubscriptions(spo: any, myNewsGuidRef: any, newsChannelsRef: any, pageLanguage: any, channelsubItemIdRef: any) {
+  const currNewsChannels: any[] = [];
+  const newsChannelConfig: any[] = [];
   const allCachedChannels = await spo.getAndCacheAllChannels();
   const channels2subItem = await spo.getSubscribedChannels4CurrentUser();
 
   if (channels2subItem.length > 0) {
-    channels2subItem[0].pb_Channels.forEach(channel => {
+    channels2subItem[0].pb_Channels.forEach((channel: any) => {
       const newChan = { Channel: [], TermGuid: channel.TermGuid, Subscribed: true, Visible: true, SortOrder: 0 };
       newsChannelConfig.push(newChan);
     });
@@ -170,9 +170,9 @@ export async function getChannelsAndSubscriptions(spo, myNewsGuidRef, newsChanne
     TermGuid: myNewsGuidRef.current, Subscribed: false, Visible: true, SortOrder: 0
   });
 
-  allCachedChannels.forEach(channel => {
+  allCachedChannels.forEach((channel: any) => {
     if (!channel.isDeprecated) {
-      const channelLanguages = channel.labels.map(label => ({ Language: label.languageTag, Text: label.name }));
+      const channelLanguages = channel.labels.map((label: any) => ({ Language: label.languageTag, Text: label.name }));
       const currentNewsChannel = newsChannelConfig.find(newsChannel => newsChannel.TermGuid === channel.id);
       if (currentNewsChannel || newsChannelConfig.length == 0) {
         currNewsChannels.push({ Channel: channelLanguages, TermGuid: channel.id, Subscribed: true, Visible: true, SortOrder: 0 });
@@ -195,11 +195,11 @@ export async function getChannelsAndSubscriptions(spo, myNewsGuidRef, newsChanne
 * @param {boolean} isChecked - Whether the channel is now checked (subscribed) or unchecked (unsubscribed).
 * @param {React.MutableRefObject<number>} channelsubItemIdRef - Ref holding the item ID of the channel subscription.
 */
-export function changeChannelSettings(spo, newsChannelsRef, item, isChecked, channelsubItemIdRef) {
-  const channels = [];
+export function changeChannelSettings(spo: any, newsChannelsRef: any, item: any, isChecked: any, channelsubItemIdRef: any) {
+  const channels: any[] = [];
   // Recreate the channel settings based on the user's interaction
   if (isChecked) {
-    newsChannelsRef.current.forEach(channel => {
+    newsChannelsRef.current.forEach((channel: any) => {
       if (channel.Subscribed) {
         channels.push({ termName: channel.Channel[0].Text, termGUID: channel.TermGuid });
       } else {
@@ -210,7 +210,7 @@ export function changeChannelSettings(spo, newsChannelsRef, item, isChecked, cha
       }
     });
   } else {
-    newsChannelsRef.current.forEach(channel => {
+    newsChannelsRef.current.forEach((channel: any) => {
       if (channel.Subscribed) {
         if (channel.TermGuid != item.TermGuid) {
           channels.push({ termName: channel.Channel[0].Text, termGUID: channel.TermGuid });
@@ -221,7 +221,7 @@ export function changeChannelSettings(spo, newsChannelsRef, item, isChecked, cha
     });
   }
   // Update the channel settings for the current user
-  spo.updateMultiMeta(channels, getRootEnv().config.spfxSubscribedChannelsListTitle, 'pb_Channels', channelsubItemIdRef.current).then().catch((error) => {
+  spo.updateMultiMeta(channels, getRootEnv().config.spfxSubscribedChannelsListTitle, 'pb_Channels', channelsubItemIdRef.current).then().catch((error: any) => {
     Logger.getInstance().error('CHANGE_CHANNEL_SETTINGS', error);
   });
 }
@@ -242,7 +242,7 @@ export function changeChannelSettings(spo, newsChannelsRef, item, isChecked, cha
 *
 * @returns {Promise<void>}
 */
-export async function getAvailableItems(spo, newsChannelCurrentRef, myNewsGuidRef, newsChannelsRef, pageLanguage, newsCount, newsItemsRef, stickyRef, setLoading, logger) {
+export async function getAvailableItems(spo: any, newsChannelCurrentRef: any, myNewsGuidRef: any, newsChannelsRef: any, pageLanguage: any, newsCount: any, newsItemsRef: any, stickyRef: any, setLoading: any, logger: any) {
   setLoading(true);
   try {
     const responsenews = await spo.getNewsItems(newsChannelCurrentRef.current, myNewsGuidRef.current, newsChannelsRef.current, pageLanguage, newsCount);
@@ -264,10 +264,10 @@ export async function getAvailableItems(spo, newsChannelCurrentRef, myNewsGuidRe
 *
 * @returns {Array} An array of dropdown options for selecting a news channel.
 */
-export function getChannelDD(newsChannelsRef, myNewsGuidRef, pageLanguage) {
-  const retVal = [];
+export function getChannelDD(newsChannelsRef: any, myNewsGuidRef: any, pageLanguage: any) {
+  const retVal: any[] = [];
   const currNewsChannels = newsChannelsRef.current;
-  currNewsChannels.map((newschannel) => {
+  currNewsChannels.map((newschannel: any) => {
     if (newschannel.TermGuid == myNewsGuidRef.current || newschannel.Subscribed) {
       retVal.push({ key: newschannel.TermGuid, text: Utility.getChannelText(pageLanguage, newschannel) });
     }

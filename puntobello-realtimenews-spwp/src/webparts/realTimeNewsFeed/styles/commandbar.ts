@@ -31,7 +31,7 @@ export const dropdownStyles: Partial<IDropdownStyles> = {
     },
   },
   dropdownOptionText: {
-    fontSize: rootEnv.css['--spfx_theme_generic_font_size'],
+    fontSize: rootEnv.css['--spfx_font_size_generic'],
     color: rootEnv.css['--spfx_color_text'],
     lineHeight: '1.25',
   },
@@ -41,7 +41,7 @@ export const dropdownStyles: Partial<IDropdownStyles> = {
     lineHeight: '40px',
   },
   caretDown: {
-    fontSize: rootEnv.css['--spfx_theme_generic_font_size'],
+    fontSize: rootEnv.css['--spfx_font_size_generic'],
     color: rootEnv.css['--spfx_color_text'],
   },
   label: {

@@ -36,7 +36,6 @@ import {
     IChannels2SubsItem, 
     IChannels2SubscriptionItem 
 } from "../models";
-import { log } from "console";
 
 /**
  * Interface representing the SharePoint Service.
@@ -136,13 +135,13 @@ export default class SharePointService implements ISharePointService {
     public static readonly serviceKey: ServiceKey<ISharePointService> =
         ServiceKey.create<ISharePointService>('SPFx:SharePointService', SharePointService);
 
-    private storage: PnPClientStorage;
-    private pageContext: PageContext;
+    private storage!: PnPClientStorage;
+    private pageContext!: PageContext;
     private logger: Logger;
-    private rootEnv: IRootEnv;
-    public filterQuery4Socket: string;
-    public sp: SPFI;
-    private graph: GraphFI;
+    private rootEnv!: IRootEnv;
+    public filterQuery4Socket!: string;
+    public sp!: SPFI;
+    private graph!: GraphFI;
     private spfxContext: any; // Store the full SPFx context
 
     /**
@@ -211,7 +210,7 @@ export default class SharePointService implements ISharePointService {
      * @returns {Promise<IChannels2SubsItem[]>} A promise that resolves with an array of subscribed channels.
      */
     public async getSubscribedChannels4CurrentUser(): Promise<IChannels2SubsItem[]> {
-        return await this.sp.web.lists.getByTitle(this.rootEnv.config.spfxSubscribedChannelsListTitle).items
+        return await this.sp.web.lists.getByTitle(this.rootEnv.config.spfxSubscribedChannelsListTitle ?? '').items
             .filter("pb_Subscriber eq '" + this.pageContext.legacyPageContext.userId + "'")
             .select("Id", "pb_Channels").top(1)();
     }
@@ -221,7 +220,7 @@ export default class SharePointService implements ISharePointService {
      * @returns {Promise<IItemAddResult>} A promise that resolves with the result of the item addition.
      */
     public async addSubscribedChannels4CurrentUser(): Promise<any> {
-        return await this.sp.web.lists.getByTitle(this.rootEnv.config.spfxSubscribedChannelsListTitle).items.add({
+        return await this.sp.web.lists.getByTitle(this.rootEnv.config.spfxSubscribedChannelsListTitle ?? '').items.add({
             Title: this.pageContext.legacyPageContext.DisplayName,
             pb_SubscriberId: this.pageContext.legacyPageContext.userId
         });
@@ -264,14 +263,14 @@ export default class SharePointService implements ISharePointService {
             newsResult.sticky = false;
             const filterQuerySticky = filterQuery + ` and (pb_Sticky eq 1 and pb_StickyDate le datetime'${currDate}')`;
             const filterQueryWithoutSticky = filterQuery + ` and ((pb_Sticky eq 0 or pb_Sticky eq null) or (pb_Sticky eq 1 and pb_StickyDate ge datetime'${currDate}'))`;
-            this.sp.web.lists.getById(this.rootEnv.config.spfxRealtimenewsListId).items.filter(filterQuerySticky).top(1)().then((item) => {
+            this.sp.web.lists.getById(this.rootEnv.config.spfxRealtimenewsListId ?? '').items.filter(filterQuerySticky).top(1)().then((item) => {
                 if (item.length > 0) {
                     newsResult.sticky = true;
                     newsResult.newsItemData.push(item[0] as INewsItemData);
                 } else {
                     newsResult.sticky = false;
                 }
-                this.sp.web.lists.getById(this.rootEnv.config.spfxRealtimenewsListId).items.filter(filterQueryWithoutSticky).orderBy("pb_PublishedFrom", false).top(newsCount)().then((items) => {
+                this.sp.web.lists.getById(this.rootEnv.config.spfxRealtimenewsListId ?? '').items.filter(filterQueryWithoutSticky).orderBy("pb_PublishedFrom", false).top(newsCount)().then((items) => {
                     newsResult.newsItemData.push(...items);
                     resolve(
                         newsResult
@@ -295,7 +294,7 @@ export default class SharePointService implements ISharePointService {
         const publishingDatesFilter = `pb_PublishedFrom le datetime'${currDate}' and (pb_PublishedTo ge datetime'${currDate}' or pb_PublishedTo eq null)`;
 
         const currentFilter = this.filterQuery4Socket + publishingDatesFilter + ' and (Id eq ' + id.toString() + ')';
-        const item = await this.sp.web.lists.getById(this.rootEnv.config.spfxRealtimenewsListId).items.filter(currentFilter).top(1)();
+        const item = await this.sp.web.lists.getById(this.rootEnv.config.spfxRealtimenewsListId ?? '').items.filter(currentFilter).top(1)();
         if (item) return true;
         return false;
     }
@@ -350,7 +349,10 @@ export default class SharePointService implements ISharePointService {
     private toISOStringWithTimezone(date: Date): string {
         const tzOffset = -date.getTimezoneOffset();
         const diff = tzOffset >= 0 ? '+' : '-';
-        const pad = n => `${Math.floor(Math.abs(n))}`.padStart(2, '0');
+        const pad = (n: number): string => {
+            const str = `${Math.floor(Math.abs(n))}`;
+            return str.length < 2 ? '0' + str : str;
+        };
         return date.getFullYear() +
             '-' + pad(date.getMonth() + 1) +
             '-' + pad(date.getDate()) +
@@ -386,7 +388,7 @@ export default class SharePointService implements ISharePointService {
             // Not running in a multilingual setup
             // Get language from web
             languageData.lcid = defaultLanguage;
-            languageData.Language = lcid.from(defaultLanguage);
+            languageData.Language = lcid.from(defaultLanguage) ?? '';
             languageData.LanguageLC = languageData.Language.toLowerCase();
             languageData.LanguageDashed = languageData.Language.replace('_','-');
             languageData.LanguageDashedLC = languageData.LanguageLC.replace('_','-');
@@ -395,7 +397,7 @@ export default class SharePointService implements ISharePointService {
         // Page is a translation
         // Get language from page property
         languageData.Language = pageContext.OData__SPTranslationLanguage.replace("-", "_").toLowerCase().replace(/(^\w{2})/, (match) => match.toLowerCase()).replace(/(_\w{2})$/, (match) => match.toUpperCase());
-        languageData.lcid = lcid.to(languageData.Language);
+        languageData.lcid = lcid.to(languageData.Language) ?? 0;
         languageData.LanguageLC = languageData.Language.toLowerCase();
         languageData.LanguageDashed = languageData.Language.replace('_','-');
         languageData.LanguageDashedLC = languageData.LanguageLC.replace('_','-');

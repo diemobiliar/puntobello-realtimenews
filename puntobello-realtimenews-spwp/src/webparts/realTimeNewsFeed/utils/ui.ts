@@ -1,5 +1,5 @@
 // External libraries
-import * as moment from 'moment';
+import moment from 'moment';
 import * as __ from 'lodash';
 
 // Fluent UI components and styles
@@ -168,15 +168,15 @@ export function getNewsCommandBarInnerStyles(): Partial<ICommandBarStyles> {
             paddingRight: 0,
             selectors: {
                 '.ms-Icon': {
-                    color: rootEnv.css['--spfx_text_color'],
-                    filter: `brightness(${rootEnv.css['--spfx_text_color_brightness_dark']})`, 
+                    color: rootEnv.css['--spfx_color_text'],
+                    filter: `brightness(${rootEnv.css['--spfx_color_text_brightness_dark']})`, 
                     marginRight: 4,
                     marginBottom: -1,
                     transition: '0.15s linear color',
                 },
                 '.ms-Button': {
-                    color: rootEnv.css['--spfx_text_color'],
-                    filter: `brightness(${rootEnv.css['--spfx_text_color_brightness_dark']})`, 
+                    color: rootEnv.css['--spfx_color_text'],
+                    filter: `brightness(${rootEnv.css['--spfx_color_text_brightness_dark']})`, 
                     transition: '0.15s linear color',
                 },
                 '.ms-Button:hover, .ms-Button:active': {
